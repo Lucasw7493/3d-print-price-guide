@@ -318,7 +318,6 @@ function calcItem(item) {
 // ── Photo ─────────────────────────────────────────────────────────────────
 function triggerPhoto(itemId) {
   photoTargetId = String(itemId);
-  alert('triggerPhoto called for: ' + photoTargetId);
   const input = document.getElementById('photo-input');
   input.value = '';
   input.click();
@@ -336,20 +335,34 @@ function closeLightbox() {
 }
 
 document.getElementById('photo-input').addEventListener('change', function() {
-  alert('file input changed, files: ' + this.files.length + ', targetId: ' + photoTargetId);
   const file = this.files[0];
-  if (!file) { alert('no file!'); return; }
+  if (!file) return;
   const targetId = photoTargetId;
-  if (!targetId) { alert('no targetId!'); return; }
-  const reader = new FileReader();
-  reader.onload = function() {
-    alert('reader loaded, saving photo for: ' + targetId);
+  if (!targetId) return;
+
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.onload = function() {
+    // Resize to max 600px wide to keep under localStorage limit
+    const MAX = 600;
+    let w = img.width, h = img.height;
+    if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const resized = canvas.toDataURL('image/jpeg', 0.7);
+    URL.revokeObjectURL(objectUrl);
+
     photos = loadPhotos();
-    photos[targetId] = reader.result;
+    photos[targetId] = resized;
     savePhotos(photos);
     renderGrid();
   };
-  reader.readAsDataURL(file);
+  img.src = objectUrl;
 });
 
 // ── Render ────────────────────────────────────────────────────────────────
