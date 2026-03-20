@@ -220,8 +220,8 @@ var PRODUCTS = [
     });
 
     if (sort === 'oldest')     result = result.slice().reverse();
-    if (sort === 'price-asc')  result = result.slice().sort(function(a,b){ return a.sell - b.sell; });
-    if (sort === 'price-desc') result = result.slice().sort(function(a,b){ return b.sell - a.sell; });
+    if (sort === 'price-asc')  result = result.slice().sort(function(a,b){ return calcPrice(a) - calcPrice(b); });
+    if (sort === 'price-desc') result = result.slice().sort(function(a,b){ return calcPrice(b) - calcPrice(a); });
     if (sort === 'name')       result = result.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
     return result;
   }
