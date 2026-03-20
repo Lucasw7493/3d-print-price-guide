@@ -51,12 +51,27 @@
     <div class="modal-body">
 
       <div class="scan-section">
-        <button class="btn-scan" onclick="triggerSlicerScan()">
-          📷 &nbsp;SCAN SLICER SCREENSHOT
-        </button>
+        <div class="scan-label">AUTO-FILL WITH AI SCAN</div>
+        <div class="scan-hint">Upload your item photo + slicer screenshot — Claude fills in everything including market prices</div>
+        <div class="scan-uploads">
+          <div class="scan-upload-slot" id="slot-item" onclick="document.getElementById('item-file').click()">
+            <div class="scan-slot-icon" id="slot-item-icon">📦</div>
+            <div class="scan-slot-label">ITEM PHOTO</div>
+            <div class="scan-slot-sub" id="slot-item-sub">tap to upload</div>
+          </div>
+          <div class="scan-upload-slot" id="slot-slicer" onclick="document.getElementById('slicer-file').click()">
+            <div class="scan-slot-icon" id="slot-slicer-icon">🖥</div>
+            <div class="scan-slot-label">SLICER SCREENSHOT</div>
+            <div class="scan-slot-sub" id="slot-slicer-sub">tap to upload</div>
+          </div>
+        </div>
+        <input type="file" id="item-file" accept="image/*" capture="environment" style="display:none"
+               onchange="handleItemFile(this)">
         <input type="file" id="slicer-file" accept="image/*" style="display:none"
                onchange="handleSlicerFile(this)">
-        <div class="scan-hint">Scans filament cost, print time &amp; qty directly from the slicer screenshot</div>
+        <button class="btn-scan" id="btn-scan-go" onclick="runScan()" disabled>
+          ⚡ &nbsp;SCAN &amp; AUTO-FILL ALL FIELDS
+        </button>
         <div class="scan-status" id="scan-status"></div>
       </div>
 
@@ -444,8 +459,8 @@ var SEED_PRODUCTS = [
     document.getElementById('modal-title').textContent = 'ADD PRODUCT';
     document.getElementById('modal-delete-btn').style.display = 'none';
     clearForm();
-    document.getElementById('scan-status').textContent = '';
-    document.getElementById('scan-status').className = 'scan-status';
+    resetScanSlots();
+    setScanStatus('', '');
     document.getElementById('product-modal').classList.add('open');
   };
 
@@ -457,8 +472,8 @@ var SEED_PRODUCTS = [
     document.getElementById('modal-delete-btn').style.display = '';
     fillForm(p);
     updateModalPrice();
-    document.getElementById('scan-status').textContent = '';
-    document.getElementById('scan-status').className = 'scan-status';
+    resetScanSlots();
+    setScanStatus('', '');
     document.getElementById('product-modal').classList.add('open');
   };
 
@@ -561,33 +576,66 @@ var SEED_PRODUCTS = [
   };
 
   /* ══════════════════════════════════════════════
-     SLICER SCREENSHOT SCAN (Claude API)
+     DUAL-IMAGE AI SCAN
      ══════════════════════════════════════════════ */
-  window.triggerSlicerScan = function() {
-    if (!getApiKey()) {
-      openSettingsModal();
-      setTimeout(function() {
-        var el = document.getElementById('s-api-key');
-        if (el) el.focus();
-      }, 300);
-      setScanStatus('⚠ Enter your Claude API key in Settings first, then try again.', 'warn');
-      return;
+  var _scanItemB64    = null;
+  var _scanItemType   = null;
+  var _scanSlicerB64  = null;
+  var _scanSlicerType = null;
+
+  function updateScanBtn() {
+    var btn = document.getElementById('btn-scan-go');
+    if (_scanItemB64 || _scanSlicerB64) {
+      btn.disabled = false;
+    } else {
+      btn.disabled = true;
     }
-    document.getElementById('slicer-file').click();
+  }
+
+  window.handleItemFile = function(input) {
+    var file = input.files[0];
+    if (!file) return;
+    input.value = '';
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var parts = e.target.result.split(',');
+      _scanItemB64  = parts[1];
+      _scanItemType = file.type || 'image/jpeg';
+      document.getElementById('slot-item-icon').textContent = '✅';
+      document.getElementById('slot-item-sub').textContent  = file.name || 'ready';
+      document.getElementById('slot-item').classList.add('loaded');
+      updateScanBtn();
+    };
+    reader.readAsDataURL(file);
   };
 
   window.handleSlicerFile = function(input) {
     var file = input.files[0];
     if (!file) return;
     input.value = '';
-    setScanStatus('⏳ Scanning screenshot with Claude AI...', 'scanning');
     var reader = new FileReader();
     reader.onload = function(e) {
       var parts = e.target.result.split(',');
-      scanWithClaude(parts[1], file.type || 'image/png');
+      _scanSlicerB64  = parts[1];
+      _scanSlicerType = file.type || 'image/png';
+      document.getElementById('slot-slicer-icon').textContent = '✅';
+      document.getElementById('slot-slicer-sub').textContent  = file.name || 'ready';
+      document.getElementById('slot-slicer').classList.add('loaded');
+      updateScanBtn();
     };
     reader.readAsDataURL(file);
   };
+
+  function resetScanSlots() {
+    _scanItemB64 = _scanItemType = _scanSlicerB64 = _scanSlicerType = null;
+    document.getElementById('slot-item-icon').textContent  = '📦';
+    document.getElementById('slot-item-sub').textContent   = 'tap to upload';
+    document.getElementById('slot-item').classList.remove('loaded');
+    document.getElementById('slot-slicer-icon').textContent = '🖥';
+    document.getElementById('slot-slicer-sub').textContent  = 'tap to upload';
+    document.getElementById('slot-slicer').classList.remove('loaded');
+    document.getElementById('btn-scan-go').disabled = true;
+  }
 
   function setScanStatus(msg, type) {
     var el = document.getElementById('scan-status');
@@ -595,15 +643,59 @@ var SEED_PRODUCTS = [
     el.className   = 'scan-status' + (type ? ' scan-' + type : '');
   }
 
-  function scanWithClaude(base64, mediaType) {
+  window.runScan = function() {
+    if (!getApiKey()) {
+      openSettingsModal();
+      setTimeout(function() { var el = document.getElementById('s-api-key'); if (el) el.focus(); }, 300);
+      setScanStatus('⚠ Enter your Claude API key in Settings first, then try again.', 'warn');
+      return;
+    }
+    if (!_scanItemB64 && !_scanSlicerB64) {
+      setScanStatus('⚠ Upload at least one image first.', 'warn');
+      return;
+    }
+
+    setScanStatus('⏳ Scanning with Claude AI — filling all fields...', 'scanning');
+    document.getElementById('btn-scan-go').disabled = true;
+
+    var content = [];
+
+    if (_scanItemB64) {
+      content.push({ type: 'image', source: { type: 'base64', media_type: _scanItemType, data: _scanItemB64 } });
+    }
+    if (_scanSlicerB64) {
+      content.push({ type: 'image', source: { type: 'base64', media_type: _scanSlicerType, data: _scanSlicerB64 } });
+    }
+
+    var hasItem   = !!_scanItemB64;
+    var hasSlicer = !!_scanSlicerB64;
+
     var prompt =
-      'This is a screenshot from a 3D printing slicer (Bambu Studio, OrcaSlicer, Cura, PrusaSlicer, etc.).\n' +
-      'Extract these values and return ONLY valid JSON — no explanation, no markdown fences:\n' +
+      'You are helping price 3D printed products for SMOKYMTN 3D PRINTS, a small business that sells at local craft markets (no shipping, no platform fees — can undercut online prices by ~15%).\n\n';
+
+    if (hasItem && hasSlicer) {
+      prompt += 'I am sending you two images:\n1. A photo of the physical 3D printed item\n2. A slicer screenshot (Bambu Studio / OrcaSlicer) showing print settings\n\n';
+    } else if (hasItem) {
+      prompt += 'I am sending you a photo of a physical 3D printed item.\n\n';
+    } else {
+      prompt += 'I am sending you a slicer screenshot (Bambu Studio / OrcaSlicer) showing print settings.\n\n';
+    }
+
+    prompt +=
+      'Return ONLY valid JSON — no explanation, no markdown fences:\n' +
       '{\n' +
-      '  "filamentCostTotal": <total filament material cost in USD as a number, or null>,\n' +
-      '  "printTimeHours": <estimated print time in hours as a decimal, or null>,\n' +
-      '  "qtyPerPlate": <number of items/models on the build plate as an integer, default 1>\n' +
-      '}';
+      '  "name": ' + (hasItem ? '"suggested product name based on what you see"' : 'null') + ',\n' +
+      '  "notes": ' + (hasItem ? '"brief description: material/colors/features, e.g. 4-color PLA — Articulated flexi dragon, print-in-place"' : 'null') + ',\n' +
+      '  "filamentCostTotal": ' + (hasSlicer ? '<total filament cost in USD from slicer, or null>' : 'null') + ',\n' +
+      '  "printTimeHours": ' + (hasSlicer ? '<print time in hours as decimal, or null>' : 'null') + ',\n' +
+      '  "qtyPerPlate": ' + (hasSlicer ? '<number of items on the build plate, default 1>' : 'null') + ',\n' +
+      '  "mktLow": ' + (hasItem ? '<lowest price similar 3D printed items sell for on Etsy/Amazon, as a number>' : 'null') + ',\n' +
+      '  "mktMid": ' + (hasItem ? '<typical/median price for similar items>' : 'null') + ',\n' +
+      '  "mktHigh": ' + (hasItem ? '<premium/high-end price for similar items>' : 'null') + '\n' +
+      '}\n\n' +
+      (hasItem ? 'For market prices: use your knowledge of what similar 3D printed items sell for on Etsy and Amazon. Be realistic — these are craft market prices, not mass-produced goods.' : '');
+
+    content.push({ type: 'text', text: prompt });
 
     fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -615,14 +707,8 @@ var SEED_PRODUCTS = [
       },
       body: JSON.stringify({
         model:      'claude-opus-4-6',
-        max_tokens: 512,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-            { type: 'text',  text: prompt }
-          ]
-        }]
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: content }]
       })
     })
     .then(function(r) { return r.json(); })
@@ -630,21 +716,34 @@ var SEED_PRODUCTS = [
       if (data.error) throw new Error(data.error.message);
       var text = data.content && data.content[0] && data.content[0].text;
       if (!text) throw new Error('Empty response');
-      var json = JSON.parse(text.trim());
+      var raw = text.trim();
+      /* strip markdown fences if Claude wraps anyway */
+      raw = raw.replace(/^```[a-z]*\n?/i, '').replace(/```$/,'').trim();
+      var json = JSON.parse(raw);
       applySlicerData(json);
-      setScanStatus('✓ Scan complete — review the filled fields below.', 'ok');
+      var filled = [];
+      if (json.name)              filled.push('name');
+      if (json.filamentCostTotal) filled.push('cost');
+      if (json.printTimeHours)    filled.push('time');
+      if (json.mktLow)            filled.push('market prices');
+      if (json.notes)             filled.push('notes');
+      setScanStatus('✅ Filled: ' + filled.join(', ') + ' — review below then save.', 'ok');
     })
     .catch(function(err) {
       setScanStatus('✕ Scan failed: ' + err.message, 'error');
+      document.getElementById('btn-scan-go').disabled = false;
     });
-  }
+  };
 
   function applySlicerData(d) {
-    if (d.filamentCostTotal != null) {
-      document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
-    }
-    if (d.printTimeHours != null) document.getElementById('f-time').value = (+d.printTimeHours).toFixed(1);
-    if (d.qtyPerPlate    != null) document.getElementById('f-qty').value  = d.qtyPerPlate;
+    if (d.name)              document.getElementById('f-name').value     = d.name;
+    if (d.notes)             document.getElementById('f-notes').value    = d.notes;
+    if (d.filamentCostTotal != null) document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
+    if (d.printTimeHours    != null) document.getElementById('f-time').value     = (+d.printTimeHours).toFixed(1);
+    if (d.qtyPerPlate       != null) document.getElementById('f-qty').value      = d.qtyPerPlate;
+    if (d.mktLow            != null) document.getElementById('f-mkt-low').value  = (+d.mktLow).toFixed(2);
+    if (d.mktMid            != null) document.getElementById('f-mkt-mid').value  = (+d.mktMid).toFixed(2);
+    if (d.mktHigh           != null) document.getElementById('f-mkt-high').value = (+d.mktHigh).toFixed(2);
     updateModalPrice();
   }
 
