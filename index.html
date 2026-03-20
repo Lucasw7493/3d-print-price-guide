@@ -412,28 +412,31 @@ function renderGrid() {
         </div>
         <div class="price-row">
           <div style="width:100%">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <div class="price-label">Price Range</div>
-              <div class="price-label">Profit / Item &nbsp; <span style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--lime)">${fmt(profit)}</span> &nbsp; <span class="margin-badge" style="color:${mc};border-color:${mc}33;background:${mc}11">${pct(margin)}</span></div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-              <div style="text-align:center">
-                <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted)">LOW</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--muted)">${fmt(item.mktLow)}</div>
-              </div>
-              <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--muted),var(--accent),var(--lime));border-radius:2px;position:relative">
-                <div style="position:absolute;top:50%;transform:translate(-50%,-50%);left:${Math.min(100,Math.max(0,((item.sell-item.mktLow)/(item.mktHigh-item.mktLow))*100))}%">
-                  <div style="background:var(--lime);border-radius:50%;width:10px;height:10px;box-shadow:0 0 8px var(--lime)"></div>
-                </div>
-              </div>
-              <div style="text-align:center">
-                <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted)">HIGH</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--lime)">${fmt(item.mktHigh)}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div class="price-label">Market Pricing</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="price-label">Profit:</span>
+                <span style="font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--lime)">${fmt(profit)}</span>
+                <span class="margin-badge" style="color:${mc};border-color:${mc}33;background:${mc}11">${pct(margin)}</span>
               </div>
             </div>
-            <div style="text-align:center;margin-top:8px">
-              <div style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace">YOUR PRICE</div>
-              <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--lime)">${fmt(item.sell)}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+              ${[
+                {label:'Budget',  price: item.mktLow,  color:'#5a7a9a'},
+                {label:'Standard',price: item.mktMid,  color:'#00c8ff'},
+                {label:'Premium', price: item.mktHigh, color:'#ffd166'},
+              ].map(tier => {
+                const isSelected = Math.abs(item.sell - tier.price) < 0.01;
+                return `<div style="background:${isSelected ? tier.color+'22' : 'var(--input-bg)'};border:1px solid ${isSelected ? tier.color : 'var(--border)'};border-radius:8px;padding:7px 6px;text-align:center;transition:all 0.2s">
+                  <div style="font-size:9px;color:${isSelected ? tier.color : 'var(--muted)'};font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:1px;text-transform:uppercase">${tier.label}</div>
+                  <div style="font-family:'Share Tech Mono',monospace;font-size:15px;color:${isSelected ? tier.color : 'var(--text)'};font-weight:bold;margin-top:2px">${fmt(tier.price)}</div>
+                  ${isSelected ? `<div style="font-size:9px;color:${tier.color};margin-top:2px">● YOUR PRICE</div>` : ''}
+                </div>`;
+              }).join('')}
+            </div>
+            <div style="text-align:center;background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.15);border-radius:8px;padding:8px">
+              <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">YOUR SELL PRICE</div>
+              <div style="font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--lime);line-height:1.1">${fmt(item.sell)}</div>
             </div>
           </div>
         </div>
