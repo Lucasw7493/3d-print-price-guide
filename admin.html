@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMOKYMTN 3D — Admin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #06000f;
+  --card: #0a001e;
+  --border: #3a0060;
+  --neon-cyan: #00ffff;
+  --neon-pink: #ff00cc;
+  --neon-green: #00ff88;
+  --neon-yellow: #ffe600;
+  --neon-purple: #cc00ff;
+  --neon-red: #ff0055;
+  --text: #ffffff;
+  --text-dim: #cc99ff;
+  --muted: #6633aa;
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  background-image: linear-gradient(180deg, #1a0030 0%, #0c001a 30%, #06000f 100%);
+  color: var(--text);
+  font-family: var(--font-mono);
+  min-height: 100vh;
+  padding: 0 12px 60px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ──────────────────────── */
+.admin-header {
+  text-align: center;
+  padding: 24px 0 18px;
+  border-bottom: 2px solid var(--neon-pink);
+  margin-bottom: 20px;
+  box-shadow: 0 2px 20px rgba(255,0,204,.3);
+}
+.admin-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 4.5vw, 22px);
+  font-weight: 900;
+  color: var(--neon-cyan);
+  letter-spacing: 3px;
+  text-shadow: 0 0 12px var(--neon-cyan), 0 0 30px rgba(0,255,255,.5);
+}
+.admin-header p {
+  font-size: 10px;
+  color: var(--neon-pink);
+  letter-spacing: 2px;
+  margin-top: 6px;
+  text-shadow: 0 0 8px rgba(255,0,204,.5);
+}
+.back-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--neon-cyan); }
+
+/* ── SECTIONS ────────────────────── */
+section {
+  max-width: 600px;
+  margin: 0 auto 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px;
+}
+section h2 {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--neon-purple);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(204,0,255,.5);
+}
+
+/* ── FORM ─────────────────────────── */
+label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+input, textarea {
+  width: 100%;
+  background: rgba(0,0,0,.45);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:focus, textarea:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(0,255,255,.3);
+}
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+textarea { resize: vertical; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+
+/* ── BUTTONS ──────────────────────── */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: 2px solid var(--neon-green);
+  border-radius: 4px;
+  background: rgba(0,255,136,.08);
+  color: var(--neon-green);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all .2s;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px var(--neon-green);
+  box-shadow: 0 0 12px rgba(0,255,136,.2);
+  margin-top: 6px;
+}
+.btn:hover:not(:disabled) {
+  background: rgba(0,255,136,.18);
+  box-shadow: 0 0 28px rgba(0,255,136,.45);
+}
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.btn-sm {
+  padding: 10px;
+  font-size: 11px;
+}
+.btn-pink {
+  border-color: var(--neon-pink);
+  background: rgba(255,0,204,.08);
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px var(--neon-pink);
+  box-shadow: 0 0 12px rgba(255,0,204,.2);
+}
+.btn-pink:hover:not(:disabled) {
+  background: rgba(255,0,204,.18);
+  box-shadow: 0 0 28px rgba(255,0,204,.45);
+}
+.btn-cyan {
+  border-color: var(--neon-cyan);
+  background: rgba(0,255,255,.06);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0,255,255,.15);
+}
+.btn-cyan:hover:not(:disabled) {
+  background: rgba(0,255,255,.14);
+  box-shadow: 0 0 24px rgba(0,255,255,.35);
+}
+
+/* ── SETUP TOGGLE ─────────────────── */
+.setup-toggle {
+  max-width: 600px;
+  margin: 0 auto 6px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px;
+  user-select: none;
+}
+.setup-toggle:hover { color: var(--neon-cyan); }
+.setup-toggle .dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.dot-green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+.dot-red { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+
+#setup-fields { overflow: hidden; transition: max-height .35s ease, opacity .25s; }
+#setup-fields.collapsed { max-height: 0 !important; opacity: 0; }
+
+/* ── IMAGE PREVIEW ────────────────── */
+#img-preview {
+  max-width: 100%;
+  max-height: 180px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin: 4px 0 10px;
+  display: none;
+  object-fit: contain;
+}
+input[type="file"] { font-size: 13px; padding: 8px; }
+input[type="file"]::file-selector-button {
+  background: rgba(204,0,255,.12);
+  border: 1px solid var(--neon-purple);
+  color: var(--neon-purple);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+/* ── STATUS ────────────────────────── */
+#status {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: none;
+}
+#status.ok {
+  display: block;
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  background: rgba(0,255,136,.06);
+}
+#status.err {
+  display: block;
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  background: rgba(255,0,85,.06);
+}
+#status.info {
+  display: block;
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  background: rgba(0,255,255,.06);
+}
+#status a { color: var(--neon-cyan); }
+
+/* ── RESPONSIVE ───────────────────── */
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
+  body { padding: 0 8px 40px; }
+  section { padding: 14px; }
+}
+  </style>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>SMOKYMTN 3D PRINTS</h1>
+  <p>ADMIN — ADD PRODUCTS</p>
+  <a href="index.html" class="back-link">View pricing guide</a>
+</header>
+
+<!-- ═══ SETUP ═══════════════════════════════ -->
+<div class="setup-toggle" id="setup-toggle" onclick="toggleSetup()">
+  <span class="dot dot-red" id="setup-dot"></span>
+  <span id="setup-label">GitHub not connected — tap to set up</span>
+</div>
+
+<section id="setup-section">
+  <div id="setup-fields">
+    <h2>GitHub Connection</h2>
+    <label>Personal Access Token</label>
+    <input id="pat" type="password" placeholder="ghp_xxxxxxxxxxxx">
+    <div class="form-row">
+      <div>
+        <label>Owner</label>
+        <input id="owner" value="Lucasw7493">
+      </div>
+      <div>
+        <label>Repository</label>
+        <input id="repo" value="3d-print-price-guide">
+      </div>
+    </div>
+    <button class="btn btn-sm btn-cyan" onclick="saveSetup()">Save Connection</button>
+  </div>
+</section>
+
+<!-- ═══ PASTE FROM CLAUDE ═══════════════════ -->
+<section>
+  <h2>Paste from Claude</h2>
+  <textarea id="claude-paste" rows="5" placeholder="Paste Claude's pricing response here and tap Auto-Fill..."></textarea>
+  <button class="btn btn-sm btn-pink" onclick="autoFill()">Auto-Fill Form</button>
+</section>
+
+<!-- ═══ PRODUCT FORM ═══════════════════════ -->
+<section>
+  <h2>New Product</h2>
+
+  <label>Product Name</label>
+  <input id="name" type="text" placeholder="e.g. Custom Flexi Keychain">
+
+  <label>Product Image</label>
+  <input type="file" id="image" accept="image/*">
+  <img id="img-preview" src="" alt="Preview">
+
+  <div class="form-row">
+    <div><label>Filament Cost ($)</label><input id="filament" type="number" step="0.01" placeholder="0.00"></div>
+    <div><label>Elec + Wear ($)</label><input id="elec" type="number" step="0.01" placeholder="0.00"></div>
+  </div>
+  <div class="form-row">
+    <div><label>Qty per Plate</label><input id="qty" type="number" value="1" min="1"></div>
+    <div><label>Print Time (hours)</label><input id="printTime" type="number" step="0.1" placeholder="0.0"></div>
+  </div>
+
+  <div class="form-row">
+    <div><label>Market Low ($)</label><input id="mktLow" type="number" step="0.01" placeholder="0.00"></div>
+    <div><label>Market Mid ($)</label><input id="mktMid" type="number" step="0.01" placeholder="0.00"></div>
+  </div>
+  <div class="form-row">
+    <div><label>Market High ($)</label><input id="mktHigh" type="number" step="0.01" placeholder="0.00"></div>
+    <div><label>Sell Price ($)</label><input id="sell" type="number" step="0.01" placeholder="0.00"></div>
+  </div>
+
+  <label>Notes</label>
+  <textarea id="notes" rows="2" placeholder="e.g. 3-color PLA — Flexi keychain, 14 color changes."></textarea>
+
+  <button class="btn" id="submit-btn" onclick="submitProduct()">PUBLISH PRODUCT</button>
+  <button class="btn btn-sm btn-pink" style="margin-top:8px" onclick="clearForm()">Clear Form</button>
+
+  <div id="status"></div>
+</section>
+
+<script>
+(function() {
+
+  var $ = function(id) { return document.getElementById(id); };
+
+  /* ── SETUP ─────────────────────────────── */
+
+  function loadSetup() {
+    $('pat').value   = localStorage.getItem('gh_pat')   || '';
+    $('owner').value = localStorage.getItem('gh_owner') || 'Lucasw7493';
+    $('repo').value  = localStorage.getItem('gh_repo')  || '3d-print-price-guide';
+    updateSetupUI();
+  }
+
+  function updateSetupUI() {
+    var connected = !!localStorage.getItem('gh_pat');
+    $('setup-dot').className = 'dot ' + (connected ? 'dot-green' : 'dot-red');
+    $('setup-label').textContent = connected
+      ? 'GitHub connected \u2714 (tap to edit)'
+      : 'GitHub not connected \u2014 tap to set up';
+    if (connected) $('setup-fields').classList.add('collapsed');
+  }
+
+  window.saveSetup = function() {
+    var pat = $('pat').value.trim();
+    if (!pat) { status('Enter a token', 'err'); return; }
+    localStorage.setItem('gh_pat',   pat);
+    localStorage.setItem('gh_owner', $('owner').value.trim());
+    localStorage.setItem('gh_repo',  $('repo').value.trim());
+    updateSetupUI();
+    status('Connection saved!', 'ok');
+  };
+
+  window.toggleSetup = function() {
+    $('setup-fields').classList.toggle('collapsed');
+  };
+
+  /* ── STATUS ────────────────────────────── */
+
+  function status(msg, type, html) {
+    if (html) { $('status').innerHTML = msg; }
+    else      { $('status').textContent = msg; }
+    $('status').className = type;
+  }
+
+  /* ── IMAGE PREVIEW ─────────────────────── */
+
+  $('image').addEventListener('change', function() {
+    var file = this.files[0];
+    if (!file) { $('img-preview').style.display = 'none'; return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $('img-preview').src = e.target.result;
+      $('img-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ── AUTO-FILL FROM CLAUDE ─────────────── */
+
+  window.autoFill = function() {
+    var text = $('claude-paste').value;
+    if (!text.trim()) { status('Paste Claude\'s response first', 'err'); return; }
+
+    function findDollar() {
+      var keywords = Array.prototype.slice.call(arguments);
+      for (var i = 0; i < keywords.length; i++) {
+        var re = new RegExp(keywords[i] + '[^$\\d]*\\$?([\\d]+\\.?\\d{0,2})', 'i');
+        var m = text.match(re);
+        if (m) return parseFloat(m[1]);
+      }
+      return null;
+    }
+
+    function setVal(id, val) {
+      if (val !== null && val !== undefined) $(id).value = val;
+    }
+
+    // Name
+    var namePatterns = [/name[:\s]+["'\*]*([^\n"'\*]+)/i, /^#+\s*(.+)/m, /product[:\s]+["'\*]*([^\n"'\*]+)/i];
+    for (var i = 0; i < namePatterns.length; i++) {
+      var m = text.match(namePatterns[i]);
+      if (m) { setVal('name', m[1].trim()); break; }
+    }
+
+    // Costs
+    setVal('filament', findDollar('filament', 'plate cost', 'material'));
+    setVal('elec',     findDollar('elec', 'electricity', 'wear'));
+
+    // Qty
+    var qm = text.match(/(\d+)\s*per\s*plate/i) || text.match(/qty[:\s]*(\d+)/i);
+    if (qm) setVal('qty', parseInt(qm[1]));
+
+    // Print time  —  "14h 18m" or "14h18m" or "14.3h"
+    var tm = text.match(/(\d+)\s*h\s*(\d+)\s*m/i);
+    if (tm) {
+      setVal('printTime', (parseInt(tm[1]) + parseInt(tm[2]) / 60).toFixed(1));
+    } else {
+      var t2 = text.match(/(?:print|total)\s*time[:\s]*(\d+\.?\d*)/i);
+      if (t2) setVal('printTime', parseFloat(t2[1]));
+    }
+
+    // Market
+    setVal('mktLow',  findDollar('(?:market\\s*)?low',  'mkt.?low'));
+    setVal('mktMid',  findDollar('(?:market\\s*)?mid',  'mkt.?mid'));
+    setVal('mktHigh', findDollar('(?:market\\s*)?high', 'mkt.?high'));
+    setVal('sell',    findDollar('sell', 'our.?price', 'recommend', 'suggested'));
+
+    // Notes
+    var nm = text.match(/notes?[:\s]+["']?([^\n"']+)/i);
+    if (nm) setVal('notes', nm[1].trim());
+
+    status('Auto-fill done \u2014 review the fields below', 'ok');
+  };
+
+  /* ── HELPERS ───────────────────────────── */
+
+  function slugify(t) {
+    return t.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s]+/g, '-').replace(/-+/g, '-');
+  }
+
+  function fileToBase64(file) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function() { resolve(reader.result.split(',')[1]); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function decodeBase64(b64) {
+    var raw = atob(b64.replace(/\n/g, ''));
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function encodeBase64(text) {
+    var bytes = new TextEncoder().encode(text);
+    var bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+
+  function esc(s) {
+    return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  /* ── GITHUB API ────────────────────────── */
+
+  function ghHeaders(token) {
+    return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+  }
+
+  function ghGet(owner, repo, path, token) {
+    return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, {
+      headers: ghHeaders(token)
+    }).then(function(res) {
+      if (!res.ok) throw new Error('GitHub GET ' + path + ': ' + res.status);
+      return res.json();
+    });
+  }
+
+  function ghPut(owner, repo, path, content, message, token, sha) {
+    var body = { message: message, content: content };
+    if (sha) body.sha = sha;
+    return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, {
+      method: 'PUT',
+      headers: ghHeaders(token),
+      body: JSON.stringify(body)
+    }).then(function(res) {
+      if (!res.ok) return res.json().then(function(e) { throw new Error('GitHub PUT ' + path + ': ' + (e.message || res.status)); });
+      return res.json();
+    });
+  }
+
+  /* ── BUILD PRODUCT ENTRY ───────────────── */
+
+  function buildEntry(d) {
+    return '  {\n'
+      + '    name:      "' + esc(d.name)  + '",\n'
+      + '    image:     "' + d.image      + '",\n'
+      + '    filament:  ' + d.filament    + ',\n'
+      + '    elec:      ' + d.elec        + ',\n'
+      + '    qty:       ' + d.qty         + ',\n'
+      + '    printTime: ' + d.printTime   + ',\n'
+      + '    mktLow:    ' + d.mktLow      + ',\n'
+      + '    mktMid:    ' + d.mktMid      + ',\n'
+      + '    mktHigh:   ' + d.mktHigh     + ',\n'
+      + '    sell:      ' + d.sell        + ',\n'
+      + '    notes:     "' + esc(d.notes) + '"\n'
+      + '  }';
+  }
+
+  function insertProduct(html, entry) {
+    var templateIdx = html.indexOf('TEMPLATE');
+    if (templateIdx === -1) throw new Error('Cannot find TEMPLATE marker in index.html');
+
+    var commentStart = html.lastIndexOf('/*', templateIdx);
+    var before = html.substring(0, commentStart);
+    var after  = html.substring(commentStart);
+
+    // Trim trailing whitespace from before
+    var trimmed = before.replace(/\s+$/, '');
+
+    // Check if there are existing products (last char is })
+    var comma = trimmed.charAt(trimmed.length - 1) === '}' ? ',' : '';
+
+    return trimmed + comma + '\n\n' + entry + '\n\n  ' + after;
+  }
+
+  /* ── SUBMIT ────────────────────────────── */
+
+  window.submitProduct = function() {
+    var token = localStorage.getItem('gh_pat');
+    var owner = localStorage.getItem('gh_owner') || 'Lucasw7493';
+    var repo  = localStorage.getItem('gh_repo')  || '3d-print-price-guide';
+
+    if (!token) { status('Set up your GitHub token first!', 'err'); return; }
+
+    var name = $('name').value.trim();
+    var file = $('image').files[0];
+
+    if (!name) { status('Enter a product name', 'err'); return; }
+    if (!file) { status('Upload a product image', 'err'); return; }
+
+    var ext = file.name.split('.').pop().toLowerCase();
+    var imageFilename = slugify(name) + '.' + ext;
+
+    var data = {
+      name:      name,
+      image:     imageFilename,
+      filament:  parseFloat($('filament').value)  || 0,
+      elec:      parseFloat($('elec').value)       || 0,
+      qty:       parseInt($('qty').value)          || 1,
+      printTime: parseFloat($('printTime').value)  || 0,
+      mktLow:    parseFloat($('mktLow').value)     || 0,
+      mktMid:    parseFloat($('mktMid').value)     || 0,
+      mktHigh:   parseFloat($('mktHigh').value)    || 0,
+      sell:      parseFloat($('sell').value)        || 0,
+      notes:     $('notes').value.trim()
+    };
+
+    $('submit-btn').disabled = true;
+
+    status('Uploading image\u2026', 'info');
+
+    fileToBase64(file)
+    .then(function(imgB64) {
+      return ghPut(owner, repo, imageFilename, imgB64, 'Add ' + name + ' photo', token);
+    })
+    .then(function() {
+      status('Updating product list\u2026', 'info');
+      return ghGet(owner, repo, 'index.html', token);
+    })
+    .then(function(indexFile) {
+      var current = decodeBase64(indexFile.content);
+      var entry   = buildEntry(data);
+      var updated = insertProduct(current, entry);
+      var b64     = encodeBase64(updated);
+      return ghPut(owner, repo, 'index.html', b64, 'Add ' + name + ' product', token, indexFile.sha);
+    })
+    .then(function() {
+      var url = 'https://' + owner + '.github.io/' + repo + '/';
+      status(
+        '\u2714 <strong>' + name + '</strong> published!<br>Site updates in ~1 min.<br><br>'
+        + '<a href="' + url + '" target="_blank">View your site \u2192</a>',
+        'ok', true
+      );
+      clearFormFields();
+    })
+    .catch(function(err) {
+      status('Error: ' + err.message, 'err');
+    })
+    .finally(function() {
+      $('submit-btn').disabled = false;
+    });
+  };
+
+  /* ── CLEAR ─────────────────────────────── */
+
+  function clearFormFields() {
+    var ids = ['name','filament','elec','printTime','mktLow','mktMid','mktHigh','sell','notes','claude-paste'];
+    for (var i = 0; i < ids.length; i++) $(ids[i]).value = '';
+    $('qty').value = '1';
+    $('image').value = '';
+    $('img-preview').style.display = 'none';
+  }
+
+  window.clearForm = function() {
+    clearFormFields();
+    $('status').className = '';
+    $('status').style.display = 'none';
+  };
+
+  /* ── INIT ──────────────────────────────── */
+
+  loadSetup();
+
+})();
+</script>
+
+</body>
+</html>
