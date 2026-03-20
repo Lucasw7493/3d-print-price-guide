@@ -23,9 +23,15 @@
 <script>
 /* ═════════════════════════════════════════════════════════════
    ██  PRODUCT DATA  ██
-   
+
    This is the ONLY section you need to edit.
-   
+
+   CATEGORIES — use one of these (or make your own):
+     "Flexi"       — articulated / print-in-place
+     "Figurines"   — statues and character figures
+     "Accessories" — keychains, wearables
+     "Fidget"      — sensory / fidget items
+
    HOW TO ADD A NEW PRODUCT:
    1. Copy the template at the bottom of this list
    2. Paste it before the closing ];
@@ -33,88 +39,88 @@
    4. Save your product photo to the /images folder
    5. Set "image" to "images/your-filename.jpg"
    6. Push to GitHub — done!
-   
-   HOW TO REMOVE A PRODUCT:
-   Delete its entire { ... }, block
-   
-   HOW TO EDIT A PRODUCT:
-   Just change the values and push to GitHub
    ═════════════════════════════════════════════════════════════ */
 
 var PRODUCTS = [
 
   {
     name:      "Ironbite Dragon",
-    image:     "ironbite.jpg",     // 4-color multicolor articulated dragon
-    filament:  0.77,                      // $3.85 plate cost / 5 per plate = $0.77 each
-    elec:      0.20,                      // ~$0.20 electricity + wear per unit (9h18m / 5)
-    qty:       5,                         // 5 per plate
-    printTime: 9.3,                       // 9h 18m total plate time
-    mktLow:    10.00,                     // small multicolor articulated dragons
-    mktMid:    18.00,                     // mid range on Etsy/local
-    mktHigh:   28.00,                     // premium multicolor, detailed
-    sell:      15.00,                     // competitive local price
+    category:  "Flexi",
+    image:     "ironbite.jpg",
+    filament:  0.77,
+    elec:      0.20,
+    qty:       5,
+    printTime: 9.3,
+    mktLow:    10.00,
+    mktMid:    18.00,
+    mktHigh:   28.00,
+    sell:      15.00,
     notes:     "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller."
   },
 
   {
     name:      "Bat Shadow",
-    image:     "batshadow.webp",   // Shadow x Batman mashup statue
-    filament:  9.21,                      // $9.21 total filament (6 colors, 424g)
-    elec:      3.50,                      // ~$3.50 electricity + wear (27+ hours across 8 plates)
-    qty:       1,                         // 1 per build (8 plates assembled)
-    printTime: 27.6,                      // 1 day 3h 38m total
-    mktLow:    45.00,                     // large detailed multicolor figurines
-    mktMid:    65.00,                     // 11" tall, 6-color, assembled statue
-    mktHigh:   90.00,                     // premium custom multicolor statues
-    sell:      55.00,                     // strong local price, great margin
+    category:  "Figurines",
+    image:     "batshadow.webp",
+    filament:  9.21,
+    elec:      3.50,
+    qty:       1,
+    printTime: 27.6,
+    mktLow:    45.00,
+    mktMid:    65.00,
+    mktHigh:   90.00,
+    sell:      55.00,
     notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece."
   },
 
   {
     name:      "Custom Flexi Keychain",
-    image:     "flexi-keychain.jpg",             // Custom flexi keychain, 3-color PLA
-    filament:  1.88,                             // $1.88 filament (76.31g, 3-color PLA)
-    elec:      1.00,                             // ~$1.00 electricity + wear (14h 18m)
-    qty:       1,                                // 1 per plate
-    printTime: 14.3,                             // 14h 18m total
-    mktLow:     8.00,                            // basic single-color flexi keychains
-    mktMid:    15.00,                            // multicolor flexi keychains on Etsy
-    mktHigh:   22.00,                            // premium custom multicolor
-    sell:      15.00,                            // good margin, competitive price
+    category:  "Accessories",
+    image:     "flexi-keychain.jpg",
+    filament:  1.88,
+    elec:      1.00,
+    qty:       1,
+    printTime: 14.3,
+    mktLow:     8.00,
+    mktMid:    15.00,
+    mktHigh:   22.00,
+    sell:      15.00,
     notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy."
   },
 
   {
     name:      "Spiky Sensory Twisty Sphere",
-    image:     "twisty-sphere.jpg",              // Spiky Sensory Twisty Spiral Fidget Sphere
-    filament:  3.85,                             // $3.85 plate cost — 154g PLA Silk + PLA Basic
-    elec:      0.85,                             // ~$0.85 electricity + wear (8h35m)
-    qty:       1,                                // 1 per plate
-    printTime: 8.6,                              // 8h 35m total
-    mktLow:    15.00,                            // basic fidget spheres
-    mktMid:    25.00,                            // spiky/twist fidget spheres on Etsy
-    mktHigh:   35.00,                            // premium silk filament, large size
-    sell:      22.00,                            // competitive, good margin
+    category:  "Fidget",
+    image:     "twisty-sphere.jpg",
+    filament:  3.85,
+    elec:      0.85,
+    qty:       1,
+    printTime: 8.6,
+    mktLow:    15.00,
+    mktMid:    25.00,
+    mktHigh:   35.00,
+    sell:      22.00,
     notes:     "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item."
   },
 
   {
     name:      "Demogorgon Flexi",
-    image:     "demogorgon.jpg",          // Stranger Things flexi figure, multicolor
-    filament:  0.28,                      // $2.50 plate cost / 9 per plate = $0.28 each
-    elec:      0.15,                      // ~$0.15 electricity + wear per unit (11h48m / 9)
-    qty:       9,                         // 9 per plate
-    printTime: 11.8,                      // 11h 48m total plate time
-    mktLow:    12.00,                     // small/basic flexi demogorgons on eBay
-    mktMid:    20.00,                     // multicolor flexi on Etsy
-    mktHigh:   32.00,                     // premium multicolor, detailed finish
-    sell:      18.00,                     // strong margin, popular IP
+    category:  "Flexi",
+    image:     "demogorgon.jpg",
+    filament:  0.28,
+    elec:      0.15,
+    qty:       9,
+    printTime: 11.8,
+    mktLow:    12.00,
+    mktMid:    20.00,
+    mktHigh:   32.00,
+    sell:      18.00,
     notes:     "3-color PLA — Stranger Things Demogorgon, flexi/articulated print-in-place. 9 per plate."
   },
 
   {
     name:      "Flexi Manta Ray",
+    category:  "Flexi",
     image:     "flexi-manta-ray.jpg",
     filament:  2.06,
     elec:      3.25,
@@ -132,6 +138,7 @@ var PRODUCTS = [
 
   ,{
     name:      "",
+    category:  "Flexi",
     image:     "images/",
     filament:  0.00,
     elec:      0.00,
@@ -178,6 +185,18 @@ var PRODUCTS = [
   <span>COST · MARKET · SELL PRICE</span>
 </div>
 
+<div class="filter-bar">
+  <input type="text" id="search-input" class="search-input" placeholder="SEARCH PRODUCTS...">
+  <div class="cat-filters" id="cat-filters"></div>
+  <select id="sort-select" class="sort-select">
+    <option value="newest">&#11015; NEWEST FIRST</option>
+    <option value="oldest">&#11014; OLDEST FIRST</option>
+    <option value="price-asc">$ LOW &#8594; HIGH</option>
+    <option value="price-desc">$ HIGH &#8594; LOW</option>
+    <option value="name">A &#8594; Z</option>
+  </select>
+</div>
+
 <div class="catalog" id="catalog"></div>
 
 <footer class="site-footer">
@@ -202,66 +221,140 @@ var PRODUCTS = [
   var $ = function(id) { return document.getElementById(id); };
   var fmt = function(n) { return '$' + Number(n).toFixed(2); };
 
-  function buildCatalog() {
+  /* ── CATEGORY COLORS ────────────────────────── */
+  var catColors = {
+    'Flexi':       { fg: '#00ffff', bg: 'rgba(0,255,255,.08)',   bd: 'rgba(0,255,255,.45)'   },
+    'Figurines':   { fg: '#ff00cc', bg: 'rgba(255,0,204,.08)',   bd: 'rgba(255,0,204,.45)'   },
+    'Accessories': { fg: '#ffe600', bg: 'rgba(255,230,0,.08)',   bd: 'rgba(255,230,0,.45)'   },
+    'Fidget':      { fg: '#00ff88', bg: 'rgba(0,255,136,.08)',   bd: 'rgba(0,255,136,.45)'   }
+  };
+  function catStyle(cat) {
+    var c = catColors[cat] || { fg: '#cc00ff', bg: 'rgba(204,0,255,.08)', bd: 'rgba(204,0,255,.45)' };
+    return 'color:' + c.fg + ';background:' + c.bg + ';border-color:' + c.bd +
+           ';text-shadow:0 0 6px ' + c.fg + ';';
+  }
+
+  /* ── STATE ──────────────────────────────────── */
+  var activeCategory = 'all';
+
+  /* ── CATEGORY BUTTONS ───────────────────────── */
+  function buildCategories() {
+    var cats = ['all'];
+    PRODUCTS.forEach(function(p) {
+      if (p.category && cats.indexOf(p.category) === -1) cats.push(p.category);
+    });
+
+    $('cat-filters').innerHTML = cats.map(function(c) {
+      var label = c === 'all' ? 'ALL' : c.toUpperCase();
+      var active = c === activeCategory ? ' active' : '';
+      return '<button class="cat-btn' + active + '" data-cat="' + c + '">' + label + '</button>';
+    }).join('');
+
+    $('cat-filters').onclick = function(e) {
+      var btn = e.target.closest('.cat-btn');
+      if (!btn) return;
+      activeCategory = btn.dataset.cat;
+      document.querySelectorAll('.cat-btn').forEach(function(b) {
+        b.classList.toggle('active', b === btn);
+      });
+      renderCatalog();
+    };
+  }
+
+  /* ── FILTER + SORT ──────────────────────────── */
+  function getProducts() {
+    var query = ($('search-input').value || '').trim().toLowerCase();
+    var sort  = $('sort-select').value;
+
+    var result = PRODUCTS.filter(function(p) {
+      var matchCat    = activeCategory === 'all' || p.category === activeCategory;
+      var matchSearch = !query ||
+        p.name.toLowerCase().indexOf(query) !== -1 ||
+        (p.notes     || '').toLowerCase().indexOf(query) !== -1 ||
+        (p.category  || '').toLowerCase().indexOf(query) !== -1;
+      return matchCat && matchSearch;
+    });
+
+    var out = result.slice();
+    if (sort === 'oldest')     out.reverse();
+    if (sort === 'price-asc')  out.sort(function(a,b){ return a.sell - b.sell; });
+    if (sort === 'price-desc') out.sort(function(a,b){ return b.sell - a.sell; });
+    if (sort === 'name')       out.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    return out;
+  }
+
+  /* ── BUILD ONE CARD ─────────────────────────── */
+  function buildCard(p) {
+    var cost = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
+
+    var img = p.image
+      ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') +
+        '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+        '<div class="no-photo" style="display:none">📷</div>'
+      : '<div class="no-photo">📷</div>';
+
+    var badge = p.category
+      ? '<span class="cat-badge" style="' + catStyle(p.category) + '">' + p.category + '</span>'
+      : '';
+
+    var notes = p.notes
+      ? '<div class="product-notes">' + p.notes + '</div>'
+      : '';
+
+    var time = p.printTime
+      ? '<div class="product-time">⏱ ' + p.printTime + 'h print time' +
+        (p.qty > 1 ? ' · ' + p.qty + ' per plate' : '') + '</div>'
+      : (p.qty > 1 ? '<div class="product-time">' + p.qty + ' per plate</div>' : '');
+
+    return ''
+      + '<div class="product">'
+      +   '<div class="product-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
+      +     img
+      +   '</div>'
+      +   '<div class="product-body">'
+      +     '<h2 class="product-name">' + p.name + '</h2>'
+      +     badge
+      +     notes
+      +     time
+      +     '<div class="data-label">Our Investment</div>'
+      +     '<div class="stats-row">'
+      +       '<div class="stat-cell"><span class="val">' + fmt(p.filament) + '</span><span class="label">Filament</span></div>'
+      +       '<div class="stat-cell"><span class="val">' + fmt(p.elec) + '</span><span class="label">Elec + Wear</span></div>'
+      +       '<div class="stat-cell accent"><span class="val">' + fmt(cost) + '</span><span class="label">Cost / Item</span></div>'
+      +     '</div>'
+      +     '<div class="data-label">Market Value</div>'
+      +     '<div class="stats-row">'
+      +       '<div class="stat-cell mkt-lo"><span class="val">' + fmt(p.mktLow) + '</span><span class="label">Low</span></div>'
+      +       '<div class="stat-cell mkt-md"><span class="val">' + fmt(p.mktMid) + '</span><span class="label">Mid</span></div>'
+      +       '<div class="stat-cell mkt-hi"><span class="val">' + fmt(p.mktHigh) + '</span><span class="label">High</span></div>'
+      +     '</div>'
+      +     '<div class="price-box">'
+      +       '<div class="price-label">OUR PRICE</div>'
+      +       '<div class="price-value">' + fmt(p.sell) + '</div>'
+      +     '</div>'
+      +   '</div>'
+      + '</div>';
+  }
+
+  /* ── RENDER CATALOG ─────────────────────────── */
+  function renderCatalog() {
+    var products = getProducts();
     var grid = $('catalog');
-    $('product-count').textContent = PRODUCTS.length;
+    $('product-count').textContent = products.length;
 
     if (!PRODUCTS.length) {
       grid.innerHTML = '<div class="empty-catalog"><div class="ico">🖨️</div><p>No products yet — check back soon.</p></div>';
       return;
     }
+    if (!products.length) {
+      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🔍</div><p>No products match your search.</p></div>';
+      return;
+    }
 
-    grid.innerHTML = PRODUCTS.map(function(p, i) {
-      var cost = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
-
-      var img = p.image
-        ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
-          + '<div class="no-photo" style="display:none">📷</div>'
-        : '<div class="no-photo">📷</div>';
-
-      var notes = p.notes
-        ? '<div class="product-notes">' + p.notes + '</div>'
-        : '';
-
-      var time = p.printTime
-        ? '<div class="product-time">⏱ ' + p.printTime + 'h print time' + (p.qty > 1 ? ' · ' + p.qty + ' per plate' : '') + '</div>'
-        : (p.qty > 1 ? '<div class="product-time">' + p.qty + ' per plate</div>' : '');
-
-      return ''
-        + '<div class="product">'
-        +   '<div class="product-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
-        +     img
-        +   '</div>'
-        +   '<div class="product-body">'
-        +     '<h2 class="product-name">' + p.name + '</h2>'
-        +     notes
-        +     time
-
-        +     '<div class="data-label">Our Investment</div>'
-        +     '<div class="stats-row">'
-        +       '<div class="stat-cell"><span class="val">' + fmt(p.filament) + '</span><span class="label">Filament</span></div>'
-        +       '<div class="stat-cell"><span class="val">' + fmt(p.elec) + '</span><span class="label">Elec + Wear</span></div>'
-        +       '<div class="stat-cell accent"><span class="val">' + fmt(cost) + '</span><span class="label">Cost / Item</span></div>'
-        +     '</div>'
-
-        +     '<div class="data-label">Market Value</div>'
-        +     '<div class="stats-row">'
-        +       '<div class="stat-cell mkt-lo"><span class="val">' + fmt(p.mktLow) + '</span><span class="label">Low</span></div>'
-        +       '<div class="stat-cell mkt-md"><span class="val">' + fmt(p.mktMid) + '</span><span class="label">Mid</span></div>'
-        +       '<div class="stat-cell mkt-hi"><span class="val">' + fmt(p.mktHigh) + '</span><span class="label">High</span></div>'
-        +     '</div>'
-
-        +     '<div class="price-box">'
-        +       '<div class="price-label">OUR PRICE</div>'
-        +       '<div class="price-value">' + fmt(p.sell) + '</div>'
-        +     '</div>'
-
-        +   '</div>'
-        + '</div>';
-    }).join('');
+    grid.innerHTML = products.map(buildCard).join('');
   }
 
-  /* ── LIGHTBOX ───────────────────────── */
+  /* ── LIGHTBOX ───────────────────────────────── */
   window.openLightbox = function(src) {
     if (!src) return;
     $('lb-img').src = src;
@@ -276,8 +369,11 @@ var PRODUCTS = [
     if (e.key === 'Escape') closeLightbox();
   });
 
-  /* ── GO ─────────────────────────────── */
-  buildCatalog();
+  /* ── INIT ───────────────────────────────────── */
+  buildCategories();
+  renderCatalog();
+  $('search-input').addEventListener('input', renderCatalog);
+  $('sort-select').addEventListener('change', renderCatalog);
 
 })();
 </script>
