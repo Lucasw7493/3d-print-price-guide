@@ -20,127 +20,266 @@
 <div class="retro-sun"></div>
 <div class="horizon-line"></div>
 
-<script>
-/* ═════════════════════════════════════════════════════════════
-   ██  PRODUCT DATA  ██
+<!-- ═══════════════════════════════════════════════════
+     ADMIN LOGIN OVERLAY
+     ═══════════════════════════════════════════════════ -->
+<div class="admin-overlay" id="admin-overlay">
+  <div class="admin-login-box">
+    <div class="admin-lock">⚙</div>
+    <div class="admin-login-title">ADMIN ACCESS</div>
+    <input type="password" id="admin-pw" class="admin-pw-input"
+           placeholder="PASSWORD"
+           onkeydown="if(event.key==='Enter')doAdminLogin()">
+    <div class="admin-login-btns">
+      <button class="btn-ghost" onclick="hideAdminOverlay()">CANCEL</button>
+      <button class="btn-primary" onclick="doAdminLogin()">UNLOCK</button>
+    </div>
+    <div class="admin-error" id="admin-error"></div>
+  </div>
+</div>
 
-   This is the ONLY section you need to edit.
+<!-- ═══════════════════════════════════════════════════
+     PRODUCT ADD / EDIT MODAL
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-backdrop" onclick="closeProductModal()"></div>
+  <div class="modal-box">
+    <div class="modal-header">
+      <span id="modal-title">ADD PRODUCT</span>
+      <button class="modal-x" onclick="closeProductModal()">✕</button>
+    </div>
+    <div class="modal-body">
 
-   HOW TO ADD A NEW PRODUCT:
-   1. Copy the template at the bottom of this list
-   2. Paste it before the closing ];
-   3. Fill in your values
-   4. Save your product photo to the /images folder
-   5. Set "image" to "images/your-filename.jpg"
-   6. Push to GitHub — done!
-   ═════════════════════════════════════════════════════════════ */
+      <div class="scan-section">
+        <button class="btn-scan" onclick="triggerSlicerScan()">
+          📷 &nbsp;SCAN SLICER SCREENSHOT
+        </button>
+        <input type="file" id="slicer-file" accept="image/*" style="display:none"
+               onchange="handleSlicerFile(this)">
+        <div class="scan-hint">Extracts weight (g), print time &amp; qty · select your spool below to calculate exact cost</div>
+        <div class="scan-status" id="scan-status"></div>
+      </div>
 
-var PRODUCTS = [
+      <div class="form-divider">PRODUCT DETAILS</div>
 
-  {
-    name:      "Ironbite Dragon",
-    image:     "ironbite.jpg",
-    filament:  0.77,
-    elec:      0.20,
-    qty:       5,
-    printTime: 9.3,
-    mktLow:    10.00,
-    mktMid:    18.00,
-    mktHigh:   28.00,
-    notes:     "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller."
-  },
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">PRODUCT NAME</label>
+          <input type="text" id="f-name" class="form-input" placeholder="e.g. Ironbite Dragon">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">IMAGE (filename or URL)</label>
+          <input type="text" id="f-image" class="form-input" placeholder="e.g. ironbite.jpg">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">CALCULATE FILAMENT COST FROM WEIGHT</label>
+          <div class="filament-calc-row">
+            <input type="number" id="f-weight" class="form-input" step="0.1" min="0" placeholder="grams used">
+            <select id="f-filament-select" class="form-input fil-select">
+              <option value="">— pick spool from library —</option>
+            </select>
+            <button class="btn-ghost btn-calc" type="button" onclick="calcFilamentFromWeight()">CALC →</button>
+          </div>
+          <div class="form-hint" id="fil-calc-hint"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">FILAMENT COST ($)</label>
+          <input type="number" id="f-filament" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateModalPrice()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ELEC + WEAR ($)</label>
+          <input type="number" id="f-elec" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateModalPrice()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">QTY PER PLATE</label>
+          <input type="number" id="f-qty" class="form-input" min="1" placeholder="1" oninput="updateModalPrice()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PRINT TIME (hrs)</label>
+          <input type="number" id="f-time" class="form-input" step="0.1" min="0" placeholder="0.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">MARKET LOW ($)</label>
+          <input type="number" id="f-mkt-low" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateModalPrice()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">MARKET MID ($)</label>
+          <input type="number" id="f-mkt-mid" class="form-input" step="0.01" min="0" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">MARKET HIGH ($)</label>
+          <input type="number" id="f-mkt-high" class="form-input" step="0.01" min="0" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">STOCK QTY</label>
+          <input type="number" id="f-stock" class="form-input" min="0" placeholder="0">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">NOTES</label>
+          <textarea id="f-notes" class="form-input form-textarea" placeholder="e.g. 4-color PLA — Articulated, print-in-place..."></textarea>
+        </div>
+      </div>
 
-  {
-    name:      "Bat Shadow",
-    image:     "batshadow.webp",
-    filament:  9.21,
-    elec:      3.50,
-    qty:       1,
-    printTime: 27.6,
-    mktLow:    45.00,
-    mktMid:    65.00,
-    mktHigh:   90.00,
-    notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece."
-  },
+      <div class="modal-price-preview">
+        <span class="mpp-label">CALCULATED SELL PRICE</span>
+        <span class="mpp-value" id="modal-price-val">$0</span>
+        <span class="mpp-basis" id="modal-price-basis"></span>
+      </div>
 
-  {
-    name:      "Custom Flexi Keychain",
-    image:     "flexi-keychain.jpg",
-    filament:  1.88,
-    elec:      1.00,
-    qty:       1,
-    printTime: 14.3,
-    mktLow:     8.00,
-    mktMid:    15.00,
-    mktHigh:   22.00,
-    notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy."
-  },
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger" id="modal-delete-btn" onclick="promptDeleteProduct()">⌫ DELETE</button>
+      <div class="modal-footer-right">
+        <button class="btn-ghost" onclick="closeProductModal()">CANCEL</button>
+        <button class="btn-primary" onclick="saveProduct()">SAVE PRODUCT</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  {
-    name:      "Spiky Sensory Twisty Sphere",
-    image:     "twisty-sphere.jpg",
-    filament:  3.85,
-    elec:      0.85,
-    qty:       1,
-    printTime: 8.6,
-    mktLow:    15.00,
-    mktMid:    25.00,
-    mktHigh:   35.00,
-    notes:     "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item."
-  },
+<!-- ═══════════════════════════════════════════════════
+     SETTINGS MODAL
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-backdrop" onclick="closeSettingsModal()"></div>
+  <div class="modal-box modal-sm">
+    <div class="modal-header">
+      <span>SETTINGS</span>
+      <button class="modal-x" onclick="closeSettingsModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-divider">CLAUDE API</div>
+      <div class="form-group full">
+        <label class="form-label">API KEY</label>
+        <input type="password" id="s-api-key" class="form-input" placeholder="sk-ant-api03-...">
+        <div class="form-hint">Required for slicer screenshot scanning. Stored locally — never sent anywhere except Anthropic's API.</div>
+      </div>
+      <div class="form-divider">CHANGE PASSWORD</div>
+      <div class="form-group full">
+        <label class="form-label">NEW PASSWORD</label>
+        <input type="password" id="s-new-pw" class="form-input" placeholder="Leave blank to keep current">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">CONFIRM PASSWORD</label>
+        <input type="password" id="s-confirm-pw" class="form-input" placeholder="">
+      </div>
+      <div class="form-divider">DATA</div>
+      <div class="form-group full">
+        <button class="btn-danger-outline" onclick="promptResetData()">⚠ RESET TO DEFAULTS</button>
+        <div class="form-hint">Clears all changes and restores the original seed product list.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div></div>
+      <div class="modal-footer-right">
+        <button class="btn-ghost" onclick="closeSettingsModal()">CANCEL</button>
+        <button class="btn-primary" onclick="saveSettingsModal()">SAVE</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  {
-    name:      "Demogorgon Flexi",
-    image:     "demogorgon.jpg",
-    filament:  0.28,
-    elec:      0.15,
-    qty:       9,
-    printTime: 11.8,
-    mktLow:    12.00,
-    mktMid:    20.00,
-    mktHigh:   32.00,
-    notes:     "3-color PLA — Stranger Things Demogorgon, flexi/articulated print-in-place. 9 per plate."
-  },
+<!-- ═══════════════════════════════════════════════════
+     CONFIRM DIALOG
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-backdrop" onclick="closeConfirm(false)"></div>
+  <div class="modal-box modal-xs">
+    <div class="modal-header">
+      <span id="confirm-title">CONFIRM</span>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" class="confirm-msg"></p>
+    </div>
+    <div class="modal-footer">
+      <div></div>
+      <div class="modal-footer-right">
+        <button class="btn-ghost" onclick="closeConfirm(false)">CANCEL</button>
+        <button class="btn-danger" id="confirm-ok">CONFIRM</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  {
-    name:      "Flexi Manta Ray",
-    image:     "flexi-manta-ray.jpg",
-    filament:  2.06,
-    elec:      3.25,
-    qty:       2,
-    printTime: 13.1,
-    mktLow:    18,
-    mktMid:    24,
-    mktHigh:   32,
-    notes:     "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish"
-  }
+<!-- ═══════════════════════════════════════════════════
+     FILAMENT LIBRARY MODAL
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="filaments-modal">
+  <div class="modal-backdrop" onclick="closeFilamentsModal()"></div>
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>🧵 FILAMENT LIBRARY</span>
+      <button class="modal-x" onclick="closeFilamentsModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fil-lib-top">
+        <div class="form-hint" style="flex:1">Track your spools so filament cost is calculated from actual weight × your purchase price — not the slicer's estimate.</div>
+        <button class="admin-btn" onclick="openFilamentForm(-1)">＋ ADD SPOOL</button>
+      </div>
 
-  /* ─────────────────────────────────────────────────
-     TEMPLATE — Copy this to add a new product:
+      <!-- Add / Edit form (hidden until needed) -->
+      <div id="fil-form" class="fil-form" style="display:none">
+        <div class="form-divider" id="fil-form-title">ADD SPOOL</div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">SPOOL NAME</label>
+            <input type="text" id="fl-name" class="form-input" placeholder="e.g. SUNLU PLA+ Silk Multicolor 1kg">
+          </div>
+          <div class="form-group">
+            <label class="form-label">BRAND</label>
+            <input type="text" id="fl-brand" class="form-input" placeholder="SUNLU">
+          </div>
+          <div class="form-group">
+            <label class="form-label">TYPE</label>
+            <input type="text" id="fl-type" class="form-input" placeholder="PLA, PLA+, Silk, PETG...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">SPOOL WEIGHT (g)</label>
+            <input type="number" id="fl-grams" class="form-input" placeholder="1000" value="1000" min="1" oninput="updateFilCpg()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">PRICE PAID ($)</label>
+            <input type="number" id="fl-price" class="form-input" step="0.01" placeholder="18.99" oninput="updateFilCpg()">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">AMAZON / REORDER LINK (optional)</label>
+            <input type="url" id="fl-link" class="form-input" placeholder="https://amazon.com/...">
+          </div>
+        </div>
+        <div class="fil-cpg-preview" id="fil-cpg-preview"></div>
+        <div class="fil-form-btns">
+          <button class="btn-danger" id="fil-delete-btn" onclick="deleteFilament()" style="display:none">⌫ DELETE</button>
+          <div class="modal-footer-right">
+            <button class="btn-ghost" onclick="cancelFilamentForm()">CANCEL</button>
+            <button class="btn-primary" onclick="saveFilament()">SAVE SPOOL</button>
+          </div>
+        </div>
+      </div>
 
-  ,{
-    name:      "",
-    image:     "images/",
-    filament:  0.00,
-    elec:      0.00,
-    qty:       1,
-    printTime: 0,
-    mktLow:    0.00,
-    mktMid:    0.00,
-    mktHigh:   0.00,
-    notes:     ""
-  }
-
-  ───────────────────────────────────────────────── */
-
-];
-</script>
-
-<!-- ════════════════════════════════════════════════
-     You don't need to edit anything below this line.
-     ════════════════════════════════════════════════ -->
+      <div id="fil-list" class="fil-list"></div>
+    </div>
+    <div class="modal-footer">
+      <div class="form-hint">Prices dated — tap a spool's Amazon link to check current cost before reordering.</div>
+      <button class="btn-ghost" onclick="closeFilamentsModal()">CLOSE</button>
+    </div>
+  </div>
+</div>
 
 <div id="scroll-wrap">
+
+<!-- ADMIN TOOLBAR -->
+<div class="admin-bar" id="admin-bar">
+  <div class="admin-badge">⚙ ADMIN MODE</div>
+  <div class="admin-bar-actions">
+    <button class="admin-btn" onclick="openAddModal()">＋ ADD PRODUCT</button>
+    <button class="admin-btn" onclick="openFilamentsModal()">🧵 FILAMENTS</button>
+    <button class="admin-btn" onclick="openSettingsModal()">⚙ SETTINGS</button>
+    <button class="admin-btn" onclick="exportJSON()">↓ EXPORT</button>
+    <label class="admin-btn" for="import-file-input" style="cursor:pointer">↑ IMPORT</label>
+    <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importJSON(this)">
+    <button class="admin-btn admin-logout" onclick="adminLogout()">LOGOUT</button>
+  </div>
+</div>
 
 <div class="neon-line"></div>
 
@@ -155,6 +294,7 @@ var PRODUCTS = [
       <div class="p-led"></div>
     </div>
     <h1 class="brand-name">SMOKYMTN 3D PRINTS</h1>
+    <button class="gear-btn" id="gear-btn" onclick="showAdminOverlay()" title="Admin login">⚙</button>
   </div>
   <p class="brand-tagline">INTERNAL PRICING GUIDE ◆ STAFF USE ONLY</p>
 </header>
@@ -162,7 +302,9 @@ var PRODUCTS = [
 <div class="catalog-meta">
   <span><span class="hl" id="product-count">0</span> PRODUCTS</span>
   <span>◆</span>
-  <span>COST · MARKET · SELL PRICE</span>
+  <span>STOCK VALUE <span class="hl" id="stock-value">$0</span></span>
+  <span>◆</span>
+  <span>COST · MARKET · PRICE</span>
 </div>
 
 <div class="filter-bar">
@@ -192,30 +334,702 @@ var PRODUCTS = [
 </div>
 
 <script>
+/* ═════════════════════════════════════════════════════════════
+   ██  DEFAULT PRODUCT DATA  ██
+
+   These are the SEED products loaded on first run.
+   After that, all changes are saved to your browser's storage.
+   To add / edit products use the Admin panel (⚙ in the header).
+   To reset back to this list: Admin → Settings → Reset to Defaults.
+   ═════════════════════════════════════════════════════════════ */
+
+var SEED_PRODUCTS = [
+
+  {
+    name:      "Ironbite Dragon",
+    image:     "ironbite.jpg",
+    filament:  0.77,
+    elec:      0.20,
+    qty:       5,
+    printTime: 9.3,
+    mktLow:    10.00,
+    mktMid:    18.00,
+    mktHigh:   28.00,
+    notes:     "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller.",
+    stock:     8
+  },
+
+  {
+    name:      "Bat Shadow",
+    image:     "batshadow.webp",
+    filament:  9.21,
+    elec:      3.50,
+    qty:       1,
+    printTime: 27.6,
+    mktLow:    45.00,
+    mktMid:    65.00,
+    mktHigh:   90.00,
+    notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece.",
+    stock:     1
+  },
+
+  {
+    name:      "Custom Flexi Keychain",
+    image:     "flexi-keychain.jpg",
+    filament:  1.88,
+    elec:      1.00,
+    qty:       1,
+    printTime: 14.3,
+    mktLow:     8.00,
+    mktMid:    15.00,
+    mktHigh:   22.00,
+    notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy.",
+    stock:     5
+  },
+
+  {
+    name:      "Spiky Sensory Twisty Sphere",
+    image:     "twisty-sphere.jpg",
+    filament:  3.85,
+    elec:      0.85,
+    qty:       1,
+    printTime: 8.6,
+    mktLow:    15.00,
+    mktMid:    25.00,
+    mktHigh:   35.00,
+    notes:     "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item.",
+    stock:     3
+  },
+
+  {
+    name:      "Demogorgon Flexi",
+    image:     "demogorgon.jpg",
+    filament:  0.28,
+    elec:      0.15,
+    qty:       9,
+    printTime: 11.8,
+    mktLow:    12.00,
+    mktMid:    20.00,
+    mktHigh:   32.00,
+    notes:     "3-color PLA — Stranger Things Demogorgon, flexi/articulated print-in-place. 9 per plate.",
+    stock:     12
+  },
+
+  {
+    name:      "Flexi Manta Ray",
+    image:     "flexi-manta-ray.jpg",
+    filament:  2.06,
+    elec:      3.25,
+    qty:       2,
+    printTime: 13.1,
+    mktLow:    18,
+    mktMid:    24,
+    mktHigh:   32,
+    notes:     "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish",
+    stock:     4
+  }
+
+];
+</script>
+
+<script>
 /* ═══════════════════════════════════════════════════
-   RENDER ENGINE — builds cards from PRODUCTS array
+   ADMIN + STORAGE ENGINE
+   ═══════════════════════════════════════════════════ */
+(function() {
+  'use strict';
+
+  var SK_PRODUCTS = 'smtn_products';
+  var SK_PASSWORD = 'smtn_pw';
+  var SK_APIKEY   = 'smtn_apikey';
+  var SK_ADMIN    = 'smtn_admin';   // sessionStorage key
+  var DEFAULT_PW  = 'admin';        // change via Settings
+
+  var _products  = null;
+  var _editIndex = -1;
+  var _confirmCb = null;
+
+  /* ══════════════════════════════════════════════
+     STORAGE
+     ══════════════════════════════════════════════ */
+  function loadProducts() {
+    if (_products) return _products;
+    var raw = localStorage.getItem(SK_PRODUCTS);
+    if (raw) {
+      try { _products = JSON.parse(raw); return _products; } catch(e) {}
+    }
+    _products = SEED_PRODUCTS.map(function(p) { return Object.assign({}, p); });
+    localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
+    return _products;
+  }
+
+  function persist() {
+    localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
+  }
+
+  function getPassword() { return localStorage.getItem(SK_PASSWORD) || DEFAULT_PW; }
+  function getApiKey()   { return localStorage.getItem(SK_APIKEY)   || ''; }
+
+  /* ══════════════════════════════════════════════
+     ADMIN AUTH
+     ══════════════════════════════════════════════ */
+  function isAdmin() { return sessionStorage.getItem(SK_ADMIN) === '1'; }
+
+  window.showAdminOverlay = function() {
+    if (isAdmin()) return;
+    document.getElementById('admin-overlay').classList.add('open');
+    setTimeout(function() { document.getElementById('admin-pw').focus(); }, 60);
+  };
+
+  window.hideAdminOverlay = function() {
+    document.getElementById('admin-overlay').classList.remove('open');
+    document.getElementById('admin-pw').value = '';
+    document.getElementById('admin-error').textContent = '';
+  };
+
+  window.doAdminLogin = function() {
+    var pw  = document.getElementById('admin-pw').value;
+    var err = document.getElementById('admin-error');
+    if (pw === getPassword()) {
+      sessionStorage.setItem(SK_ADMIN, '1');
+      hideAdminOverlay();
+      document.getElementById('admin-bar').classList.add('open');
+      document.getElementById('gear-btn').style.display = 'none';
+      window.renderCatalog();
+    } else {
+      err.textContent = 'INCORRECT PASSWORD';
+      document.getElementById('admin-pw').value = '';
+      document.getElementById('admin-pw').classList.add('shake');
+      setTimeout(function() { document.getElementById('admin-pw').classList.remove('shake'); }, 400);
+    }
+  };
+
+  window.adminLogout = function() {
+    sessionStorage.removeItem(SK_ADMIN);
+    document.getElementById('admin-bar').classList.remove('open');
+    document.getElementById('gear-btn').style.display = '';
+    window.renderCatalog();
+  };
+
+  /* ══════════════════════════════════════════════
+     PRODUCT MODAL
+     ══════════════════════════════════════════════ */
+  window.openAddModal = function() {
+    _editIndex = -1;
+    document.getElementById('modal-title').textContent = 'ADD PRODUCT';
+    document.getElementById('modal-delete-btn').style.display = 'none';
+    clearForm();
+    populateFilamentSelect();
+    document.getElementById('scan-status').textContent = '';
+    document.getElementById('scan-status').className = 'scan-status';
+    document.getElementById('product-modal').classList.add('open');
+  };
+
+  window.openEditModal = function(index) {
+    var p = loadProducts()[index];
+    if (!p) return;
+    _editIndex = index;
+    document.getElementById('modal-title').textContent = 'EDIT PRODUCT';
+    document.getElementById('modal-delete-btn').style.display = '';
+    fillForm(p);
+    populateFilamentSelect();
+    updateModalPrice();
+    document.getElementById('scan-status').textContent = '';
+    document.getElementById('scan-status').className = 'scan-status';
+    document.getElementById('product-modal').classList.add('open');
+  };
+
+  window.closeProductModal = function() {
+    document.getElementById('product-modal').classList.remove('open');
+  };
+
+  function clearForm() {
+    var ids = ['f-name','f-image','f-filament','f-elec','f-time','f-weight',
+               'f-mkt-low','f-mkt-mid','f-mkt-high','f-notes'];
+    ids.forEach(function(id) { document.getElementById(id).value = ''; });
+    document.getElementById('f-qty').value   = '1';
+    document.getElementById('f-stock').value = '0';
+    document.getElementById('fil-calc-hint').textContent = '';
+    updateModalPrice();
+  }
+
+  function fillForm(p) {
+    document.getElementById('f-name').value      = p.name      || '';
+    document.getElementById('f-image').value     = p.image     || '';
+    document.getElementById('f-filament').value  = p.filament  != null ? p.filament  : '';
+    document.getElementById('f-elec').value      = p.elec      != null ? p.elec      : '';
+    document.getElementById('f-qty').value       = p.qty       != null ? p.qty       : '1';
+    document.getElementById('f-time').value      = p.printTime != null ? p.printTime : '';
+    document.getElementById('f-mkt-low').value   = p.mktLow    != null ? p.mktLow    : '';
+    document.getElementById('f-mkt-mid').value   = p.mktMid    != null ? p.mktMid    : '';
+    document.getElementById('f-mkt-high').value  = p.mktHigh   != null ? p.mktHigh   : '';
+    document.getElementById('f-stock').value     = p.stock     != null ? p.stock     : '0';
+    document.getElementById('f-notes').value     = p.notes     || '';
+  }
+
+  function readForm() {
+    return {
+      name:      document.getElementById('f-name').value.trim(),
+      image:     document.getElementById('f-image').value.trim(),
+      filament:  parseFloat(document.getElementById('f-filament').value) || 0,
+      elec:      parseFloat(document.getElementById('f-elec').value)     || 0,
+      qty:       parseInt(document.getElementById('f-qty').value)        || 1,
+      printTime: parseFloat(document.getElementById('f-time').value)     || 0,
+      mktLow:    parseFloat(document.getElementById('f-mkt-low').value)  || 0,
+      mktMid:    parseFloat(document.getElementById('f-mkt-mid').value)  || 0,
+      mktHigh:   parseFloat(document.getElementById('f-mkt-high').value) || 0,
+      stock:     parseInt(document.getElementById('f-stock').value)      || 0,
+      notes:     document.getElementById('f-notes').value.trim()
+    };
+  }
+
+  window.updateModalPrice = function() {
+    var p         = readForm();
+    var price     = window.calcPrice(p);
+    var cost      = ((p.filament||0) + (p.elec||0)) / Math.max(p.qty||1, 1);
+    var costFloor = Math.round(cost * 3);
+    var mktTarget = Math.round((p.mktLow||0) * 0.85);
+    var basis     = price === costFloor && costFloor >= mktTarget ? '3\u00d7 cost floor' : 'from market low';
+    document.getElementById('modal-price-val').textContent   = '$' + price;
+    document.getElementById('modal-price-basis').textContent =
+      '3\u00d7 cost: $' + costFloor + '  \u00b7  mkt 85%: $' + mktTarget + '  \u00b7  ' + basis;
+  };
+
+  window.saveProduct = function() {
+    var p = readForm();
+    if (!p.name) {
+      alert('Product name is required.');
+      document.getElementById('f-name').focus();
+      return;
+    }
+    loadProducts();
+    if (_editIndex >= 0) {
+      _products[_editIndex] = p;
+    } else {
+      _products.unshift(p); // newest first
+    }
+    persist();
+    closeProductModal();
+    window.renderCatalog();
+  };
+
+  window.promptDeleteProduct = function() {
+    if (_editIndex < 0) return;
+    showConfirm(
+      'DELETE PRODUCT',
+      'Delete "' + _products[_editIndex].name + '"? This cannot be undone.',
+      function() {
+        _products.splice(_editIndex, 1);
+        persist();
+        closeProductModal();
+        window.renderCatalog();
+      }
+    );
+  };
+
+  /* ══════════════════════════════════════════════
+     STOCK ADJUSTMENT
+     ══════════════════════════════════════════════ */
+  window.adjustStock = function(index, delta) {
+    loadProducts();
+    if (!_products[index]) return;
+    _products[index].stock = Math.max(0, (_products[index].stock || 0) + delta);
+    persist();
+    window.renderCatalog();
+  };
+
+  /* ══════════════════════════════════════════════
+     SLICER SCREENSHOT SCAN (Claude API)
+     ══════════════════════════════════════════════ */
+  window.triggerSlicerScan = function() {
+    if (!getApiKey()) {
+      openSettingsModal();
+      setTimeout(function() {
+        var el = document.getElementById('s-api-key');
+        if (el) el.focus();
+      }, 300);
+      setScanStatus('⚠ Enter your Claude API key in Settings first, then try again.', 'warn');
+      return;
+    }
+    document.getElementById('slicer-file').click();
+  };
+
+  window.handleSlicerFile = function(input) {
+    var file = input.files[0];
+    if (!file) return;
+    input.value = '';
+    setScanStatus('⏳ Scanning screenshot with Claude AI...', 'scanning');
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var parts = e.target.result.split(',');
+      scanWithClaude(parts[1], file.type || 'image/png');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  function setScanStatus(msg, type) {
+    var el = document.getElementById('scan-status');
+    el.textContent = msg;
+    el.className   = 'scan-status' + (type ? ' scan-' + type : '');
+  }
+
+  function scanWithClaude(base64, mediaType) {
+    var prompt =
+      'This is a screenshot from a 3D printing slicer (Bambu Studio, OrcaSlicer, Cura, PrusaSlicer, etc.).\n' +
+      'Extract these values and return ONLY valid JSON — no explanation, no markdown fences:\n' +
+      '{\n' +
+      '  "filamentCostTotal": <total filament material cost in USD as a number, or null>,\n' +
+      '  "printTimeHours": <estimated print time in hours as a decimal, or null>,\n' +
+      '  "qtyPerPlate": <number of items/models on the build plate as an integer, default 1>,\n' +
+      '  "filamentWeightGrams": <total filament weight in grams as a number, or null>\n' +
+      '}';
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key':                               getApiKey(),
+        'anthropic-version':                       '2023-06-01',
+        'content-type':                            'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model:      'claude-opus-4-6',
+        max_tokens: 512,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+            { type: 'text',  text: prompt }
+          ]
+        }]
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error.message);
+      var text = data.content && data.content[0] && data.content[0].text;
+      if (!text) throw new Error('Empty response');
+      var json = JSON.parse(text.trim());
+      applySlicerData(json);
+      setScanStatus('✓ Scan complete — review the filled fields below.', 'ok');
+    })
+    .catch(function(err) {
+      setScanStatus('✕ Scan failed: ' + err.message, 'error');
+    });
+  }
+
+  function applySlicerData(d) {
+    /* Fill weight (most accurate slicer data) — user selects spool to calc cost */
+    if (d.filamentWeightGrams != null) {
+      document.getElementById('f-weight').value = (+d.filamentWeightGrams).toFixed(1);
+    }
+    /* Fallback: fill cost directly if no weight */
+    if (d.filamentWeightGrams == null && d.filamentCostTotal != null) {
+      document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
+    }
+    if (d.printTimeHours != null) document.getElementById('f-time').value = (+d.printTimeHours).toFixed(1);
+    if (d.qtyPerPlate    != null) document.getElementById('f-qty').value  = d.qtyPerPlate;
+
+    /* Remind user to pick filament spool */
+    var wt = parseFloat(document.getElementById('f-weight').value);
+    var hint = document.getElementById('fil-calc-hint');
+    if (wt > 0) {
+      hint.textContent = '\u2197 Weight scanned (' + wt + 'g) — pick your spool above and click CALC to get exact cost.';
+    }
+    updateModalPrice();
+  }
+
+  /* ══════════════════════════════════════════════
+     SETTINGS MODAL
+     ══════════════════════════════════════════════ */
+  window.openSettingsModal = function() {
+    document.getElementById('s-api-key').value    = getApiKey();
+    document.getElementById('s-new-pw').value     = '';
+    document.getElementById('s-confirm-pw').value = '';
+    document.getElementById('settings-modal').classList.add('open');
+  };
+
+  window.closeSettingsModal = function() {
+    document.getElementById('settings-modal').classList.remove('open');
+  };
+
+  window.saveSettingsModal = function() {
+    var apiKey = document.getElementById('s-api-key').value.trim();
+    var newPw  = document.getElementById('s-new-pw').value;
+    var confPw = document.getElementById('s-confirm-pw').value;
+    if (newPw && newPw !== confPw) { alert('Passwords do not match.'); return; }
+    if (apiKey) localStorage.setItem(SK_APIKEY, apiKey);
+    else        localStorage.removeItem(SK_APIKEY);
+    if (newPw)  localStorage.setItem(SK_PASSWORD, newPw);
+    closeSettingsModal();
+  };
+
+  window.promptResetData = function() {
+    showConfirm(
+      'RESET TO DEFAULTS',
+      'This will erase all your changes and restore the original product list. Are you sure?',
+      function() {
+        _products = SEED_PRODUCTS.map(function(p) { return Object.assign({}, p); });
+        persist();
+        closeSettingsModal();
+        window.renderCatalog();
+      }
+    );
+  };
+
+  /* ══════════════════════════════════════════════
+     EXPORT / IMPORT
+     ══════════════════════════════════════════════ */
+  window.exportJSON = function() {
+    var blob = new Blob([JSON.stringify(loadProducts(), null, 2)], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'smokymtn-products-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  window.importJSON = function(input) {
+    var file = input.files[0];
+    if (!file) return;
+    input.value = '';
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var data = JSON.parse(e.target.result);
+        if (!Array.isArray(data)) throw new Error('Expected an array of products');
+        showConfirm(
+          'IMPORT PRODUCTS',
+          'Replace all ' + loadProducts().length + ' current products with ' + data.length + ' imported products?',
+          function() { _products = data; persist(); window.renderCatalog(); }
+        );
+      } catch(err) { alert('Import failed: ' + err.message); }
+    };
+    reader.readAsText(file);
+  };
+
+  /* ══════════════════════════════════════════════
+     CONFIRM DIALOG
+     ══════════════════════════════════════════════ */
+  function showConfirm(title, message, onOk) {
+    _confirmCb = onOk;
+    document.getElementById('confirm-title').textContent   = title;
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-ok').onclick = function() { closeConfirm(true); };
+    document.getElementById('confirm-modal').classList.add('open');
+  }
+
+  window.closeConfirm = function(confirmed) {
+    document.getElementById('confirm-modal').classList.remove('open');
+    if (confirmed && _confirmCb) _confirmCb();
+    _confirmCb = null;
+  };
+
+  /* ══════════════════════════════════════════════
+     FILAMENT LIBRARY
+     ══════════════════════════════════════════════ */
+  var SK_FILAMENTS  = 'smtn_filaments';
+  var _filaments    = null;
+  var _filEditIndex = -1;
+
+  function loadFilaments() {
+    if (_filaments) return _filaments;
+    var raw = localStorage.getItem(SK_FILAMENTS);
+    if (raw) { try { _filaments = JSON.parse(raw); } catch(e) { _filaments = []; } }
+    else { _filaments = []; }
+    return _filaments;
+  }
+
+  function persistFilaments() {
+    localStorage.setItem(SK_FILAMENTS, JSON.stringify(_filaments));
+  }
+
+  function cpg(f) {
+    var g = parseFloat(f.spoolGrams) || 1000;
+    var p = parseFloat(f.pricePaid)  || 0;
+    return p / g;
+  }
+
+  window.openFilamentsModal = function() {
+    renderFilamentList();
+    document.getElementById('fil-form').style.display = 'none';
+    document.getElementById('filaments-modal').classList.add('open');
+  };
+
+  window.closeFilamentsModal = function() {
+    document.getElementById('filaments-modal').classList.remove('open');
+    populateFilamentSelect(); /* refresh product form dropdown */
+  };
+
+  function renderFilamentList() {
+    var list  = loadFilaments();
+    var el    = document.getElementById('fil-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="fil-empty">No spools yet — add your first SUNLU spool to get started.</div>';
+      return;
+    }
+    el.innerHTML = list.map(function(f, i) {
+      var rate = cpg(f);
+      var age  = f.dateAdded
+        ? Math.floor((Date.now() - new Date(f.dateAdded).getTime()) / 86400000) + 'd ago'
+        : '';
+      var linkBtn = f.link
+        ? '<a class="fil-link-btn" href="' + f.link + '" target="_blank" rel="noopener">🛒 CHECK PRICE</a>'
+        : '';
+      return '<div class="fil-row">'
+        + '<div class="fil-row-main">'
+        +   '<div class="fil-row-name">' + f.name + '</div>'
+        +   '<div class="fil-row-meta">'
+        +     (f.brand ? '<span>' + f.brand + '</span>' : '')
+        +     (f.type  ? '<span>' + f.type  + '</span>' : '')
+        +     (age     ? '<span class="fil-age">' + age + '</span>' : '')
+        +   '</div>'
+        + '</div>'
+        + '<div class="fil-row-right">'
+        +   '<div class="fil-cpg-big">$' + rate.toFixed(4) + '<span>/g</span></div>'
+        +   '<div class="fil-row-sub">$' + (+f.pricePaid).toFixed(2) + ' / ' + f.spoolGrams + 'g spool</div>'
+        + '</div>'
+        + '<div class="fil-row-btns">'
+        +   linkBtn
+        +   '<button class="card-edit-btn" onclick="openFilamentForm(' + i + ')">✎ EDIT</button>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  window.openFilamentForm = function(index) {
+    _filEditIndex = index;
+    var form = document.getElementById('fil-form');
+    form.style.display = '';
+    document.getElementById('fil-form-title').textContent = index < 0 ? 'ADD SPOOL' : 'EDIT SPOOL';
+    document.getElementById('fil-delete-btn').style.display = index < 0 ? 'none' : '';
+    if (index >= 0) {
+      var f = loadFilaments()[index];
+      document.getElementById('fl-name').value  = f.name       || '';
+      document.getElementById('fl-brand').value = f.brand      || '';
+      document.getElementById('fl-type').value  = f.type       || '';
+      document.getElementById('fl-grams').value = f.spoolGrams || 1000;
+      document.getElementById('fl-price').value = f.pricePaid  || '';
+      document.getElementById('fl-link').value  = f.link       || '';
+    } else {
+      ['fl-name','fl-brand','fl-type','fl-link'].forEach(function(id){ document.getElementById(id).value=''; });
+      document.getElementById('fl-grams').value = '1000';
+      document.getElementById('fl-price').value = '';
+    }
+    updateFilCpg();
+    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  window.cancelFilamentForm = function() {
+    document.getElementById('fil-form').style.display = 'none';
+  };
+
+  window.updateFilCpg = function() {
+    var g = parseFloat(document.getElementById('fl-grams').value) || 0;
+    var p = parseFloat(document.getElementById('fl-price').value) || 0;
+    var el = document.getElementById('fil-cpg-preview');
+    if (g > 0 && p > 0) {
+      var rate = p / g;
+      el.innerHTML = '<span class="fil-cpg-rate">$' + rate.toFixed(4) + ' / gram</span>'
+        + '<span class="fil-cpg-note">A 100g print costs $' + (rate * 100).toFixed(2) + '</span>';
+    } else {
+      el.textContent = '';
+    }
+  };
+
+  window.saveFilament = function() {
+    var name = document.getElementById('fl-name').value.trim();
+    if (!name) { alert('Spool name is required.'); document.getElementById('fl-name').focus(); return; }
+    var obj = {
+      name:       name,
+      brand:      document.getElementById('fl-brand').value.trim(),
+      type:       document.getElementById('fl-type').value.trim(),
+      spoolGrams: parseFloat(document.getElementById('fl-grams').value) || 1000,
+      pricePaid:  parseFloat(document.getElementById('fl-price').value) || 0,
+      link:       document.getElementById('fl-link').value.trim(),
+      dateAdded:  _filEditIndex < 0 ? new Date().toISOString() : (loadFilaments()[_filEditIndex].dateAdded || new Date().toISOString())
+    };
+    loadFilaments();
+    if (_filEditIndex >= 0) { _filaments[_filEditIndex] = obj; }
+    else                    { _filaments.push(obj); }
+    persistFilaments();
+    document.getElementById('fil-form').style.display = 'none';
+    renderFilamentList();
+  };
+
+  window.deleteFilament = function() {
+    if (_filEditIndex < 0) return;
+    showConfirm('DELETE SPOOL', 'Delete "' + _filaments[_filEditIndex].name + '"?', function() {
+      _filaments.splice(_filEditIndex, 1);
+      persistFilaments();
+      document.getElementById('fil-form').style.display = 'none';
+      renderFilamentList();
+    });
+  };
+
+  /* populate the spool dropdown in the product form */
+  function populateFilamentSelect() {
+    var sel  = document.getElementById('f-filament-select');
+    if (!sel) return;
+    var list = loadFilaments();
+    sel.innerHTML = '<option value="">— pick spool from library —</option>'
+      + list.map(function(f, i) {
+          return '<option value="' + i + '">'
+            + f.name + ' ($' + cpg(f).toFixed(4) + '/g)'
+            + '</option>';
+        }).join('');
+  }
+
+  /* calculate filament cost = weight × $/g and fill the cost field */
+  window.calcFilamentFromWeight = function() {
+    var wt  = parseFloat(document.getElementById('f-weight').value);
+    var idx = document.getElementById('f-filament-select').value;
+    var hint = document.getElementById('fil-calc-hint');
+    if (!wt || wt <= 0) { hint.textContent = '⚠ Enter weight in grams first.'; return; }
+    if (idx === '') { hint.textContent = '⚠ Pick a spool from the library first.'; return; }
+    var f    = loadFilaments()[parseInt(idx)];
+    var rate = cpg(f);
+    var cost = wt * rate;
+    document.getElementById('f-filament').value = cost.toFixed(2);
+    hint.textContent = wt + 'g × $' + rate.toFixed(4) + '/g = $' + cost.toFixed(2) + '  (' + f.name + ')';
+    updateModalPrice();
+  };
+
+  /* expose to render engine */
+  window._isAdmin      = isAdmin;
+  window._getProducts  = loadProducts;
+
+})();
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   RENDER ENGINE
    ═══════════════════════════════════════════════════ */
 (function() {
 
   var $ = function(id) { return document.getElementById(id); };
   var fmt  = function(n) { return '$' + Number(n).toFixed(2); };
-  var fmtD = function(n) { return '$' + Math.round(n); };  // whole dollars
+  var fmtD = function(n) { return '$' + Math.round(n); };
 
   /* ── PRICE FORMULA ──────────────────────────── */
-  // Research-backed: 3× cost floor, competitive at 95% of market low
-  function calcPrice(p) {
+  // No platform fees (saves ~12%) + no shipping = beat online on total price.
+  // Target 85% of market low: undercuts online sellers while covering 3× cost minimum.
+  window.calcPrice = function(p) {
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
     var costFloor = cost * 3;
-    var mktTarget = (p.mktLow || 0) * 0.95;
+    var mktTarget = (p.mktLow || 0) * 0.85;
     return Math.round(Math.max(costFloor, mktTarget));
-  }
+  };
 
   /* ── FILTER + SORT ──────────────────────────── */
-  function getProducts() {
+  function getFiltered() {
+    var all   = window._getProducts();
     var query = ($('search-input').value || '').trim().toLowerCase();
     var sort  = $('sort-select').value;
 
-    var result = PRODUCTS.filter(function(p) {
+    var result = all.filter(function(p) {
       return !query || p.name.toLowerCase().indexOf(query) !== -1;
     });
 
@@ -227,11 +1041,11 @@ var PRODUCTS = [
   }
 
   /* ── BUILD ONE CARD ─────────────────────────── */
-  function buildCard(p) {
+  function buildCard(p, realIndex) {
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
     var price     = calcPrice(p);
     var costFloor = Math.round(cost * 3);
-    var mktTarget = Math.round((p.mktLow || 0) * 0.95);
+    var mktTarget = Math.round((p.mktLow || 0) * 0.85);
     var basis     = price === costFloor && costFloor >= mktTarget
       ? '3&times; cost floor'
       : 'from market low';
@@ -251,13 +1065,52 @@ var PRODUCTS = [
         (p.qty > 1 ? ' · ' + p.qty + ' per plate' : '') + '</div>'
       : (p.qty > 1 ? '<div class="product-time">' + p.qty + ' per plate</div>' : '');
 
+    var stockQty   = p.stock != null ? p.stock : null;
+    var stockClass = stockQty === 0 ? 'out' : (stockQty != null && stockQty <= 2 ? 'low' : '');
+    var stockBadge = stockQty != null
+      ? '<div class="stock-badge' + (stockClass ? ' ' + stockClass : '') + '">'
+        + (stockQty === 0 ? 'OUT OF STOCK' : stockQty + ' IN STOCK')
+        + '</div>'
+      : '';
+
+    /* profit display */
+    var profit = price - cost;
+    var margin = price > 0 ? Math.round(profit / price * 100) : 0;
+    var mClass = margin >= 60 ? 'profit-great'
+               : margin >= 40 ? 'profit-good'
+               : margin >= 25 ? 'profit-ok'
+               :                'profit-thin';
+    var profitRow = '<div class="profit-bar ' + mClass + '">'
+      + '<span class="profit-label">PROFIT / ITEM</span>'
+      + '<span class="profit-val">$' + profit.toFixed(2) + '</span>'
+      + '<span class="profit-sep">·</span>'
+      + '<span class="profit-margin">' + margin + '% MARGIN</span>'
+      + '</div>';
+
+    /* admin controls: stock +/- and edit button */
+    var adminRow = '';
+    if (window._isAdmin()) {
+      adminRow = '<div class="card-admin-row">'
+        + '<div class="stock-adj">'
+        + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',-1)">&#8722;</button>'
+        + '<span class="stock-adj-val">' + (stockQty != null ? stockQty : '—') + '</span>'
+        + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',1)">&#43;</button>'
+        + '<span class="stock-adj-label">STOCK</span>'
+        + '</div>'
+        + '<button class="card-edit-btn" onclick="openEditModal(' + realIndex + ')">&#9998; EDIT</button>'
+        + '</div>';
+    }
+
     return ''
       + '<div class="product">'
       +   '<div class="product-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
       +     img
       +   '</div>'
       +   '<div class="product-body">'
-      +     '<h2 class="product-name">' + p.name + '</h2>'
+      +     '<div class="product-name-row">'
+      +       '<h2 class="product-name">' + p.name + '</h2>'
+      +       stockBadge
+      +     '</div>'
       +     notes
       +     time
       +     '<div class="data-label">Our Investment</div>'
@@ -275,28 +1128,41 @@ var PRODUCTS = [
       +     '<div class="price-box">'
       +       '<div class="price-label">OUR PRICE</div>'
       +       '<div class="price-value">' + fmtD(price) + '</div>'
-      +       '<div class="price-basis">3&times; cost: ' + fmtD(costFloor) + ' &middot; mkt low: ' + fmtD(mktTarget) + ' &middot; ' + basis + '</div>'
+      +       '<div class="price-basis">3&times; cost: ' + fmtD(costFloor) + ' &middot; 85% mkt: ' + fmtD(mktTarget) + ' &middot; ' + basis + '</div>'
       +     '</div>'
+      +     profitRow
+      +     adminRow
       +   '</div>'
       + '</div>';
   }
 
   /* ── RENDER CATALOG ─────────────────────────── */
-  function renderCatalog() {
-    var products = getProducts();
-    var grid = $('catalog');
-    $('product-count').textContent = products.length;
+  window.renderCatalog = function() {
+    var all      = window._getProducts();
+    var filtered = getFiltered();
+    var grid     = $('catalog');
 
-    if (!PRODUCTS.length) {
-      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🖨️</div><p>No products yet — check back soon.</p></div>';
+    $('product-count').textContent = filtered.length;
+
+    var totalStock = 0;
+    all.forEach(function(p) {
+      if ((p.stock || 0) > 0) totalStock += p.stock * calcPrice(p);
+    });
+    $('stock-value').textContent = '$' + Math.round(totalStock);
+
+    if (!all.length) {
+      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🖨️</div><p>No products yet.<br><br>Log in as admin to add products.</p></div>';
       return;
     }
-    if (!products.length) {
+    if (!filtered.length) {
       grid.innerHTML = '<div class="empty-catalog"><div class="ico">🔍</div><p>No products match your search.</p></div>';
       return;
     }
-    grid.innerHTML = products.map(buildCard).join('');
-  }
+
+    grid.innerHTML = filtered.map(function(p) {
+      return buildCard(p, all.indexOf(p));
+    }).join('');
+  };
 
   /* ── LIGHTBOX ───────────────────────────────── */
   window.openLightbox = function(src) {
@@ -310,11 +1176,20 @@ var PRODUCTS = [
     $('scroll-wrap').style.overflow = '';
   };
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'Escape') {
+      closeLightbox();
+      closeProductModal();
+      closeSettingsModal();
+      closeConfirm(false);
+    }
   });
 
   /* ── INIT ───────────────────────────────────── */
   renderCatalog();
+  if (window._isAdmin()) {
+    document.getElementById('admin-bar').classList.add('open');
+    document.getElementById('gear-btn').style.display = 'none';
+  }
   $('search-input').addEventListener('input', renderCatalog);
   $('sort-select').addEventListener('change', renderCatalog);
 
