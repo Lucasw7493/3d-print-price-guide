@@ -54,6 +54,7 @@
     <div class="header-actions">
       <button class="btn btn-cyan btn-sm" onclick="exportData()">⬇ Backup</button>
       <label class="btn btn-ghost btn-sm" style="cursor:pointer">⬆ Restore<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+      <button class="btn btn-cyan btn-sm" onclick="shareAsFile()">📤 Share</button>
       <button class="btn btn-primary" onclick="openModal()">+ New Item</button>
     </div>
   </div>
@@ -266,7 +267,9 @@ function initTilt() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STORAGE
+   STORAGE — photos are now stored ON each item as item.photo
+   (base64 data URL). No more separate IndexedDB.
+   This means backups and shares include your images.
    ═══════════════════════════════════════════════════════════ */
 var STORE_KEY = 'printshop_items';
 var SALES_KEY = 'printshop_sales';
@@ -275,38 +278,58 @@ function saveItems(a) { localStorage.setItem(STORE_KEY, JSON.stringify(a)); }
 function loadSales() { try { return JSON.parse(localStorage.getItem(SALES_KEY) || '[]'); } catch(e) { return []; } }
 function saveSales(a) { localStorage.setItem(SALES_KEY, JSON.stringify(a)); }
 
-/* ═══════════════════════════════════════════════════════════
-   IndexedDB for photos
-   ═══════════════════════════════════════════════════════════ */
-var db = null;
-function openDB() {
-  return new Promise(function(resolve, reject) {
-    if (db) { resolve(db); return; }
-    if (!window.indexedDB) { reject(new Error('No IndexedDB')); return; }
+/* Migrate: pull old IndexedDB photos onto items if they exist */
+function migrateOldPhotos() {
+  if (!window.indexedDB) return Promise.resolve();
+  return new Promise(function(resolve) {
     var req = indexedDB.open('printshop', 1);
     req.onupgradeneeded = function(e) { var d = e.target.result; if (!d.objectStoreNames.contains('photos')) d.createObjectStore('photos', { keyPath: 'id' }); };
-    req.onsuccess = function(e) { db = e.target.result; resolve(db); };
-    req.onerror = function(e) { reject(e.target.error); };
+    req.onsuccess = function(e) {
+      var d = e.target.result;
+      try {
+        var r = d.transaction('photos','readonly').objectStore('photos').getAll();
+        r.onsuccess = function(ev) {
+          var results = ev.target.result || [];
+          if (!results.length) { resolve(); return; }
+          var changed = false;
+          results.forEach(function(row) {
+            var item = null;
+            for (var i = 0; i < items.length; i++) {
+              if (String(items[i].id) === String(row.id)) { item = items[i]; break; }
+            }
+            if (item && !item.photo && row.data) {
+              item.photo = row.data;
+              changed = true;
+            }
+          });
+          if (changed) saveItems(items);
+          /* Clean up old IndexedDB */
+          try {
+            var tx = d.transaction('photos','readwrite');
+            tx.objectStore('photos').clear();
+          } catch(ex) {}
+          resolve();
+        };
+        r.onerror = function() { resolve(); };
+      } catch(ex) { resolve(); }
+    };
+    req.onerror = function() { resolve(); };
   });
 }
-function savePhoto(id, dataUrl) { return openDB().then(function(d) { return new Promise(function(res, rej) { var tx = d.transaction('photos','readwrite'); tx.objectStore('photos').put({id:String(id),data:dataUrl}); tx.oncomplete=res; tx.onerror=function(){rej(tx.error)}; }); }).catch(function(){}); }
-function deletePhoto(id) { return openDB().then(function(d) { return new Promise(function(res) { var tx = d.transaction('photos','readwrite'); tx.objectStore('photos').delete(String(id)); tx.oncomplete=res; tx.onerror=function(){res()}; }); }).catch(function(){}); }
-function getAllPhotos() { return openDB().then(function(d) { return new Promise(function(res) { var r = d.transaction('photos','readonly').objectStore('photos').getAll(); r.onsuccess=function(e){var m={};(e.target.result||[]).forEach(function(x){m[x.id]=x.data});res(m);}; r.onerror=function(){res({})}; }); }).catch(function(){return{};}); }
 
 /* ═══════════════════════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════════════════════ */
 var items = loadItems();
 var sales = loadSales();
-var photos = {};
 var editingId = null;
 var photoTargetId = null;
 
 if (items.length === 0) {
   items = [
-    { id:1, name:'Articulated Dragon', qty:1, filament:2.50, elec:0.60, mktLow:8, mktMid:12, mktHigh:20, sell:10, sold:0, notes:'PLA, rainbow silk', printTime:4.5 },
-    { id:2, name:'Flexi Shark', qty:2, filament:1.80, elec:0.40, mktLow:5, mktMid:8, mktHigh:12, sell:7, sold:0, notes:'PETG, blue or grey', printTime:2 },
-    { id:3, name:'Custom Phone Stand', qty:3, filament:1.20, elec:0.30, mktLow:6, mktMid:10, mktHigh:15, sell:8, sold:0, notes:'PLA, multiple colors', printTime:1.5 },
+    { id:1, name:'Articulated Dragon', qty:1, filament:2.50, elec:0.60, mktLow:8, mktMid:12, mktHigh:20, sell:10, sold:0, notes:'PLA, rainbow silk', printTime:4.5, photo:'' },
+    { id:2, name:'Flexi Shark', qty:2, filament:1.80, elec:0.40, mktLow:5, mktMid:8, mktHigh:12, sell:7, sold:0, notes:'PETG, blue or grey', printTime:2, photo:'' },
+    { id:3, name:'Custom Phone Stand', qty:3, filament:1.20, elec:0.30, mktLow:6, mktMid:10, mktHigh:15, sell:8, sold:0, notes:'PLA, multiple colors', printTime:1.5, photo:'' },
   ];
   saveItems(items);
 }
@@ -333,10 +356,17 @@ function showToast(msg) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PHOTO
+   PHOTO — stored directly on item.photo as base64
    ═══════════════════════════════════════════════════════════ */
 function triggerPhoto(id) { photoTargetId = String(id); var inp = document.getElementById('photo-input'); inp.value = ''; inp.click(); sfxClick(); }
-function viewPhoto(id) { var p = photos[String(id)]; if (!p) return; document.getElementById('lightbox-img').src = p; document.getElementById('lightbox').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function viewPhoto(id) {
+  var item = null;
+  for (var i = 0; i < items.length; i++) { if (String(items[i].id) === String(id)) { item = items[i]; break; } }
+  if (!item || !item.photo) return;
+  document.getElementById('lightbox-img').src = item.photo;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
 
 document.getElementById('photo-input').addEventListener('change', function() {
@@ -345,13 +375,20 @@ document.getElementById('photo-input').addEventListener('change', function() {
   if (!file.type.startsWith('image/')) { alert('Select an image file.'); return; }
   var img = new Image(); var url = URL.createObjectURL(file);
   img.onload = function() {
-    var MAX=800, w=img.width, h=img.height;
+    var MAX=600, w=img.width, h=img.height;
     if (w>MAX||h>MAX) { if (w>h){h=Math.round(h*MAX/w);w=MAX}else{w=Math.round(w*MAX/h);h=MAX} }
     var c = document.createElement('canvas'); c.width=w; c.height=h;
     c.getContext('2d').drawImage(img,0,0,w,h);
-    var data = c.toDataURL('image/jpeg',0.75);
+    var data = c.toDataURL('image/jpeg',0.65);
     URL.revokeObjectURL(url);
-    savePhoto(tid,data).then(function(){ photos[tid]=data; renderGrid(); showToast('PHOTO SAVED'); sfxSave(); });
+    /* Store directly on the item */
+    for (var i = 0; i < items.length; i++) {
+      if (String(items[i].id) === tid) { items[i].photo = data; break; }
+    }
+    saveItems(items);
+    renderGrid();
+    showToast('PHOTO SAVED');
+    sfxSave();
   };
   img.onerror = function() { URL.revokeObjectURL(url); alert('Could not load image.'); };
   img.src = url;
@@ -396,16 +433,16 @@ function clearSalesLog() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EXPORT / IMPORT
+   EXPORT / IMPORT — photos included in backup
    ═══════════════════════════════════════════════════════════ */
 function exportData() {
-  var data = { version:1, exported:new Date().toISOString(), items:items, sales:sales };
-  var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  var data = { version:2, exported:new Date().toISOString(), items:items, sales:sales };
+  var blob = new Blob([JSON.stringify(data)], {type:'application/json'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a'); a.href=url;
   a.download = 'smokymtn-backup-'+new Date().toISOString().slice(0,10)+'.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url); sfxSave(); showToast('BACKUP DOWNLOADED');
+  URL.revokeObjectURL(url); sfxSave(); showToast('BACKUP + PHOTOS SAVED');
 }
 function importData(event) {
   var file = event.target.files[0]; if (!file) return;
@@ -422,6 +459,78 @@ function importData(event) {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   SHARE — generates a standalone HTML file anyone can open
+   All items, photos, and data are embedded right in the file.
+   No server, no database — just one .html file.
+   ═══════════════════════════════════════════════════════════ */
+function shareAsFile() {
+  showToast('BUILDING SHARE FILE...');
+  setTimeout(function() {
+    var itemCards = items.map(function(item) {
+      var c = calcItem(item);
+      var photoTag = item.photo
+        ? '<img src="' + item.photo + '" style="width:100%;height:200px;object-fit:contain;background:#08081a;display:block" alt="' + item.name.replace(/"/g,'&quot;') + '">'
+        : '<div style="width:100%;height:200px;background:#08081a;display:flex;align-items:center;justify-content:center;color:#6a5f8a;font-size:13px">No photo</div>';
+      var notesLine = item.notes ? '<p style="font-size:11px;color:#b0a8cc;padding:6px 8px;border-left:2px solid #ffe100;margin-bottom:10px;font-style:italic">' + item.notes.replace(/</g,'&lt;') + '</p>' : '';
+      return '<div style="background:#12122a;border:1px solid #2a1a4a;border-radius:8px;overflow:hidden;break-inside:avoid;margin-bottom:16px">'
+        + photoTag
+        + '<div style="padding:14px 16px">'
+        + '<h3 style="font-family:Orbitron,sans-serif;font-size:15px;color:#00f0ff;margin-bottom:4px">' + item.name + '</h3>'
+        + '<p style="font-size:11px;color:#6a5f8a;margin-bottom:10px">&times;' + item.qty + ' per plate' + (item.printTime ? ' &bull; ' + item.printTime + 'h print' : '') + (item.sold ? ' &bull; ' + item.sold + ' sold' : '') + '</p>'
+        + notesLine
+        + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">'
+        + '<div style="background:rgba(0,240,255,0.03);border:1px solid #2a1a4a;border-radius:4px;padding:6px;text-align:center"><div style="font-family:Orbitron,sans-serif;font-size:12px;color:#e8e0ff">$' + item.filament.toFixed(2) + '</div><div style="font-size:8px;color:#6a5f8a;margin-top:2px">FILAMENT</div></div>'
+        + '<div style="background:rgba(0,240,255,0.03);border:1px solid #2a1a4a;border-radius:4px;padding:6px;text-align:center"><div style="font-family:Orbitron,sans-serif;font-size:12px;color:#e8e0ff">$' + item.elec.toFixed(2) + '</div><div style="font-size:8px;color:#6a5f8a;margin-top:2px">ELEC+WEAR</div></div>'
+        + '<div style="background:rgba(255,225,0,0.05);border:1px solid rgba(255,225,0,0.2);border-radius:4px;padding:6px;text-align:center"><div style="font-family:Orbitron,sans-serif;font-size:12px;color:#ffe100">$' + c.costPerItem.toFixed(2) + '</div><div style="font-size:8px;color:#6a5f8a;margin-top:2px">COST/ITEM</div></div>'
+        + '</div>'
+        + '<div style="text-align:center;background:rgba(57,255,20,0.06);border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:10px">'
+        + '<div style="font-size:8px;color:#39ff14;letter-spacing:1px;margin-bottom:2px">SELL PRICE</div>'
+        + '<div style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:900;color:#39ff14">$' + item.sell.toFixed(2) + '</div>'
+        + '<div style="font-size:10px;color:#39ff14;margin-top:2px">Profit: $' + c.profit.toFixed(2) + ' &bull; Margin: ' + (c.margin * 100).toFixed(1) + '%</div>'
+        + '</div></div></div>';
+    }).join('\n');
+
+    var totalRev = sales.reduce(function(a,s){return a+(s.price||0);},0);
+    var totalSold = items.reduce(function(a,i){return a+(i.sold||0);},0);
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+      + '<title>SMOKYMTN 3D PRINTS — Catalog</title>'
+      + '<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">'
+      + '<style>'
+      + 'body{background:#0a0a12;color:#e8e0ff;font-family:sans-serif;margin:0;padding:20px}'
+      + 'h1{font-family:Orbitron,sans-serif;font-size:22px;font-weight:900;color:#00f0ff;text-align:center;margin:20px 0 6px;letter-spacing:3px;text-shadow:0 0 10px rgba(0,240,255,0.5)}'
+      + '.sub{text-align:center;font-family:"Press Start 2P",monospace;font-size:8px;color:#ff2d78;margin-bottom:24px;letter-spacing:1px}'
+      + '.stats{display:flex;justify-content:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}'
+      + '.stat{background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);border-radius:8px;padding:8px 16px;text-align:center;min-width:80px}'
+      + '.stat .v{font-family:Orbitron,sans-serif;font-size:18px;font-weight:700;color:#39ff14;display:block}'
+      + '.stat .l{font-size:8px;color:#6a5f8a;text-transform:uppercase;letter-spacing:1px}'
+      + '.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;max-width:1100px;margin:0 auto}'
+      + '.foot{text-align:center;padding:30px;font-size:9px;color:#6a5f8a;font-family:"Press Start 2P",monospace}'
+      + '.foot span{color:#ff2d78}'
+      + '</style></head><body>'
+      + '<h1>SMOKYMTN 3D PRINTS</h1>'
+      + '<div class="sub">PRODUCT CATALOG — ' + new Date().toLocaleDateString() + '</div>'
+      + '<div class="stats">'
+      + '<div class="stat"><span class="v">' + items.length + '</span><span class="l">Items</span></div>'
+      + '<div class="stat"><span class="v">' + totalSold + '</span><span class="l">Sold</span></div>'
+      + '<div class="stat"><span class="v">$' + totalRev.toFixed(2) + '</span><span class="l">Revenue</span></div>'
+      + '</div>'
+      + '<div class="grid">' + itemCards + '</div>'
+      + '<div class="foot"><span>SMOKYMTN 3D PRINTS</span><br>&copy; 2026</div>'
+      + '</body></html>';
+
+    var blob = new Blob([html], {type:'text/html'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url;
+    a.download = 'SMOKYMTN-Catalog-' + new Date().toISOString().slice(0,10) + '.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    sfxSale();
+    showToast('SHARE FILE CREATED');
+  }, 100);
+}
+
+/* ═══════════════════════════════════════════════════════════
    RENDER
    ═══════════════════════════════════════════════════════════ */
 function render() { renderGrid(); renderSalesLog(); renderScenarios(); renderStats(); setTimeout(initTilt, 100); }
@@ -435,7 +544,7 @@ function renderGrid() {
   grid.innerHTML = items.map(function(item, idx) {
     var c = calcItem(item), cpi=c.costPerItem, profit=c.profit, margin=c.margin, sold=item.sold||0;
     var mc = margin>0.6?'margin-good':margin>0.3?'margin-ok':'margin-low';
-    var photo = photos[String(item.id)];
+    var photo = item.photo || '';
     var esc = item.name.replace(/"/g,'&quot;');
     var ph = photo
       ? '<img src="'+photo+'" alt="'+esc+'"><div class="photo-overlay"><button class="po-btn" onclick="viewPhoto(\''+item.id+'\')">🔍 VIEW</button><button class="po-btn change" onclick="triggerPhoto(\''+item.id+'\')">📷 SWAP</button></div>'
@@ -519,19 +628,19 @@ function updatePreview(){var f=parseFloat(document.getElementById('f-filament').
 function saveItem() {
   var name=document.getElementById('f-name').value.trim(),qty=parseInt(document.getElementById('f-qty').value)||1,filament=parseFloat(document.getElementById('f-filament').value)||0,elec=parseFloat(document.getElementById('f-elec').value)||0,printTime=parseFloat(document.getElementById('f-printtime').value)||0,mktLow=parseFloat(document.getElementById('f-mkt-low').value)||0,mktMid=parseFloat(document.getElementById('f-mkt-mid').value)||0,mktHigh=parseFloat(document.getElementById('f-mkt-high').value)||0,sell=parseFloat(document.getElementById('f-sell').value)||0,notes=document.getElementById('f-notes').value.trim();
   if(!name){alert('Enter an item name.');return;}
-  if(editingId){var idx=-1;for(var i=0;i<items.length;i++){if(items[i].id===editingId){idx=i;break;}}if(idx>-1){var es=items[idx].sold||0;items[idx]={id:editingId,name:name,qty:qty,filament:filament,elec:elec,printTime:printTime,mktLow:mktLow,mktMid:mktMid,mktHigh:mktHigh,sell:sell,notes:notes,sold:es};}}
-  else{items.push({id:uid(),name:name,qty:qty,filament:filament,elec:elec,printTime:printTime,mktLow:mktLow,mktMid:mktMid,mktHigh:mktHigh,sell:sell,notes:notes,sold:0});}
+  if(editingId){var idx=-1;for(var i=0;i<items.length;i++){if(items[i].id===editingId){idx=i;break;}}if(idx>-1){var es=items[idx].sold||0;var ep=items[idx].photo||'';items[idx]={id:editingId,name:name,qty:qty,filament:filament,elec:elec,printTime:printTime,mktLow:mktLow,mktMid:mktMid,mktHigh:mktHigh,sell:sell,notes:notes,sold:es,photo:ep};}}
+  else{items.push({id:uid(),name:name,qty:qty,filament:filament,elec:elec,printTime:printTime,mktLow:mktLow,mktMid:mktMid,mktHigh:mktHigh,sell:sell,notes:notes,sold:0,photo:''});}
   saveItems(items);closeModal();sfxSave();render();showToast(editingId?'ITEM UPDATED':'ITEM ADDED');
 }
 function editItem(id){var item=null;for(var i=0;i<items.length;i++){if(items[i].id===id){item=items[i];break;}}if(item)openModal(item);}
-function deleteItem(id){if(!confirm('Delete this item?'))return;items=items.filter(function(i){return i.id!==id;});delete photos[String(id)];deletePhoto(id);saveItems(items);sfxDelete();render();showToast('ITEM DELETED');
+function deleteItem(id){if(!confirm('Delete this item?'))return;items=items.filter(function(i){return i.id!==id;});saveItems(items);sfxDelete();render();showToast('ITEM DELETED');
   spawnParticles(window.innerWidth/2, window.innerHeight/2, 20, '#ff3355');
 }
 
 /* ═══════════════════════════════════════════════════════════
-   INIT
+   INIT — migrate any old IndexedDB photos onto items, then render
    ═══════════════════════════════════════════════════════════ */
-getAllPhotos().then(function(p){photos=p;render();}).catch(function(){photos={};render();});
+migrateOldPhotos().then(function() { render(); }).catch(function() { render(); });
 </script>
 </body>
 </html>
