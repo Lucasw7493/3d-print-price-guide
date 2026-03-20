@@ -51,27 +51,21 @@
     <div class="modal-body">
 
       <div class="scan-section">
-        <div class="scan-label">AUTO-FILL WITH AI SCAN</div>
-        <div class="scan-hint">Upload your item photo + slicer screenshot — Claude fills in everything including market prices</div>
-        <div class="scan-uploads">
-          <div class="scan-upload-slot" id="slot-item" onclick="document.getElementById('item-file').click()">
-            <div class="scan-slot-icon" id="slot-item-icon">📦</div>
-            <div class="scan-slot-label">ITEM PHOTO</div>
-            <div class="scan-slot-sub" id="slot-item-sub">tap to upload</div>
+        <div class="scan-label">AUTO-FILL FROM CLAUDE</div>
+        <div class="scan-steps">
+          <div class="scan-step">
+            <span class="scan-step-num">1</span>
+            <span>Copy the prompt below, open <strong>Claude.ai</strong>, attach your <strong>item photo</strong> + <strong>slicer screenshot</strong>, and send</span>
           </div>
-          <div class="scan-upload-slot" id="slot-slicer" onclick="document.getElementById('slicer-file').click()">
-            <div class="scan-slot-icon" id="slot-slicer-icon">🖥</div>
-            <div class="scan-slot-label">SLICER SCREENSHOT</div>
-            <div class="scan-slot-sub" id="slot-slicer-sub">tap to upload</div>
+          <div class="scan-step">
+            <span class="scan-step-num">2</span>
+            <span>Paste Claude's response into the box below and click <strong>AUTO-FILL</strong></span>
           </div>
         </div>
-        <input type="file" id="item-file" accept="image/*" capture="environment" style="display:none"
-               onchange="handleItemFile(this)">
-        <input type="file" id="slicer-file" accept="image/*" style="display:none"
-               onchange="handleSlicerFile(this)">
-        <button class="btn-scan" id="btn-scan-go" onclick="runScan()" disabled>
-          ⚡ &nbsp;SCAN &amp; AUTO-FILL ALL FIELDS
-        </button>
+        <button class="btn-copy-prompt" onclick="copyClaudePrompt()">📋 &nbsp;COPY PROMPT FOR CLAUDE</button>
+        <div class="scan-copy-status" id="copy-status"></div>
+        <textarea class="paste-box" id="claude-paste" placeholder="Paste Claude's response here..."></textarea>
+        <button class="btn-scan" onclick="autoFillFromPaste()">⚡ &nbsp;AUTO-FILL FORM</button>
         <div class="scan-status" id="scan-status"></div>
       </div>
 
@@ -83,8 +77,16 @@
           <input type="text" id="f-name" class="form-input" placeholder="e.g. Ironbite Dragon">
         </div>
         <div class="form-group full">
-          <label class="form-label">IMAGE (filename or URL)</label>
-          <input type="text" id="f-image" class="form-input" placeholder="e.g. ironbite.jpg">
+          <label class="form-label">PRODUCT IMAGE</label>
+          <div class="img-pick-row">
+            <label class="btn-ghost img-pick-btn" for="f-image-file">📷 CHOOSE PHOTO</label>
+            <input type="file" id="f-image-file" accept="image/*" style="display:none" onchange="handleProductImage(this)">
+            <span class="img-pick-name" id="f-image-name">No photo chosen</span>
+          </div>
+          <input type="hidden" id="f-image">
+          <div class="img-preview-wrap" id="img-preview-wrap" style="display:none">
+            <img id="img-preview" src="" alt="preview" class="img-preview">
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label">FILAMENT COST ($)</label>
@@ -152,12 +154,6 @@
       <button class="modal-x" onclick="closeSettingsModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-divider">CLAUDE API</div>
-      <div class="form-group full">
-        <label class="form-label">API KEY</label>
-        <input type="password" id="s-api-key" class="form-input" placeholder="sk-ant-api03-...">
-        <div class="form-hint">Required for slicer screenshot scanning. Stored locally — never sent anywhere except Anthropic's API.</div>
-      </div>
       <div class="form-divider">CHANGE PASSWORD</div>
       <div class="form-group full">
         <label class="form-label">NEW PASSWORD</label>
@@ -459,7 +455,7 @@ var SEED_PRODUCTS = [
     document.getElementById('modal-title').textContent = 'ADD PRODUCT';
     document.getElementById('modal-delete-btn').style.display = 'none';
     clearForm();
-    resetScanSlots();
+    document.getElementById('claude-paste').value = '';
     setScanStatus('', '');
     document.getElementById('product-modal').classList.add('open');
   };
@@ -472,7 +468,7 @@ var SEED_PRODUCTS = [
     document.getElementById('modal-delete-btn').style.display = '';
     fillForm(p);
     updateModalPrice();
-    resetScanSlots();
+    document.getElementById('claude-paste').value = '';
     setScanStatus('', '');
     document.getElementById('product-modal').classList.add('open');
   };
@@ -481,18 +477,36 @@ var SEED_PRODUCTS = [
     document.getElementById('product-modal').classList.remove('open');
   };
 
+  function setProductImage(src, label) {
+    document.getElementById('f-image').value = src || '';
+    document.getElementById('f-image-name').textContent = label || 'No photo chosen';
+    var wrap = document.getElementById('img-preview-wrap');
+    var img  = document.getElementById('img-preview');
+    if (src) { img.src = src; wrap.style.display = ''; }
+    else     { img.src = ''; wrap.style.display = 'none'; }
+  }
+
+  window.handleProductImage = function(input) {
+    var file = input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) { setProductImage(e.target.result, file.name); };
+    reader.readAsDataURL(file);
+    input.value = '';
+  };
+
   function clearForm() {
-    var ids = ['f-name','f-image','f-filament','f-elec','f-time',
+    var ids = ['f-name','f-filament','f-elec','f-time',
                'f-mkt-low','f-mkt-mid','f-mkt-high','f-notes'];
     ids.forEach(function(id) { document.getElementById(id).value = ''; });
     document.getElementById('f-qty').value   = '1';
     document.getElementById('f-stock').value = '0';
+    setProductImage('', '');
     updateModalPrice();
   }
 
   function fillForm(p) {
     document.getElementById('f-name').value      = p.name      || '';
-    document.getElementById('f-image').value     = p.image     || '';
     document.getElementById('f-filament').value  = p.filament  != null ? p.filament  : '';
     document.getElementById('f-elec').value      = p.elec      != null ? p.elec      : '';
     document.getElementById('f-qty').value       = p.qty       != null ? p.qty       : '1';
@@ -502,6 +516,7 @@ var SEED_PRODUCTS = [
     document.getElementById('f-mkt-high').value  = p.mktHigh   != null ? p.mktHigh   : '';
     document.getElementById('f-stock').value     = p.stock     != null ? p.stock     : '0';
     document.getElementById('f-notes').value     = p.notes     || '';
+    setProductImage(p.image || '', p.image ? 'Current photo' : '');
   }
 
   function readForm() {
@@ -578,64 +593,43 @@ var SEED_PRODUCTS = [
   /* ══════════════════════════════════════════════
      DUAL-IMAGE AI SCAN
      ══════════════════════════════════════════════ */
-  var _scanItemB64    = null;
-  var _scanItemType   = null;
-  var _scanSlicerB64  = null;
-  var _scanSlicerType = null;
+  var CLAUDE_PROMPT =
+    'I\'m adding a 3D printed product to my price guide for SMOKYMTN 3D PRINTS ' +
+    '(we sell at local craft markets — no shipping, no platform fees).\n\n' +
+    'Look at my attached images (item photo + slicer screenshot) and return ONLY this JSON, no extra text:\n\n' +
+    '{\n' +
+    '  "name": "product name",\n' +
+    '  "notes": "brief description: colors, material, key features",\n' +
+    '  "filamentCostTotal": 0.00,\n' +
+    '  "printTimeHours": 0.0,\n' +
+    '  "qtyPerPlate": 1,\n' +
+    '  "mktLow": 0.00,\n' +
+    '  "mktMid": 0.00,\n' +
+    '  "mktHigh": 0.00\n' +
+    '}\n\n' +
+    'filamentCostTotal = the material cost shown in the slicer screenshot.\n' +
+    'mktLow/Mid/High = what similar 3D printed items sell for on Etsy (realistic craft market prices).';
 
-  function updateScanBtn() {
-    var btn = document.getElementById('btn-scan-go');
-    if (_scanItemB64 || _scanSlicerB64) {
-      btn.disabled = false;
-    } else {
-      btn.disabled = true;
-    }
-  }
-
-  window.handleItemFile = function(input) {
-    var file = input.files[0];
-    if (!file) return;
-    input.value = '';
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var parts = e.target.result.split(',');
-      _scanItemB64  = parts[1];
-      _scanItemType = file.type || 'image/jpeg';
-      document.getElementById('slot-item-icon').textContent = '✅';
-      document.getElementById('slot-item-sub').textContent  = file.name || 'ready';
-      document.getElementById('slot-item').classList.add('loaded');
-      updateScanBtn();
-    };
-    reader.readAsDataURL(file);
+  window.copyClaudePrompt = function() {
+    navigator.clipboard.writeText(CLAUDE_PROMPT).then(function() {
+      var el = document.getElementById('copy-status');
+      el.textContent = '✅ Copied! Paste into Claude.ai with your photos.';
+      el.className = 'scan-copy-status ok';
+      setTimeout(function() { el.textContent = ''; el.className = 'scan-copy-status'; }, 3000);
+    }).catch(function() {
+      /* fallback for older browsers */
+      var ta = document.createElement('textarea');
+      ta.value = CLAUDE_PROMPT;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      var el = document.getElementById('copy-status');
+      el.textContent = '✅ Copied!';
+      el.className = 'scan-copy-status ok';
+      setTimeout(function() { el.textContent = ''; el.className = 'scan-copy-status'; }, 3000);
+    });
   };
-
-  window.handleSlicerFile = function(input) {
-    var file = input.files[0];
-    if (!file) return;
-    input.value = '';
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var parts = e.target.result.split(',');
-      _scanSlicerB64  = parts[1];
-      _scanSlicerType = file.type || 'image/png';
-      document.getElementById('slot-slicer-icon').textContent = '✅';
-      document.getElementById('slot-slicer-sub').textContent  = file.name || 'ready';
-      document.getElementById('slot-slicer').classList.add('loaded');
-      updateScanBtn();
-    };
-    reader.readAsDataURL(file);
-  };
-
-  function resetScanSlots() {
-    _scanItemB64 = _scanItemType = _scanSlicerB64 = _scanSlicerType = null;
-    document.getElementById('slot-item-icon').textContent  = '📦';
-    document.getElementById('slot-item-sub').textContent   = 'tap to upload';
-    document.getElementById('slot-item').classList.remove('loaded');
-    document.getElementById('slot-slicer-icon').textContent = '🖥';
-    document.getElementById('slot-slicer-sub').textContent  = 'tap to upload';
-    document.getElementById('slot-slicer').classList.remove('loaded');
-    document.getElementById('btn-scan-go').disabled = true;
-  }
 
   function setScanStatus(msg, type) {
     var el = document.getElementById('scan-status');
@@ -643,109 +637,36 @@ var SEED_PRODUCTS = [
     el.className   = 'scan-status' + (type ? ' scan-' + type : '');
   }
 
-  window.runScan = function() {
-    if (!getApiKey()) {
-      openSettingsModal();
-      setTimeout(function() { var el = document.getElementById('s-api-key'); if (el) el.focus(); }, 300);
-      setScanStatus('⚠ Enter your Claude API key in Settings first, then try again.', 'warn');
-      return;
-    }
-    if (!_scanItemB64 && !_scanSlicerB64) {
-      setScanStatus('⚠ Upload at least one image first.', 'warn');
-      return;
-    }
-
-    setScanStatus('⏳ Scanning with Claude AI — filling all fields...', 'scanning');
-    document.getElementById('btn-scan-go').disabled = true;
-
-    var content = [];
-
-    if (_scanItemB64) {
-      content.push({ type: 'image', source: { type: 'base64', media_type: _scanItemType, data: _scanItemB64 } });
-    }
-    if (_scanSlicerB64) {
-      content.push({ type: 'image', source: { type: 'base64', media_type: _scanSlicerType, data: _scanSlicerB64 } });
-    }
-
-    var hasItem   = !!_scanItemB64;
-    var hasSlicer = !!_scanSlicerB64;
-
-    var prompt =
-      'You are helping price 3D printed products for SMOKYMTN 3D PRINTS, a small business that sells at local craft markets (no shipping, no platform fees — can undercut online prices by ~15%).\n\n';
-
-    if (hasItem && hasSlicer) {
-      prompt += 'I am sending you two images:\n1. A photo of the physical 3D printed item\n2. A slicer screenshot (Bambu Studio / OrcaSlicer) showing print settings\n\n';
-    } else if (hasItem) {
-      prompt += 'I am sending you a photo of a physical 3D printed item.\n\n';
-    } else {
-      prompt += 'I am sending you a slicer screenshot (Bambu Studio / OrcaSlicer) showing print settings.\n\n';
-    }
-
-    prompt +=
-      'Return ONLY valid JSON — no explanation, no markdown fences:\n' +
-      '{\n' +
-      '  "name": ' + (hasItem ? '"suggested product name based on what you see"' : 'null') + ',\n' +
-      '  "notes": ' + (hasItem ? '"brief description: material/colors/features, e.g. 4-color PLA — Articulated flexi dragon, print-in-place"' : 'null') + ',\n' +
-      '  "filamentCostTotal": ' + (hasSlicer ? '<total filament cost in USD from slicer, or null>' : 'null') + ',\n' +
-      '  "printTimeHours": ' + (hasSlicer ? '<print time in hours as decimal, or null>' : 'null') + ',\n' +
-      '  "qtyPerPlate": ' + (hasSlicer ? '<number of items on the build plate, default 1>' : 'null') + ',\n' +
-      '  "mktLow": ' + (hasItem ? '<lowest price similar 3D printed items sell for on Etsy/Amazon, as a number>' : 'null') + ',\n' +
-      '  "mktMid": ' + (hasItem ? '<typical/median price for similar items>' : 'null') + ',\n' +
-      '  "mktHigh": ' + (hasItem ? '<premium/high-end price for similar items>' : 'null') + '\n' +
-      '}\n\n' +
-      (hasItem ? 'For market prices: use your knowledge of what similar 3D printed items sell for on Etsy and Amazon. Be realistic — these are craft market prices, not mass-produced goods.' : '');
-
-    content.push({ type: 'text', text: prompt });
-
-    fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key':                               getApiKey(),
-        'anthropic-version':                       '2023-06-01',
-        'content-type':                            'application/json',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model:      'claude-opus-4-6',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: content }]
-      })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.error) throw new Error(data.error.message);
-      var text = data.content && data.content[0] && data.content[0].text;
-      if (!text) throw new Error('Empty response');
-      var raw = text.trim();
-      /* strip markdown fences if Claude wraps anyway */
-      raw = raw.replace(/^```[a-z]*\n?/i, '').replace(/```$/,'').trim();
-      var json = JSON.parse(raw);
-      applySlicerData(json);
-      var filled = [];
-      if (json.name)              filled.push('name');
-      if (json.filamentCostTotal) filled.push('cost');
-      if (json.printTimeHours)    filled.push('time');
-      if (json.mktLow)            filled.push('market prices');
-      if (json.notes)             filled.push('notes');
-      setScanStatus('✅ Filled: ' + filled.join(', ') + ' — review below then save.', 'ok');
-    })
-    .catch(function(err) {
-      setScanStatus('✕ Scan failed: ' + err.message, 'error');
-      document.getElementById('btn-scan-go').disabled = false;
-    });
-  };
-
-  function applySlicerData(d) {
-    if (d.name)              document.getElementById('f-name').value     = d.name;
-    if (d.notes)             document.getElementById('f-notes').value    = d.notes;
-    if (d.filamentCostTotal != null) document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
-    if (d.printTimeHours    != null) document.getElementById('f-time').value     = (+d.printTimeHours).toFixed(1);
-    if (d.qtyPerPlate       != null) document.getElementById('f-qty').value      = d.qtyPerPlate;
-    if (d.mktLow            != null) document.getElementById('f-mkt-low').value  = (+d.mktLow).toFixed(2);
-    if (d.mktMid            != null) document.getElementById('f-mkt-mid').value  = (+d.mktMid).toFixed(2);
-    if (d.mktHigh           != null) document.getElementById('f-mkt-high').value = (+d.mktHigh).toFixed(2);
-    updateModalPrice();
+  function resetPasteBox() {
+    var ta = document.getElementById('claude-paste');
+    if (ta) ta.value = '';
+    setScanStatus('', '');
   }
+
+  window.autoFillFromPaste = function() {
+    var raw = (document.getElementById('claude-paste').value || '').trim();
+    if (!raw) { setScanStatus('⚠ Paste Claude\'s response first.', 'warn'); return; }
+    try {
+      /* strip markdown fences if present */
+      raw = raw.replace(/^```[a-z]*\n?/i, '').replace(/```\s*$/, '').trim();
+      /* extract first JSON object if there's surrounding text */
+      var match = raw.match(/\{[\s\S]*\}/);
+      if (match) raw = match[0];
+      var d = JSON.parse(raw);
+      if (d.name)                  document.getElementById('f-name').value     = d.name;
+      if (d.notes)                 document.getElementById('f-notes').value    = d.notes;
+      if (d.filamentCostTotal > 0) document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
+      if (d.printTimeHours    > 0) document.getElementById('f-time').value     = (+d.printTimeHours).toFixed(1);
+      if (d.qtyPerPlate       > 0) document.getElementById('f-qty').value      = d.qtyPerPlate;
+      if (d.mktLow            > 0) document.getElementById('f-mkt-low').value  = (+d.mktLow).toFixed(2);
+      if (d.mktMid            > 0) document.getElementById('f-mkt-mid').value  = (+d.mktMid).toFixed(2);
+      if (d.mktHigh           > 0) document.getElementById('f-mkt-high').value = (+d.mktHigh).toFixed(2);
+      updateModalPrice();
+      setScanStatus('✅ Form filled — review below, pick your image, then save.', 'ok');
+    } catch(e) {
+      setScanStatus('✕ Could not read that response. Make sure you copied Claude\'s full reply.', 'error');
+    }
+  };
 
   /* ══════════════════════════════════════════════
      SETTINGS MODAL

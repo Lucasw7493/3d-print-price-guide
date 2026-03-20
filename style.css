@@ -1083,13 +1083,12 @@ body > * { position: relative; z-index: 1; }
 }
 .modal-footer-right { display: flex; gap: 8px; }
 
-/* ── SLICER SCAN SECTION ────────────────────────── */
+/* ── AUTO-FILL SECTION ────────────────────────── */
 .scan-section {
   background: rgba(0,180,255,.04);
   border: 1px solid rgba(0,153,255,.25);
   border-radius: 6px;
   padding: 16px;
-  text-align: center;
   margin-bottom: 20px;
 }
 .scan-label {
@@ -1097,57 +1096,105 @@ body > * { position: relative; z-index: 1; }
   font-size: 8px;
   color: var(--neon-blue);
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
+  text-align: center;
   text-shadow: 0 0 8px rgba(0,153,255,.5);
 }
-.scan-hint {
-  font-size: 11px;
-  color: var(--muted);
+.scan-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 14px;
 }
-.scan-uploads {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.scan-step {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
-  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
 }
-.scan-upload-slot {
-  background: rgba(0,153,255,.05);
-  border: 2px dashed rgba(0,153,255,.3);
-  border-radius: 6px;
-  padding: 16px 10px;
-  cursor: pointer;
-  transition: background .15s, border-color .15s;
-  user-select: none;
-}
-.scan-upload-slot:hover {
-  background: rgba(0,153,255,.12);
-  border-color: rgba(0,153,255,.6);
-}
-.scan-upload-slot.loaded {
-  border-style: solid;
-  border-color: var(--neon-green);
-  background: rgba(0,255,136,.05);
-}
-.scan-slot-icon {
-  font-size: 22px;
-  margin-bottom: 6px;
-}
-.scan-slot-label {
+.scan-step strong { color: var(--neon-cyan); }
+.scan-step-num {
   font-family: var(--font-pixel);
-  font-size: 6px;
-  letter-spacing: 1px;
+  font-size: 8px;
+  background: rgba(0,153,255,.15);
+  border: 1px solid var(--neon-blue);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   color: var(--neon-blue);
-  margin-bottom: 4px;
 }
-.scan-upload-slot.loaded .scan-slot-label { color: var(--neon-green); }
-.scan-slot-sub {
+.btn-copy-prompt {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  letter-spacing: 1px;
+  padding: 10px 16px;
+  background: rgba(0,153,255,.08);
+  border: 1px solid rgba(0,153,255,.5);
+  border-radius: var(--radius);
+  color: var(--neon-blue);
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 6px;
+  transition: background .15s;
+}
+.btn-copy-prompt:hover { background: rgba(0,153,255,.18); }
+.scan-copy-status {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
+  min-height: 14px;
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+.scan-copy-status.ok { color: var(--neon-green); }
+.paste-box {
+  width: 100%;
+  min-height: 80px;
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(0,153,255,.3);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 10px;
+  resize: vertical;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+.paste-box:focus { outline: none; border-color: var(--neon-blue); }
+/* ── IMAGE PICKER ──────────────────────────────── */
+.img-pick-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.img-pick-btn {
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 8px !important;
+  padding: 8px 12px !important;
+}
+.img-pick-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.img-preview-wrap { margin-top: 8px; }
+.img-preview {
+  max-width: 100%;
+  max-height: 140px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.1);
+  object-fit: contain;
 }
 .btn-scan {
   font-family: var(--font-pixel);
