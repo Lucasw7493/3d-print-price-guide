@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Print Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #080b14;
+    --surface:  #0d1220;
+    --card:     #111827;
+    --border:   #1e2d45;
+    --accent:   #00c8ff;
+    --lime:     #00ff9d;
+    --yellow:   #ffd166;
+    --red:      #ff4d6d;
+    --text:     #e2eaf4;
+    --muted:    #5a7a9a;
+    --input-bg: #0a1525;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,200,255,0.07), transparent),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,200,255,0.015) 40px, rgba(0,200,255,0.015) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,200,255,0.015) 40px, rgba(0,200,255,0.015) 41px);
+  }
+
+  header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,200,255,0.05) 0%, transparent 100%);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), #0050ff);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; box-shadow: 0 0 20px rgba(0,200,255,0.3);
+  }
+  .logo-text h1 { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+  .logo-text p  { font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; letter-spacing: 1px; }
+  .header-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+  .stat-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; text-align: center; }
+  .stat-pill .val { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--lime); display: block; }
+  .stat-pill .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  main { padding: 20px; max-width: 1100px; margin: 0 auto; }
+
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 14px; gap: 10px; }
+  .section-title { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .section-title::before { content: ''; display: block; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+
+  .btn { font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; font-size: 13px; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #0077dd); color: #000; box-shadow: 0 0 16px rgba(0,200,255,0.25); }
+  .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .btn-danger  { background: rgba(255,77,109,0.15); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
+  .btn-danger:hover { background: rgba(255,77,109,0.25); }
+  .btn-ghost   { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+
+  .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; animation: fadeIn 0.3s ease; }
+  .item-card:hover { border-color: rgba(0,200,255,0.3); transform: translateY(-2px); }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  /* Photo */
+  .card-photo { position: relative; width: 100%; height: 220px; background: #0a0f1a; overflow: hidden; }
+  .card-photo img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 0.3s; }
+  .photo-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+  .photo-placeholder:hover { background: rgba(0,200,255,0.04); }
+  .photo-placeholder .cam-icon { font-size: 40px; opacity: 0.35; }
+  .photo-placeholder p { font-size: 11px; font-family: 'Share Tech Mono', monospace; letter-spacing: 2px; }
+  .photo-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; gap: 12px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .card-photo:hover .photo-overlay { opacity: 1; pointer-events: all; }
+  .po-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--accent); border-radius: 8px; padding: 9px 16px; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; color: var(--accent); cursor: pointer; transition: background 0.15s; }
+  .po-btn:hover { background: rgba(0,200,255,0.2); }
+  .po-btn.change { border-color: var(--yellow); color: var(--yellow); }
+  .po-btn.change:hover { background: rgba(255,209,102,0.2); }
+  #photo-input { display: none; }
+
+  /* Lightbox */
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 88vh; object-fit: contain; border-radius: 10px; box-shadow: 0 0 60px rgba(0,200,255,0.12); }
+  .lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-size: 18px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .lightbox-close:hover { background: rgba(255,255,255,0.18); }
+
+  .card-top { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .item-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+  .item-qty  { font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .card-actions { display: flex; gap: 6px; }
+  .card-body { padding: 14px 18px; }
+
+  .cost-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .cost-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .cost-box .val { font-family: 'Share Tech Mono', monospace; font-size: 15px; color: var(--lime); display: block; }
+  .cost-box .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+  .cost-box.highlight .val { color: var(--yellow); }
+
+  .price-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.15); border-radius: 10px; padding: 10px 14px; }
+  .price-label { font-size: 12px; color: var(--muted); }
+  .price-sell  { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: var(--lime); }
+  .margin-badge { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.25); border-radius: 6px; padding: 3px 8px; font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--lime); }
+  .mkt-range { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .mkt-range span { color: var(--accent); }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.2s ease; }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+  .modal-header { padding: 20px 22px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title  { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: var(--accent); }
+  .modal-body   { padding: 20px 22px; }
+  .modal-footer { padding: 14px 22px 20px; display: flex; gap: 10px; justify-content: flex-end; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+  .form-input { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 14px; transition: border-color 0.15s; outline: none; }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,200,255,0.1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-hint { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: 'Share Tech Mono', monospace; }
+
+  .cost-preview { background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 16px; }
+  .cost-preview-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-family: 'Rajdhani', sans-serif; }
+  .preview-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+  .preview-row.total { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; color: var(--lime); font-weight: bold; }
+
+  .qty-input-wrap { display: flex; align-items: center; }
+  .qty-btn { width: 36px; height: 40px; background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+  .qty-btn:first-child { border-radius: 8px 0 0 8px; border-right: none; }
+  .qty-btn:last-child  { border-radius: 0 8px 8px 0; border-left: none; }
+  .qty-btn:hover { background: var(--card); }
+  .qty-num { flex: 1; text-align: center; background: var(--input-bg); border: 1px solid var(--border); padding: 10px; color: var(--lime); font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: bold; outline: none; }
+
+  .scenarios-wrapper { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .scenarios-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scenarios-table th { font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; font-size: 11px; text-transform: uppercase; color: var(--muted); padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .scenarios-table td { padding: 12px 14px; border-bottom: 1px solid rgba(30,45,69,0.5); font-family: 'Share Tech Mono', monospace; }
+  .scenarios-table tr:last-child td { border-bottom: none; }
+  .scenarios-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .scenario-label { font-family: 'Exo 2', sans-serif; font-weight: 600; color: var(--text); }
+  .profit-val  { color: var(--lime); font-weight: bold; }
+  .revenue-val { color: var(--yellow); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); grid-column: 1/-1; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
+  .empty-state p { font-size: 14px; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .header-stats { gap: 10px; }
+    .stat-pill .val { font-size: 15px; }
+    .items-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .scenarios-table { font-size: 11px; }
+    .scenarios-table th, .scenarios-table td { padding: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🖨️</div>
+    <div class="logo-text">
+      <h1>Print Shop</h1>
+      <p>LOCAL SALES TRACKER</p>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-pill"><span class="val" id="stat-items">0</span><span class="lbl">Items</span></div>
+    <div class="stat-pill"><span class="val" id="stat-avg-margin">0%</span><span class="lbl">Avg Margin</span></div>
+    <div class="stat-pill"><span class="val" id="stat-best-profit">$0</span><span class="lbl">Best Profit</span></div>
+  </div>
+</header>
+
+<main>
+  <div class="section-header">
+    <div class="section-title">Product Catalog</div>
+    <button class="btn btn-primary" onclick="openModal()">+ Add Item</button>
+  </div>
+  <div class="items-grid" id="items-grid"></div>
+
+  <div class="section-header" style="margin-top:36px;">
+    <div class="section-title">Monthly Revenue Scenarios</div>
+  </div>
+  <div class="scenarios-wrapper">
+    <table class="scenarios-table">
+      <thead>
+        <tr><th>Scenario</th><th>Units Sold</th><th>Revenue</th><th>Cost</th><th>Net Profit</th></tr>
+      </thead>
+      <tbody id="scenarios-body"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">ADD NEW ITEM</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Item Name</label>
+        <input class="form-input" id="f-name" placeholder="e.g. Ironbite Dragon" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantity per Plate</label>
+        <div class="qty-input-wrap">
+          <button class="qty-btn" onclick="adjustQty(-1)">−</button>
+          <input class="qty-num" id="f-qty" type="number" min="1" value="1" oninput="updatePreview()">
+          <button class="qty-btn" onclick="adjustQty(1)">+</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Filament Cost ($)</label>
+          <input class="form-input" id="f-filament" type="number" step="0.01" placeholder="0.00" oninput="updatePreview()">
+          <div class="form-hint">From slicer "Total cost"</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Elec + Wear ($)</label>
+          <input class="form-input" id="f-elec" type="number" step="0.01" placeholder="0.00" oninput="updatePreview()">
+          <div class="form-hint">Est. electricity + printer wear</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Market Low ($)</label>
+          <input class="form-input" id="f-mkt-low" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Market Mid ($)</label>
+          <input class="form-input" id="f-mkt-mid" type="number" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Market High ($)</label>
+        <input class="form-input" id="f-mkt-high" type="number" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Sell Price ($)</label>
+        <input class="form-input" id="f-sell" type="number" step="0.01" placeholder="0.00" oninput="updatePreview()" style="font-size:18px;color:var(--lime);">
+      </div>
+      <div class="cost-preview">
+        <div class="cost-preview-title">💡 Cost Breakdown Preview</div>
+        <div class="preview-row"><span>Filament cost</span><span id="prev-filament">$0.00</span></div>
+        <div class="preview-row"><span>Elec + wear</span><span id="prev-elec">$0.00</span></div>
+        <div class="preview-row"><span>Total plate cost</span><span id="prev-plate">$0.00</span></div>
+        <div class="preview-row"><span>Cost per item</span><span id="prev-item">$0.00</span></div>
+        <div class="preview-row total"><span>Profit per item</span><span id="prev-profit">$0.00</span></div>
+        <div class="preview-row total" style="color:var(--yellow)"><span>Margin</span><span id="prev-margin">0%</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveItem()">💾 Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden file input — opens camera/gallery -->
+<input type="file" id="photo-input" accept="image/*" style="display:none">
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+  <img id="lightbox-img" src="" alt="Product photo">
+</div>
+
+<script>
+const STORE_KEY = 'printshop_items';
+
+function loadItems()  { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch { return []; } }
+function saveItems(a) { localStorage.setItem(STORE_KEY, JSON.stringify(a)); }
+
+// ── IndexedDB for photos (works on iOS Safari) ────────────────────────────
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (db) { resolve(db); return; }
+    const req = indexedDB.open('printshop', 1);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore('photos', { keyPath: 'id' });
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror   = e => reject(e);
+  });
+}
+
+function savePhoto(id, dataUrl) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction('photos', 'readwrite');
+    tx.objectStore('photos').put({ id: String(id), data: dataUrl });
+    tx.oncomplete = resolve;
+    tx.onerror    = reject;
+  }));
+}
+
+function getPhoto(id) {
+  return openDB().then(db => new Promise((resolve) => {
+    const req = db.transaction('photos', 'readonly')
+                  .objectStore('photos').get(String(id));
+    req.onsuccess = e => resolve(e.target.result ? e.target.result.data : null);
+    req.onerror   = () => resolve(null);
+  }));
+}
+
+function deletePhoto(id) {
+  return openDB().then(db => new Promise((resolve) => {
+    const tx = db.transaction('photos', 'readwrite');
+    tx.objectStore('photos').delete(String(id));
+    tx.oncomplete = resolve;
+    tx.onerror    = resolve;
+  }));
+}
+
+function getAllPhotos() {
+  return openDB().then(db => new Promise((resolve) => {
+    const req = db.transaction('photos', 'readonly')
+                  .objectStore('photos').getAll();
+    req.onsuccess = e => {
+      const map = {};
+      (e.target.result || []).forEach(r => { map[r.id] = r.data; });
+      resolve(map);
+    };
+    req.onerror = () => resolve({});
+  }));
+}
+
+let items  = loadItems();
+let photos = {};
+let editingId     = null;
+let photoTargetId = null;
+
+if (items.length === 0) {
+  items = [
+    { id: 1, name: 'Ironbite Dragon', qty: 5, filament: 3.85, elec: 0.98, mktLow: 12, mktMid: 18, mktHigh: 28, sell: 18 },
+    { id: 2, name: 'Bat Shadow',      qty: 1, filament: 9.21, elec: 3.55, mktLow: 45, mktMid: 65, mktHigh: 85, sell: 65 },
+  ];
+  saveItems(items);
+}
+
+const fmt = v => '$' + (+v).toFixed(2);
+const pct = v => (v * 100).toFixed(1) + '%';
+const uid = () => Date.now();
+
+function calcItem(item) {
+  const plateCost   = item.filament + item.elec;
+  const costPerItem = plateCost / item.qty;
+  const profit      = item.sell - costPerItem;
+  const margin      = item.sell > 0 ? profit / item.sell : 0;
+  return { plateCost, costPerItem, profit, margin };
+}
+
+// ── Photo ─────────────────────────────────────────────────────────────────
+function triggerPhoto(itemId) {
+  photoTargetId = String(itemId);
+  const input = document.getElementById('photo-input');
+  input.value = '';
+  input.click();
+}
+
+function viewPhoto(itemId) {
+  const photo = photos[String(itemId)];
+  if (!photo) return;
+  document.getElementById('lightbox-img').src = photo;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+document.getElementById('photo-input').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+  const targetId = photoTargetId;
+  if (!targetId) return;
+
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.onload = function() {
+    const MAX = 600;
+    let w = img.width, h = img.height;
+    if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    const resized = canvas.toDataURL('image/jpeg', 0.7);
+    URL.revokeObjectURL(objectUrl);
+
+    savePhoto(targetId, resized).then(() => {
+      photos[targetId] = resized;
+      renderGrid();
+    });
+  };
+  img.src = objectUrl;
+});
+
+// ── Render ────────────────────────────────────────────────────────────────
+function render() { renderGrid(); renderScenarios(); renderStats(); }
+
+function renderGrid() {
+  const grid = document.getElementById('items-grid');
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No items yet. Hit <strong>+ Add Item</strong> to get started.</p></div>`;
+    return;
+  }
+  grid.innerHTML = items.map(item => {
+    const { costPerItem, profit, margin } = calcItem(item);
+    const mc = margin > 0.7 ? 'var(--lime)' : margin > 0.4 ? 'var(--yellow)' : 'var(--red)';
+    const photo = photos[String(item.id)];
+    const photoHTML = photo
+      ? `<img src="${photo}" alt="${item.name}">
+         <div class="photo-overlay">
+           <button class="po-btn" onclick="viewPhoto('${item.id}')">🔍 View</button>
+           <button class="po-btn change" onclick="triggerPhoto('${item.id}')">📷 Change</button>
+         </div>`
+      : `<div class="photo-placeholder" onclick="triggerPhoto('${item.id}')">
+           <div class="cam-icon">📷</div><p>TAP TO ADD PHOTO</p>
+         </div>`;
+    return `
+    <div class="item-card">
+      <div class="card-photo">${photoHTML}</div>
+      <div class="card-top">
+        <div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-qty">×${item.qty} per plate</div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editItem(${item.id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">🗑️</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="cost-row">
+          <div class="cost-box"><span class="val">${fmt(item.filament)}</span><div class="lbl">Filament</div></div>
+          <div class="cost-box"><span class="val">${fmt(item.elec)}</span><div class="lbl">Elec+Wear</div></div>
+          <div class="cost-box highlight"><span class="val">${fmt(costPerItem)}</span><div class="lbl">Cost/Item</div></div>
+        </div>
+        <div class="price-row">
+          <div style="width:100%">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div class="price-label">Market Pricing</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="price-label">Profit:</span>
+                <span style="font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--lime)">${fmt(profit)}</span>
+                <span class="margin-badge" style="color:${mc};border-color:${mc}33;background:${mc}11">${pct(margin)}</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+              ${[
+                {label:'Budget',  price: item.mktLow,  color:'#5a7a9a'},
+                {label:'Standard',price: item.mktMid,  color:'#00c8ff'},
+                {label:'Premium', price: item.mktHigh, color:'#ffd166'},
+              ].map(tier => {
+                const isSelected = Math.abs(item.sell - tier.price) < 0.01;
+                return `<div style="background:${isSelected ? tier.color+'22' : 'var(--input-bg)'};border:1px solid ${isSelected ? tier.color : 'var(--border)'};border-radius:8px;padding:7px 6px;text-align:center;transition:all 0.2s">
+                  <div style="font-size:9px;color:${isSelected ? tier.color : 'var(--muted)'};font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:1px;text-transform:uppercase">${tier.label}</div>
+                  <div style="font-family:'Share Tech Mono',monospace;font-size:15px;color:${isSelected ? tier.color : 'var(--text)'};font-weight:bold;margin-top:2px">${fmt(tier.price)}</div>
+                  ${isSelected ? `<div style="font-size:9px;color:${tier.color};margin-top:2px">● YOUR PRICE</div>` : ''}
+                </div>`;
+              }).join('')}
+            </div>
+            <div style="text-align:center;background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.15);border-radius:8px;padding:8px">
+              <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px">YOUR SELL PRICE</div>
+              <div style="font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--lime);line-height:1.1">${fmt(item.sell)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderScenarios() {
+  const tbody = document.getElementById('scenarios-body');
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;font-family:'Share Tech Mono',monospace;">Add items to see projections</td></tr>`;
+    return;
+  }
+  [{ label:'Conservative', m:1 },{ label:'Moderate', m:2 },{ label:'Aggressive', m:4 }].forEach(sc => {
+    let rev=0, cost=0, units=0;
+    const bd = items.map(item => {
+      const { costPerItem } = calcItem(item);
+      const u = item.qty * sc.m;
+      rev   += u * item.sell;
+      cost  += u * costPerItem;
+      units += u;
+      return `${item.name.split(' ')[0]}: ${u}u`;
+    }).join(' · ');
+    tbody.innerHTML += `
+    <tr>
+      <td><div class="scenario-label">${sc.label}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace">${bd}</div></td>
+      <td>${units}</td>
+      <td class="revenue-val">${fmt(rev)}</td>
+      <td style="color:var(--muted)">${fmt(cost)}</td>
+      <td class="profit-val">${fmt(rev-cost)}</td>
+    </tr>`;
+  });
+}
+
+function renderStats() {
+  document.getElementById('stat-items').textContent = items.length;
+  if (!items.length) { document.getElementById('stat-avg-margin').textContent='0%'; document.getElementById('stat-best-profit').textContent='$0'; return; }
+  const margins = items.map(i => calcItem(i).margin);
+  document.getElementById('stat-avg-margin').textContent  = pct(margins.reduce((a,b)=>a+b,0)/margins.length);
+  document.getElementById('stat-best-profit').textContent = fmt(Math.max(...items.map(i=>calcItem(i).profit)));
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openModal(item=null) {
+  editingId = item ? item.id : null;
+  document.getElementById('modal-title').textContent  = item ? 'EDIT ITEM' : 'ADD NEW ITEM';
+  document.getElementById('f-name').value     = item?.name     ?? '';
+  document.getElementById('f-qty').value      = item?.qty      ?? 1;
+  document.getElementById('f-filament').value = item?.filament ?? '';
+  document.getElementById('f-elec').value     = item?.elec     ?? '';
+  document.getElementById('f-mkt-low').value  = item?.mktLow   ?? '';
+  document.getElementById('f-mkt-mid').value  = item?.mktMid   ?? '';
+  document.getElementById('f-mkt-high').value = item?.mktHigh  ?? '';
+  document.getElementById('f-sell').value     = item?.sell     ?? '';
+  document.getElementById('modal').classList.add('open');
+  updatePreview();
+  setTimeout(() => document.getElementById('f-name').focus(), 50);
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); editingId = null; }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+
+function adjustQty(d) {
+  const el = document.getElementById('f-qty');
+  el.value = Math.max(1, (parseInt(el.value)||1) + d);
+  updatePreview();
+}
+
+function updatePreview() {
+  const f = parseFloat(document.getElementById('f-filament').value)||0;
+  const e = parseFloat(document.getElementById('f-elec').value)||0;
+  const q = parseInt(document.getElementById('f-qty').value)||1;
+  const s = parseFloat(document.getElementById('f-sell').value)||0;
+  const plate   = f + e;
+  const perItem = plate / q;
+  const profit  = s - perItem;
+  const margin  = s > 0 ? profit/s : 0;
+  document.getElementById('prev-filament').textContent = fmt(f);
+  document.getElementById('prev-elec').textContent     = fmt(e);
+  document.getElementById('prev-plate').textContent    = fmt(plate);
+  document.getElementById('prev-item').textContent     = fmt(perItem);
+  document.getElementById('prev-profit').textContent   = fmt(profit);
+  document.getElementById('prev-margin').textContent   = pct(margin);
+}
+
+function saveItem() {
+  const name     = document.getElementById('f-name').value.trim();
+  const qty      = parseInt(document.getElementById('f-qty').value)||1;
+  const filament = parseFloat(document.getElementById('f-filament').value)||0;
+  const elec     = parseFloat(document.getElementById('f-elec').value)||0;
+  const mktLow   = parseFloat(document.getElementById('f-mkt-low').value)||0;
+  const mktMid   = parseFloat(document.getElementById('f-mkt-mid').value)||0;
+  const mktHigh  = parseFloat(document.getElementById('f-mkt-high').value)||0;
+  const sell     = parseFloat(document.getElementById('f-sell').value)||0;
+  if (!name) { alert('Please enter an item name.'); return; }
+  if (editingId) {
+    const idx = items.findIndex(i => i.id === editingId);
+    if (idx > -1) items[idx] = { id:editingId, name, qty, filament, elec, mktLow, mktMid, mktHigh, sell };
+  } else {
+    items.push({ id:uid(), name, qty, filament, elec, mktLow, mktMid, mktHigh, sell });
+  }
+  saveItems(items);
+  closeModal();
+  render();
+}
+
+function editItem(itemId)   { const item = items.find(i=>i.id===itemId); if(item) openModal(item); }
+function deleteItem(itemId) {
+  if (!confirm('Delete this item?')) return;
+  items = items.filter(i => i.id !== itemId);
+  delete photos[String(itemId)];
+  deletePhoto(itemId);
+  saveItems(items);
+  render();
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────
+getAllPhotos().then(p => {
+  photos = p;
+  render();
+});
+</script>
+</body>
+</html>
