@@ -539,12 +539,12 @@ var SEED_PRODUCTS = [
     var p         = readForm();
     var price     = window.calcPrice(p);
     var cost      = ((p.filament||0) + (p.elec||0)) / Math.max(p.qty||1, 1);
-    var costFloor = Math.round(cost * 3);
+    var costFloor = Math.round(cost / 0.40);
     var mktTarget = Math.round((p.mktLow||0) * 0.85);
-    var basis     = price === costFloor && costFloor >= mktTarget ? '3\u00d7 cost floor' : 'from market low';
+    var basis     = price === costFloor && costFloor >= mktTarget ? '60% margin floor' : 'from market low';
     document.getElementById('modal-price-val').textContent   = '$' + price;
     document.getElementById('modal-price-basis').textContent =
-      '3\u00d7 cost: $' + costFloor + '  \u00b7  mkt 85%: $' + mktTarget + '  \u00b7  ' + basis;
+      '60% floor: $' + costFloor + '  \u00b7  mkt 85%: $' + mktTarget + '  \u00b7  ' + basis;
   };
 
   window.saveProduct = function() {
@@ -774,10 +774,10 @@ var SEED_PRODUCTS = [
 
   /* ── PRICE FORMULA ──────────────────────────── */
   // No platform fees (saves ~12%) + no shipping = beat online on total price.
-  // Target 85% of market low: undercuts online sellers while covering 3× cost minimum.
+  // 60% profit margin floor (cost / 0.40 = cost × 2.5), also checks 85% of market low.
   window.calcPrice = function(p) {
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
-    var costFloor = cost * 3;
+    var costFloor = cost / 0.40;
     var mktTarget = (p.mktLow || 0) * 0.85;
     return Math.round(Math.max(costFloor, mktTarget));
   };
@@ -803,10 +803,10 @@ var SEED_PRODUCTS = [
   function buildCard(p, realIndex) {
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
     var price     = calcPrice(p);
-    var costFloor = Math.round(cost * 3);
+    var costFloor = Math.round(cost / 0.40);
     var mktTarget = Math.round((p.mktLow || 0) * 0.85);
     var basis     = price === costFloor && costFloor >= mktTarget
-      ? '3&times; cost floor'
+      ? '60% margin floor'
       : 'from market low';
 
     var img = p.image
@@ -887,7 +887,7 @@ var SEED_PRODUCTS = [
       +     '<div class="price-box">'
       +       '<div class="price-label">OUR PRICE</div>'
       +       '<div class="price-value">' + fmtD(price) + '</div>'
-      +       '<div class="price-basis">3&times; cost: ' + fmtD(costFloor) + ' &middot; 85% mkt: ' + fmtD(mktTarget) + ' &middot; ' + basis + '</div>'
+      +       '<div class="price-basis">60% floor: ' + fmtD(costFloor) + ' &middot; 85% mkt: ' + fmtD(mktTarget) + ' &middot; ' + basis + '</div>'
       +     '</div>'
       +     profitRow
       +     adminRow
