@@ -832,21 +832,3 @@ body > * { position: relative; z-index: 1; }
 }
 @keyframes horizonBright { 0%,100%{opacity:.8} 50%{opacity:1} }
 
-/* ── VHS SWEEP LINE ──────────────────────────────── */
-body > .scanlines::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 90px;
-  top: -90px;
-  pointer-events: none;
-  background: linear-gradient(180deg,
-    transparent,
-    rgba(0,255,255,.025) 45%,
-    rgba(0,255,255,.055)  50%,
-    rgba(0,255,255,.025) 55%,
-    transparent
-  );
-  animation: vhsSweep 8s linear infinite;
-}
-@keyframes vhsSweep { from{top:-90px} to{top:100vh} }
