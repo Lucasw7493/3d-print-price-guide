@@ -224,13 +224,6 @@ body > * { position: relative; z-index: 1; }
     drop-shadow(0 0 12px rgba(0,255,255,.9))
     drop-shadow(0 0 30px rgba(255,0,204,.7))
     drop-shadow(0 0 60px rgba(204,0,255,.4));
-  animation: titleFlicker 8s infinite;
-}
-@keyframes titleFlicker {
-  0%,95%,100% { opacity: 1; filter: drop-shadow(0 0 12px rgba(0,255,255,.9)) drop-shadow(0 0 30px rgba(255,0,204,.7)) drop-shadow(0 0 60px rgba(204,0,255,.4)); }
-  96%          { opacity: .85; filter: drop-shadow(0 0 4px rgba(0,255,255,.4));  }
-  97%          { opacity: 1;   filter: drop-shadow(0 0 18px rgba(0,255,255,1))  drop-shadow(0 0 40px rgba(255,0,204,.9)); }
-  98%          { opacity: .9;  filter: drop-shadow(0 0 6px rgba(255,0,204,.5)); }
 }
 
 .brand-tagline {
