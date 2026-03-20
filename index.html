@@ -47,7 +47,6 @@ var PRODUCTS = [
     mktLow:    10.00,
     mktMid:    18.00,
     mktHigh:   28.00,
-    sell:      15.00,
     notes:     "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller."
   },
 
@@ -61,7 +60,6 @@ var PRODUCTS = [
     mktLow:    45.00,
     mktMid:    65.00,
     mktHigh:   90.00,
-    sell:      55.00,
     notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece."
   },
 
@@ -75,7 +73,6 @@ var PRODUCTS = [
     mktLow:     8.00,
     mktMid:    15.00,
     mktHigh:   22.00,
-    sell:      15.00,
     notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy."
   },
 
@@ -89,7 +86,6 @@ var PRODUCTS = [
     mktLow:    15.00,
     mktMid:    25.00,
     mktHigh:   35.00,
-    sell:      22.00,
     notes:     "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item."
   },
 
@@ -103,7 +99,6 @@ var PRODUCTS = [
     mktLow:    12.00,
     mktMid:    20.00,
     mktHigh:   32.00,
-    sell:      18.00,
     notes:     "3-color PLA — Stranger Things Demogorgon, flexi/articulated print-in-place. 9 per plate."
   },
 
@@ -117,7 +112,6 @@ var PRODUCTS = [
     mktLow:    18,
     mktMid:    24,
     mktHigh:   32,
-    sell:      22,
     notes:     "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish"
   }
 
@@ -134,7 +128,6 @@ var PRODUCTS = [
     mktLow:    0.00,
     mktMid:    0.00,
     mktHigh:   0.00,
-    sell:      0.00,
     notes:     ""
   }
 
@@ -205,7 +198,17 @@ var PRODUCTS = [
 (function() {
 
   var $ = function(id) { return document.getElementById(id); };
-  var fmt = function(n) { return '$' + Number(n).toFixed(2); };
+  var fmt  = function(n) { return '$' + Number(n).toFixed(2); };
+  var fmtD = function(n) { return '$' + Math.round(n); };  // whole dollars
+
+  /* ── PRICE FORMULA ──────────────────────────── */
+  // Research-backed: 3× cost floor, competitive at 95% of market low
+  function calcPrice(p) {
+    var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
+    var costFloor = cost * 3;
+    var mktTarget = (p.mktLow || 0) * 0.95;
+    return Math.round(Math.max(costFloor, mktTarget));
+  }
 
   /* ── FILTER + SORT ──────────────────────────── */
   function getProducts() {
@@ -225,7 +228,13 @@ var PRODUCTS = [
 
   /* ── BUILD ONE CARD ─────────────────────────── */
   function buildCard(p) {
-    var cost = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
+    var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
+    var price     = calcPrice(p);
+    var costFloor = Math.round(cost * 3);
+    var mktTarget = Math.round((p.mktLow || 0) * 0.95);
+    var basis     = price === costFloor && costFloor >= mktTarget
+      ? '3&times; cost floor'
+      : 'from market low';
 
     var img = p.image
       ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') +
@@ -265,7 +274,8 @@ var PRODUCTS = [
       +     '</div>'
       +     '<div class="price-box">'
       +       '<div class="price-label">OUR PRICE</div>'
-      +       '<div class="price-value">' + fmt(p.sell) + '</div>'
+      +       '<div class="price-value">' + fmtD(price) + '</div>'
+      +       '<div class="price-basis">3&times; cost: ' + fmtD(costFloor) + ' &middot; mkt low: ' + fmtD(mktTarget) + ' &middot; ' + basis + '</div>'
       +     '</div>'
       +   '</div>'
       + '</div>';

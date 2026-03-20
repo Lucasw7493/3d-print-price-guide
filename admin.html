@@ -320,7 +320,12 @@ input[type="file"]::file-selector-button {
   </div>
   <div class="form-row">
     <div><label>Market High ($)</label><input id="mktHigh" type="number" step="0.01" placeholder="0.00"></div>
-    <div><label>Sell Price ($)</label><input id="sell" type="number" step="0.01" placeholder="0.00"></div>
+  </div>
+
+  <div id="price-preview" style="display:none;margin-bottom:10px;padding:12px;border:1px solid var(--neon-green);border-radius:4px;background:rgba(0,255,136,.05);text-align:center;">
+    <div style="font-size:10px;color:rgba(0,255,136,.6);letter-spacing:2px;margin-bottom:4px;">AUTO PRICE</div>
+    <div id="price-preview-val" style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--neon-green);text-shadow:0 0 10px var(--neon-green);"></div>
+    <div id="price-preview-basis" style="font-size:10px;color:rgba(0,255,136,.5);margin-top:4px;"></div>
   </div>
 
   <label>Notes</label>
@@ -438,7 +443,7 @@ input[type="file"]::file-selector-button {
     setVal('mktLow',  findDollar('(?:market\\s*)?low',  'mkt.?low'));
     setVal('mktMid',  findDollar('(?:market\\s*)?mid',  'mkt.?mid'));
     setVal('mktHigh', findDollar('(?:market\\s*)?high', 'mkt.?high'));
-    setVal('sell',    findDollar('sell', 'our.?price', 'recommend', 'suggested'));
+    updatePricePreview();
 
     // Notes
     var nm = text.match(/notes?[:\s]+["']?([^\n"']+)/i);
@@ -521,7 +526,6 @@ input[type="file"]::file-selector-button {
       + '    mktLow:    ' + d.mktLow      + ',\n'
       + '    mktMid:    ' + d.mktMid      + ',\n'
       + '    mktHigh:   ' + d.mktHigh     + ',\n'
-      + '    sell:      ' + d.sell        + ',\n'
       + '    notes:     "' + esc(d.notes) + '"\n'
       + '  }';
   }
@@ -571,7 +575,6 @@ input[type="file"]::file-selector-button {
       mktLow:    parseFloat($('mktLow').value)     || 0,
       mktMid:    parseFloat($('mktMid').value)     || 0,
       mktHigh:   parseFloat($('mktHigh').value)    || 0,
-      sell:      parseFloat($('sell').value)        || 0,
       notes:     $('notes').value.trim()
     };
 
@@ -614,11 +617,29 @@ input[type="file"]::file-selector-button {
   /* ── CLEAR ─────────────────────────────── */
 
   function clearFormFields() {
-    var ids = ['name','filament','elec','printTime','mktLow','mktMid','mktHigh','sell','notes','claude-paste'];
+    var ids = ['name','filament','elec','printTime','mktLow','mktMid','mktHigh','notes','claude-paste'];
     for (var i = 0; i < ids.length; i++) $(ids[i]).value = '';
     $('qty').value = '1';
     $('image').value = '';
     $('img-preview').style.display = 'none';
+    $('price-preview').style.display = 'none';
+  }
+
+  /* ── LIVE PRICE PREVIEW ─────────────────────── */
+  function updatePricePreview() {
+    var filament  = parseFloat($('filament').value) || 0;
+    var elec      = parseFloat($('elec').value)     || 0;
+    var qty       = parseInt($('qty').value)        || 1;
+    var mktLow    = parseFloat($('mktLow').value)   || 0;
+    if (!mktLow && !filament && !elec) { $('price-preview').style.display = 'none'; return; }
+    var cost      = (filament + elec) / qty;
+    var costFloor = Math.round(cost * 3);
+    var mktTarget = Math.round(mktLow * 0.95);
+    var price     = Math.max(costFloor, mktTarget);
+    var basis     = price === costFloor && costFloor >= mktTarget ? '3× cost floor' : 'from market low';
+    $('price-preview-val').textContent = '$' + price;
+    $('price-preview-basis').textContent = '3× cost: $' + costFloor + '  ·  mkt low: $' + mktTarget + '  ·  ' + basis;
+    $('price-preview').style.display = 'block';
   }
 
   window.clearForm = function() {
@@ -628,6 +649,10 @@ input[type="file"]::file-selector-button {
   };
 
   /* ── INIT ──────────────────────────────── */
+
+  ['filament','elec','qty','mktLow'].forEach(function(id) {
+    $(id).addEventListener('input', updatePricePreview);
+  });
 
   loadSetup();
 

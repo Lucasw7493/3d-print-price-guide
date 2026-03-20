@@ -534,6 +534,14 @@ body > * { position: relative; z-index: 1; }
     0 0 20px rgba(0,255,136,.6);
   margin-bottom: 4px;
 }
+.price-basis {
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  color: rgba(0,255,136,.5);
+  letter-spacing: 1px;
+  margin-top: 8px;
+  line-height: 1.8;
+}
 .price-value {
   font-family: var(--font-display);
   font-size: 42px;
