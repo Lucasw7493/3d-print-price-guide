@@ -149,6 +149,8 @@ var PRODUCTS = [
      You don't need to edit anything below this line.
      ════════════════════════════════════════════════ -->
 
+<div id="scroll-wrap">
+
 <div class="neon-line"></div>
 
 <header class="site-header">
@@ -179,6 +181,8 @@ var PRODUCTS = [
   Internal pricing reference · Staff only<br>
   © 2026
 </footer>
+
+</div><!-- /#scroll-wrap -->
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lb-close" onclick="closeLightbox()">✕</button>
@@ -258,11 +262,11 @@ var PRODUCTS = [
     if (!src) return;
     $('lb-img').src = src;
     $('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    $('scroll-wrap').style.overflow = 'hidden';
   };
   window.closeLightbox = function() {
     $('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
+    $('scroll-wrap').style.overflow = '';
   };
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeLightbox();
