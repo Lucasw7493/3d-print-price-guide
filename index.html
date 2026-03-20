@@ -21,24 +21,6 @@
 <div class="horizon-line"></div>
 
 <!-- ═══════════════════════════════════════════════════
-     ADMIN LOGIN OVERLAY
-     ═══════════════════════════════════════════════════ -->
-<div class="admin-overlay" id="admin-overlay">
-  <div class="admin-login-box">
-    <div class="admin-lock">⚙</div>
-    <div class="admin-login-title">ADMIN ACCESS</div>
-    <input type="password" id="admin-pw" class="admin-pw-input"
-           placeholder="PASSWORD"
-           onkeydown="if(event.key==='Enter')doAdminLogin()">
-    <div class="admin-login-btns">
-      <button class="btn-ghost" onclick="hideAdminOverlay()">CANCEL</button>
-      <button class="btn-primary" onclick="doAdminLogin()">UNLOCK</button>
-    </div>
-    <div class="admin-error" id="admin-error"></div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
      PRODUCT ADD / EDIT MODAL
      ═══════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="product-modal">
@@ -158,15 +140,6 @@
       <button class="modal-x" onclick="closeSettingsModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-divider">CHANGE PASSWORD</div>
-      <div class="form-group full">
-        <label class="form-label">NEW PASSWORD</label>
-        <input type="password" id="s-new-pw" class="form-input" placeholder="Leave blank to keep current">
-      </div>
-      <div class="form-group full">
-        <label class="form-label">CONFIRM PASSWORD</label>
-        <input type="password" id="s-confirm-pw" class="form-input" placeholder="">
-      </div>
       <div class="form-divider">DATA</div>
       <div class="form-group full">
         <button class="btn-danger-outline" onclick="promptResetData()">⚠ RESET TO DEFAULTS</button>
@@ -208,16 +181,14 @@
 
 <div id="scroll-wrap">
 
-<!-- ADMIN TOOLBAR -->
-<div class="admin-bar" id="admin-bar">
-  <div class="admin-badge">⚙ ADMIN MODE</div>
+<!-- TOOLBAR -->
+<div class="admin-bar">
   <div class="admin-bar-actions">
     <button class="admin-btn" onclick="openAddModal()">＋ ADD PRODUCT</button>
     <button class="admin-btn" onclick="openSettingsModal()">⚙ SETTINGS</button>
     <button class="admin-btn" onclick="exportJSON()">↓ EXPORT</button>
     <label class="admin-btn" for="import-file-input" style="cursor:pointer">↑ IMPORT</label>
     <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importJSON(this)">
-    <button class="admin-btn admin-logout" onclick="adminLogout()">LOGOUT</button>
   </div>
 </div>
 
@@ -234,7 +205,6 @@
       <div class="p-led"></div>
     </div>
     <h1 class="brand-name">SMOKYMTN 3D PRINTS</h1>
-    <button class="gear-btn" id="gear-btn" onclick="showAdminOverlay()" title="Admin login">⚙</button>
   </div>
   <p class="brand-tagline">INTERNAL PRICING GUIDE ◆ STAFF USE ONLY</p>
 </header>
@@ -380,10 +350,6 @@ var SEED_PRODUCTS = [
   'use strict';
 
   var SK_PRODUCTS = 'smtn_products';
-  var SK_PASSWORD = 'smtn_pw';
-  var SK_APIKEY   = 'smtn_apikey';
-  var SK_ADMIN    = 'smtn_admin';   // sessionStorage key
-  var DEFAULT_PW  = 'admin';        // change via Settings
 
   var _products  = null;
   var _editIndex = -1;
@@ -406,50 +372,6 @@ var SEED_PRODUCTS = [
   function persist() {
     localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
   }
-
-  function getPassword() { return localStorage.getItem(SK_PASSWORD) || DEFAULT_PW; }
-  function getApiKey()   { return localStorage.getItem(SK_APIKEY)   || ''; }
-
-  /* ══════════════════════════════════════════════
-     ADMIN AUTH
-     ══════════════════════════════════════════════ */
-  function isAdmin() { return sessionStorage.getItem(SK_ADMIN) === '1'; }
-
-  window.showAdminOverlay = function() {
-    if (isAdmin()) return;
-    document.getElementById('admin-overlay').classList.add('open');
-    setTimeout(function() { document.getElementById('admin-pw').focus(); }, 60);
-  };
-
-  window.hideAdminOverlay = function() {
-    document.getElementById('admin-overlay').classList.remove('open');
-    document.getElementById('admin-pw').value = '';
-    document.getElementById('admin-error').textContent = '';
-  };
-
-  window.doAdminLogin = function() {
-    var pw  = document.getElementById('admin-pw').value;
-    var err = document.getElementById('admin-error');
-    if (pw === getPassword()) {
-      sessionStorage.setItem(SK_ADMIN, '1');
-      hideAdminOverlay();
-      document.getElementById('admin-bar').classList.add('open');
-      document.getElementById('gear-btn').style.display = 'none';
-      window.renderCatalog();
-    } else {
-      err.textContent = 'INCORRECT PASSWORD';
-      document.getElementById('admin-pw').value = '';
-      document.getElementById('admin-pw').classList.add('shake');
-      setTimeout(function() { document.getElementById('admin-pw').classList.remove('shake'); }, 400);
-    }
-  };
-
-  window.adminLogout = function() {
-    sessionStorage.removeItem(SK_ADMIN);
-    document.getElementById('admin-bar').classList.remove('open');
-    document.getElementById('gear-btn').style.display = '';
-    window.renderCatalog();
-  };
 
   /* ══════════════════════════════════════════════
      PRODUCT MODAL
@@ -678,9 +600,6 @@ var SEED_PRODUCTS = [
      SETTINGS MODAL
      ══════════════════════════════════════════════ */
   window.openSettingsModal = function() {
-    document.getElementById('s-api-key').value    = getApiKey();
-    document.getElementById('s-new-pw').value     = '';
-    document.getElementById('s-confirm-pw').value = '';
     document.getElementById('settings-modal').classList.add('open');
   };
 
@@ -689,13 +608,6 @@ var SEED_PRODUCTS = [
   };
 
   window.saveSettingsModal = function() {
-    var apiKey = document.getElementById('s-api-key').value.trim();
-    var newPw  = document.getElementById('s-new-pw').value;
-    var confPw = document.getElementById('s-confirm-pw').value;
-    if (newPw && newPw !== confPw) { alert('Passwords do not match.'); return; }
-    if (apiKey) localStorage.setItem(SK_APIKEY, apiKey);
-    else        localStorage.removeItem(SK_APIKEY);
-    if (newPw)  localStorage.setItem(SK_PASSWORD, newPw);
     closeSettingsModal();
   };
 
@@ -762,7 +674,6 @@ var SEED_PRODUCTS = [
   };
 
   /* expose to render engine */
-  window._isAdmin      = isAdmin;
   window._getProducts  = loadProducts;
 
 })();
@@ -853,19 +764,16 @@ var SEED_PRODUCTS = [
       + '<span class="profit-margin">' + margin + '% MARGIN</span>'
       + '</div>';
 
-    /* admin controls: stock +/- and edit button */
-    var adminRow = '';
-    if (window._isAdmin()) {
-      adminRow = '<div class="card-admin-row">'
-        + '<div class="stock-adj">'
-        + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',-1)">&#8722;</button>'
-        + '<span class="stock-adj-val">' + (stockQty != null ? stockQty : '—') + '</span>'
-        + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',1)">&#43;</button>'
-        + '<span class="stock-adj-label">STOCK</span>'
-        + '</div>'
-        + '<button class="card-edit-btn" onclick="openEditModal(' + realIndex + ')">&#9998; EDIT</button>'
-        + '</div>';
-    }
+    /* controls: stock +/- and edit button always visible */
+    var adminRow = '<div class="card-admin-row">'
+      + '<div class="stock-adj">'
+      + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',-1)">&#8722;</button>'
+      + '<span class="stock-adj-val">' + (stockQty != null ? stockQty : '—') + '</span>'
+      + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',1)">&#43;</button>'
+      + '<span class="stock-adj-label">STOCK</span>'
+      + '</div>'
+      + '<button class="card-edit-btn" onclick="openEditModal(' + realIndex + ')">&#9998; EDIT</button>'
+      + '</div>';
 
     return ''
       + '<div class="product">'
@@ -952,10 +860,6 @@ var SEED_PRODUCTS = [
 
   /* ── INIT ───────────────────────────────────── */
   renderCatalog();
-  if (window._isAdmin()) {
-    document.getElementById('admin-bar').classList.add('open');
-    document.getElementById('gear-btn').style.display = 'none';
-  }
   $('search-input').addEventListener('input', renderCatalog);
   $('sort-select').addEventListener('change', renderCatalog);
 

@@ -893,7 +893,7 @@ body > * { position: relative; z-index: 1; }
 
 /* ── ADMIN TOOLBAR ──────────────────────────────── */
 .admin-bar {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -904,7 +904,6 @@ body > * { position: relative; z-index: 1; }
   position: relative;
   z-index: 10;
 }
-.admin-bar.open { display: flex; }
 .admin-badge {
   font-family: var(--font-pixel);
   font-size: 7px;
