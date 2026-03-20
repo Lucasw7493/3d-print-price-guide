@@ -928,10 +928,10 @@ var SEED_PRODUCTS = [
 
   /* ── INIT — load cached data immediately, then refresh from GitHub ── */
   window._getProducts();   /* prime cache from localStorage */
-  renderCatalog();         /* show instantly */
-  fetchFromGitHub(function() { renderCatalog(); }); /* update from GitHub in background */
-  $('search-input').addEventListener('input', renderCatalog);
-  $('sort-select').addEventListener('change', renderCatalog);
+  window.renderCatalog();  /* show instantly */
+  fetchFromGitHub(function() { window.renderCatalog(); }); /* update from GitHub in background */
+  $('search-input').addEventListener('input', function() { window.renderCatalog(); });
+  $('sort-select').addEventListener('change', function() { window.renderCatalog(); });
 
 })();
 </script>
