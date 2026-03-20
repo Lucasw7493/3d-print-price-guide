@@ -316,16 +316,14 @@ function calcItem(item) {
 }
 
 // ── Photo ─────────────────────────────────────────────────────────────────
-function triggerPhoto(itemId, e) {
-  if (e) e.stopPropagation();
+function triggerPhoto(itemId) {
   photoTargetId = String(itemId);
   const input = document.getElementById('photo-input');
   input.value = '';
   input.click();
 }
 
-function viewPhoto(itemId, e) {
-  if (e) e.stopPropagation();
+function viewPhoto(itemId) {
   const photo = photos[String(itemId)];
   if (!photo) return;
   document.getElementById('lightbox-img').src = photo;
@@ -343,9 +341,20 @@ document.getElementById('photo-input').addEventListener('change', function(e) {
   reader.onload = ev => {
     photos[String(photoTargetId)] = ev.target.result;
     savePhotos(photos);
+    photoTargetId = null;
     renderGrid();
   };
   reader.readAsDataURL(file);
+});
+
+// Single event listener on the grid — handles all photo clicks safely
+document.addEventListener('click', function(e) {
+  const addBtn    = e.target.closest('[data-add-photo]');
+  const changeBtn = e.target.closest('[data-change-photo]');
+  const viewBtn   = e.target.closest('[data-view-photo]');
+  if (addBtn)    { e.stopPropagation(); triggerPhoto(addBtn.dataset.addPhoto); }
+  if (changeBtn) { e.stopPropagation(); triggerPhoto(changeBtn.dataset.changePhoto); }
+  if (viewBtn)   { e.stopPropagation(); viewPhoto(viewBtn.dataset.viewPhoto); }
 });
 
 // ── Render ────────────────────────────────────────────────────────────────
@@ -364,10 +373,10 @@ function renderGrid() {
     const photoHTML = photo
       ? `<img src="${photo}" alt="${item.name}">
          <div class="photo-overlay">
-           <button class="po-btn" onclick="viewPhoto('${item.id}', event)">🔍 View</button>
-           <button class="po-btn change" onclick="triggerPhoto('${item.id}', event)">📷 Change</button>
+           <button class="po-btn" data-view-photo="${item.id}">🔍 View</button>
+           <button class="po-btn change" data-change-photo="${item.id}">📷 Change</button>
          </div>`
-      : `<div class="photo-placeholder" onclick="triggerPhoto('${item.id}')"><div class="cam-icon">📷</div><p>TAP TO ADD PHOTO</p></div>`;
+      : `<div class="photo-placeholder" data-add-photo="${item.id}"><div class="cam-icon">📷</div><p>TAP TO ADD PHOTO</p></div>`;
     return `
     <div class="item-card">
       <div class="card-photo">${photoHTML}</div>
