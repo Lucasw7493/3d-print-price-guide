@@ -120,6 +120,10 @@
           <label class="form-label">STOCK QTY</label>
           <input type="number" id="f-stock" class="form-input" min="0" placeholder="0">
         </div>
+        <div class="form-group">
+          <label class="form-label">SET PRICE ($) <span class="form-label-hint">overrides formula</span></label>
+          <input type="number" id="f-price-override" class="form-input" step="0.01" min="0" placeholder="leave blank = auto" oninput="updateModalPrice()">
+        </div>
         <div class="form-group full">
           <label class="form-label">NOTES</label>
           <textarea id="f-notes" class="form-input form-textarea" placeholder="e.g. 4-color PLA — Articulated, print-in-place..."></textarea>
@@ -497,7 +501,7 @@ var SEED_PRODUCTS = [
 
   function clearForm() {
     var ids = ['f-name','f-filament','f-elec','f-time',
-               'f-mkt-low','f-mkt-mid','f-mkt-high','f-notes'];
+               'f-mkt-low','f-mkt-mid','f-mkt-high','f-notes','f-price-override'];
     ids.forEach(function(id) { document.getElementById(id).value = ''; });
     document.getElementById('f-qty').value   = '1';
     document.getElementById('f-stock').value = '0';
@@ -514,8 +518,9 @@ var SEED_PRODUCTS = [
     document.getElementById('f-mkt-low').value   = p.mktLow    != null ? p.mktLow    : '';
     document.getElementById('f-mkt-mid').value   = p.mktMid    != null ? p.mktMid    : '';
     document.getElementById('f-mkt-high').value  = p.mktHigh   != null ? p.mktHigh   : '';
-    document.getElementById('f-stock').value     = p.stock     != null ? p.stock     : '0';
-    document.getElementById('f-notes').value     = p.notes     || '';
+    document.getElementById('f-stock').value         = p.stock         != null ? p.stock         : '0';
+    document.getElementById('f-notes').value         = p.notes         || '';
+    document.getElementById('f-price-override').value = p.priceOverride != null ? p.priceOverride : '';
     setProductImage(p.image || '', p.image ? 'Current photo' : '');
   }
 
@@ -530,8 +535,9 @@ var SEED_PRODUCTS = [
       mktLow:    parseFloat(document.getElementById('f-mkt-low').value)  || 0,
       mktMid:    parseFloat(document.getElementById('f-mkt-mid').value)  || 0,
       mktHigh:   parseFloat(document.getElementById('f-mkt-high').value) || 0,
-      stock:     parseInt(document.getElementById('f-stock').value)      || 0,
-      notes:     document.getElementById('f-notes').value.trim()
+      stock:         parseInt(document.getElementById('f-stock').value)          || 0,
+      notes:         document.getElementById('f-notes').value.trim(),
+      priceOverride: parseFloat(document.getElementById('f-price-override').value) || null
     };
   }
 
@@ -774,9 +780,9 @@ var SEED_PRODUCTS = [
 
   /* ── PRICE FORMULA ──────────────────────────── */
   // No platform fees (saves ~12%) + no shipping = beat online on total price.
-  // Price floor = 2.2× cost (slightly more than double the investment).
-  // Also checks 85% of market low — takes whichever is higher.
+  // If priceOverride is set, use it directly. Otherwise: 2.2× cost or 85% of market low.
   window.calcPrice = function(p) {
+    if (p.priceOverride > 0) return Math.round(p.priceOverride);
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
     var costFloor = cost * 2.2;
     var mktTarget = (p.mktLow || 0) * 0.85;
