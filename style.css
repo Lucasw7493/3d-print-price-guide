@@ -43,6 +43,7 @@ body {
   font-family: var(--font-mono);
   height: 100%;
   overflow: hidden;
+  position: relative;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -60,7 +61,7 @@ body {
 /* Gradient sky — magenta → purple → black */
 body::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
@@ -74,7 +75,7 @@ body::before {
 /* ── SYNTHWAVE GRID FLOOR ───────────────────────── */
 body::after {
   content: '';
-  position: fixed;
+  position: absolute;
   bottom: 0; left: -20%; right: -20%;
   height: 55vh;
   pointer-events: none;
@@ -92,7 +93,7 @@ body::after {
 
 /* Scanlines on top of everything */
 body > .scanlines {
-  position: fixed; inset: 0;
+  position: absolute; inset: 0;
   pointer-events: none; z-index: 999;
   background: repeating-linear-gradient(
     0deg,
@@ -564,33 +565,6 @@ body > * { position: relative; z-index: 1; }
 }
 .empty-catalog .ico { font-size: 56px; margin-bottom: 16px; opacity: .4; }
 
-/* ── MOBILE GPU COMPOSITING FIX ─────────────────── */
-/* Forces fixed bg elements onto their own GPU layers,
-   preventing repaint flicker/flash when scrolling on mobile */
-body::before {
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
-}
-body::after {
-  transform: perspective(400px) rotateX(70deg) translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
-}
-.scanlines,
-.sf-far, .sf-mid, .sf-near,
-.retro-sun,
-.horizon-line {
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
-}
-
 /* ── SCROLLBAR ──────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -622,7 +596,7 @@ body::after {
 
 /* ── STAR FIELDS ─────────────────────────────────── */
 .sf-far, .sf-mid, .sf-near {
-  position: fixed;
+  position: absolute;
   top: 0; left: 0; right: 0; bottom: 42%;
   overflow: hidden;
   pointer-events: none;
@@ -650,7 +624,7 @@ body::after {
 
 /* ── RETRO SYNTHWAVE SUN ─────────────────────────── */
 .retro-sun {
-  position: fixed;
+  position: absolute;
   bottom: 42%;
   left: 50%;
   transform: translateX(-50%);
@@ -718,7 +692,7 @@ body::after {
 
 /* ── HORIZON GLOW LINE ───────────────────────────── */
 .horizon-line {
-  position: fixed;
+  position: absolute;
   bottom: 42%;
   left: 0; right: 0;
   height: 2px;
