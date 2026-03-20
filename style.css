@@ -590,6 +590,54 @@ body > * { position: relative; z-index: 1; }
   .brand-name { letter-spacing: 0; }
 }
 
+/* ── MOBILE: OLD SCHOOL ARCADE CABINET ───────────── */
+/* Strip expensive layers, replace with CRT vignette  */
+@media (max-width: 768px) {
+
+  /* Kill the heavy background layers */
+  .sf-mid, .sf-near,
+  .retro-sun, .horizon-line { display: none; }
+
+  /* Remove grid floor */
+  body::after { display: none; }
+
+  /* Single faint star field — full screen */
+  .sf-far { bottom: 0; opacity: 0.25; }
+
+  /* Simple dark sky gradient */
+  body::before {
+    background: linear-gradient(180deg, #160028 0%, #06000f 55%);
+  }
+
+  /* CRT scanlines + edge vignette — one cheap element */
+  body > .scanlines {
+    background:
+      radial-gradient(ellipse 100% 100% at 50% 50%,
+        transparent 48%, rgba(0,0,0,.82) 100%),
+      repeating-linear-gradient(
+        0deg,
+        transparent        0px,
+        transparent        2px,
+        rgba(0,0,0,.28)    2px,
+        rgba(0,0,0,.28)    4px
+      );
+  }
+
+  /* Simpler card glow — no huge blur radii */
+  .product {
+    box-shadow: 0 0 8px rgba(255,0,204,.35);
+  }
+  .product:hover {
+    box-shadow: 0 0 14px var(--neon-cyan), 0 0 28px rgba(0,255,255,.18);
+  }
+  .price-box {
+    box-shadow: 0 0 14px rgba(0,255,136,.25);
+  }
+  .brand-icon {
+    box-shadow: 0 0 8px var(--neon-pink);
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════
    STATIC BG — STAR FIELD · RETRO SUN · HORIZON
    ═══════════════════════════════════════════════════════════ */
