@@ -6,7 +6,11 @@
   <title>SMOKYMTN 3D PRINTS</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <script>
+    var d = new Date();
+    var v = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+    document.write('<link rel="stylesheet" href="style.css?v=' + v + '">');
+  </script>
 </head>
 <body>
 <div class="scanlines"></div>
