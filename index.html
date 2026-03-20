@@ -26,12 +26,6 @@
 
    This is the ONLY section you need to edit.
 
-   CATEGORIES — use one of these (or make your own):
-     "Flexi"       — articulated / print-in-place
-     "Figurines"   — statues and character figures
-     "Accessories" — keychains, wearables
-     "Fidget"      — sensory / fidget items
-
    HOW TO ADD A NEW PRODUCT:
    1. Copy the template at the bottom of this list
    2. Paste it before the closing ];
@@ -45,7 +39,6 @@ var PRODUCTS = [
 
   {
     name:      "Ironbite Dragon",
-    category:  "Flexi",
     image:     "ironbite.jpg",
     filament:  0.77,
     elec:      0.20,
@@ -60,7 +53,6 @@ var PRODUCTS = [
 
   {
     name:      "Bat Shadow",
-    category:  "Figurines",
     image:     "batshadow.webp",
     filament:  9.21,
     elec:      3.50,
@@ -75,7 +67,6 @@ var PRODUCTS = [
 
   {
     name:      "Custom Flexi Keychain",
-    category:  "Accessories",
     image:     "flexi-keychain.jpg",
     filament:  1.88,
     elec:      1.00,
@@ -90,7 +81,6 @@ var PRODUCTS = [
 
   {
     name:      "Spiky Sensory Twisty Sphere",
-    category:  "Fidget",
     image:     "twisty-sphere.jpg",
     filament:  3.85,
     elec:      0.85,
@@ -105,7 +95,6 @@ var PRODUCTS = [
 
   {
     name:      "Demogorgon Flexi",
-    category:  "Flexi",
     image:     "demogorgon.jpg",
     filament:  0.28,
     elec:      0.15,
@@ -120,7 +109,6 @@ var PRODUCTS = [
 
   {
     name:      "Flexi Manta Ray",
-    category:  "Flexi",
     image:     "flexi-manta-ray.jpg",
     filament:  2.06,
     elec:      3.25,
@@ -138,7 +126,6 @@ var PRODUCTS = [
 
   ,{
     name:      "",
-    category:  "Flexi",
     image:     "images/",
     filament:  0.00,
     elec:      0.00,
@@ -186,8 +173,7 @@ var PRODUCTS = [
 </div>
 
 <div class="filter-bar">
-  <input type="text" id="search-input" class="search-input" placeholder="SEARCH PRODUCTS...">
-  <div class="cat-filters" id="cat-filters"></div>
+  <input type="text" id="search-input" class="search-input" placeholder="SEARCH BY NAME...">
   <select id="sort-select" class="sort-select">
     <option value="newest">&#11015; NEWEST FIRST</option>
     <option value="oldest">&#11014; OLDEST FIRST</option>
@@ -221,66 +207,20 @@ var PRODUCTS = [
   var $ = function(id) { return document.getElementById(id); };
   var fmt = function(n) { return '$' + Number(n).toFixed(2); };
 
-  /* ── CATEGORY COLORS ────────────────────────── */
-  var catColors = {
-    'Flexi':       { fg: '#00ffff', bg: 'rgba(0,255,255,.08)',   bd: 'rgba(0,255,255,.45)'   },
-    'Figurines':   { fg: '#ff00cc', bg: 'rgba(255,0,204,.08)',   bd: 'rgba(255,0,204,.45)'   },
-    'Accessories': { fg: '#ffe600', bg: 'rgba(255,230,0,.08)',   bd: 'rgba(255,230,0,.45)'   },
-    'Fidget':      { fg: '#00ff88', bg: 'rgba(0,255,136,.08)',   bd: 'rgba(0,255,136,.45)'   }
-  };
-  function catStyle(cat) {
-    var c = catColors[cat] || { fg: '#cc00ff', bg: 'rgba(204,0,255,.08)', bd: 'rgba(204,0,255,.45)' };
-    return 'color:' + c.fg + ';background:' + c.bg + ';border-color:' + c.bd +
-           ';text-shadow:0 0 6px ' + c.fg + ';';
-  }
-
-  /* ── STATE ──────────────────────────────────── */
-  var activeCategory = 'all';
-
-  /* ── CATEGORY BUTTONS ───────────────────────── */
-  function buildCategories() {
-    var cats = ['all'];
-    PRODUCTS.forEach(function(p) {
-      if (p.category && cats.indexOf(p.category) === -1) cats.push(p.category);
-    });
-
-    $('cat-filters').innerHTML = cats.map(function(c) {
-      var label = c === 'all' ? 'ALL' : c.toUpperCase();
-      var active = c === activeCategory ? ' active' : '';
-      return '<button class="cat-btn' + active + '" data-cat="' + c + '">' + label + '</button>';
-    }).join('');
-
-    $('cat-filters').onclick = function(e) {
-      var btn = e.target.closest('.cat-btn');
-      if (!btn) return;
-      activeCategory = btn.dataset.cat;
-      document.querySelectorAll('.cat-btn').forEach(function(b) {
-        b.classList.toggle('active', b === btn);
-      });
-      renderCatalog();
-    };
-  }
-
   /* ── FILTER + SORT ──────────────────────────── */
   function getProducts() {
     var query = ($('search-input').value || '').trim().toLowerCase();
     var sort  = $('sort-select').value;
 
     var result = PRODUCTS.filter(function(p) {
-      var matchCat    = activeCategory === 'all' || p.category === activeCategory;
-      var matchSearch = !query ||
-        p.name.toLowerCase().indexOf(query) !== -1 ||
-        (p.notes     || '').toLowerCase().indexOf(query) !== -1 ||
-        (p.category  || '').toLowerCase().indexOf(query) !== -1;
-      return matchCat && matchSearch;
+      return !query || p.name.toLowerCase().indexOf(query) !== -1;
     });
 
-    var out = result.slice();
-    if (sort === 'oldest')     out.reverse();
-    if (sort === 'price-asc')  out.sort(function(a,b){ return a.sell - b.sell; });
-    if (sort === 'price-desc') out.sort(function(a,b){ return b.sell - a.sell; });
-    if (sort === 'name')       out.sort(function(a,b){ return a.name.localeCompare(b.name); });
-    return out;
+    if (sort === 'oldest')     result = result.slice().reverse();
+    if (sort === 'price-asc')  result = result.slice().sort(function(a,b){ return a.sell - b.sell; });
+    if (sort === 'price-desc') result = result.slice().sort(function(a,b){ return b.sell - a.sell; });
+    if (sort === 'name')       result = result.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+    return result;
   }
 
   /* ── BUILD ONE CARD ─────────────────────────── */
@@ -292,10 +232,6 @@ var PRODUCTS = [
         '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
         '<div class="no-photo" style="display:none">📷</div>'
       : '<div class="no-photo">📷</div>';
-
-    var badge = p.category
-      ? '<span class="cat-badge" style="' + catStyle(p.category) + '">' + p.category + '</span>'
-      : '';
 
     var notes = p.notes
       ? '<div class="product-notes">' + p.notes + '</div>'
@@ -313,7 +249,6 @@ var PRODUCTS = [
       +   '</div>'
       +   '<div class="product-body">'
       +     '<h2 class="product-name">' + p.name + '</h2>'
-      +     badge
       +     notes
       +     time
       +     '<div class="data-label">Our Investment</div>'
@@ -350,7 +285,6 @@ var PRODUCTS = [
       grid.innerHTML = '<div class="empty-catalog"><div class="ico">🔍</div><p>No products match your search.</p></div>';
       return;
     }
-
     grid.innerHTML = products.map(buildCard).join('');
   }
 
@@ -370,7 +304,6 @@ var PRODUCTS = [
   });
 
   /* ── INIT ───────────────────────────────────── */
-  buildCategories();
   renderCatalog();
   $('search-input').addEventListener('input', renderCatalog);
   $('sort-select').addEventListener('change', renderCatalog);
