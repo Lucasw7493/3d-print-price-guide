@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Ironbite Dragon",
+    "image": "ironbite.jpg",
+    "filament": 0.77,
+    "elec": 0.20,
+    "qty": 5,
+    "printTime": 9.3,
+    "mktLow": 10.00,
+    "mktMid": 18.00,
+    "mktHigh": 28.00,
+    "notes": "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller.",
+    "stock": 8
+  },
+  {
+    "name": "Bat Shadow",
+    "image": "batshadow.webp",
+    "filament": 9.21,
+    "elec": 3.50,
+    "qty": 1,
+    "printTime": 27.6,
+    "mktLow": 45.00,
+    "mktMid": 65.00,
+    "mktHigh": 90.00,
+    "notes": "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece.",
+    "stock": 1
+  },
+  {
+    "name": "Custom Flexi Keychain",
+    "image": "flexi-keychain.jpg",
+    "filament": 1.88,
+    "elec": 1.00,
+    "qty": 1,
+    "printTime": 14.3,
+    "mktLow": 8.00,
+    "mktMid": 15.00,
+    "mktHigh": 22.00,
+    "notes": "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy.",
+    "stock": 5
+  },
+  {
+    "name": "Spiky Sensory Twisty Sphere",
+    "image": "twisty-sphere.jpg",
+    "filament": 3.85,
+    "elec": 0.85,
+    "qty": 1,
+    "printTime": 8.6,
+    "mktLow": 15.00,
+    "mktMid": 25.00,
+    "mktHigh": 35.00,
+    "notes": "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item.",
+    "stock": 3
+  },
+  {
+    "name": "Demogorgon Flexi",
+    "image": "demogorgon.jpg",
+    "filament": 0.28,
+    "elec": 0.15,
+    "qty": 9,
+    "printTime": 11.8,
+    "mktLow": 12.00,
+    "mktMid": 20.00,
+    "mktHigh": 32.00,
+    "notes": "3-color PLA — Stranger Things Demogorgon, flexi/articulated print-in-place. 9 per plate.",
+    "stock": 12
+  },
+  {
+    "name": "Flexi Manta Ray",
+    "image": "flexi-manta-ray.jpg",
+    "filament": 2.06,
+    "elec": 3.25,
+    "qty": 2,
+    "printTime": 13.1,
+    "mktLow": 18,
+    "mktMid": 24,
+    "mktHigh": 32,
+    "notes": "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish",
+    "stock": 4
+  }
+]

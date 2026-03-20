@@ -140,6 +140,16 @@
       <button class="modal-x" onclick="closeSettingsModal()">✕</button>
     </div>
     <div class="modal-body">
+      <div class="form-divider">SYNC — ALL DEVICES</div>
+      <div class="form-group full">
+        <label class="form-label">GITHUB TOKEN <span class="form-label-hint">set once to sync across all devices</span></label>
+        <input type="password" id="s-gh-token" class="form-input" placeholder="github_pat_...">
+        <div class="form-hint">
+          Get a free token: GitHub → Settings → Developer Settings → Personal access tokens → Fine-grained tokens → New token → select this repo → Contents: Read &amp; Write.<br>
+          Paste it here on the device you use to make edits. Staff devices only need to open the page — no token needed to view.
+        </div>
+        <div class="gh-token-status" id="gh-token-status"></div>
+      </div>
       <div class="form-divider">DATA</div>
       <div class="form-group full">
         <button class="btn-danger-outline" onclick="promptResetData()">⚠ RESET TO DEFAULTS</button>
@@ -207,6 +217,7 @@
     <h1 class="brand-name">SMOKYMTN 3D PRINTS</h1>
   </div>
   <p class="brand-tagline">INTERNAL PRICING GUIDE ◆ STAFF USE ONLY</p>
+  <div class="sync-status" id="sync-status"></div>
 </header>
 
 <div class="catalog-meta">
@@ -349,28 +360,76 @@ var SEED_PRODUCTS = [
 (function() {
   'use strict';
 
-  var SK_PRODUCTS = 'smtn_products';
+  var SK_PRODUCTS  = 'smtn_products';
+  var SK_GH_TOKEN  = 'smtn_gh_token';
+  var GH_REPO      = 'Lucasw7493/3d-print-price-guide';
+  var GH_FILE      = 'products.json';
+  var GH_BRANCH    = 'main';
 
   var _products  = null;
   var _editIndex = -1;
   var _confirmCb = null;
 
+  function getToken() { return localStorage.getItem(SK_GH_TOKEN) || ''; }
+
   /* ══════════════════════════════════════════════
-     STORAGE
+     STORAGE — loads from GitHub, falls back to localStorage
      ══════════════════════════════════════════════ */
   function loadProducts() {
     if (_products) return _products;
     var raw = localStorage.getItem(SK_PRODUCTS);
-    if (raw) {
-      try { _products = JSON.parse(raw); return _products; } catch(e) {}
-    }
-    _products = SEED_PRODUCTS.map(function(p) { return Object.assign({}, p); });
-    localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
+    if (raw) { try { _products = JSON.parse(raw); } catch(e) {} }
+    if (!_products) _products = SEED_PRODUCTS.map(function(p){ return Object.assign({},p); });
     return _products;
   }
 
+  /* fetch fresh from GitHub on every page load */
+  function fetchFromGitHub(cb) {
+    var url = 'https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + GH_FILE + '?t=' + Date.now();
+    fetch(url)
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(data){
+        if (Array.isArray(data)) {
+          _products = data;
+          localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
+        }
+        cb();
+      })
+      .catch(function(){ cb(); }); /* fall back silently */
+  }
+
+  /* save locally + push to GitHub */
   function persist() {
     localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
+    var token = getToken();
+    if (!token) return;
+    var body = JSON.stringify(_products, null, 2);
+    /* GitHub API needs base64 content + current file SHA */
+    var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
+    var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+    fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
+      .then(function(r){ return r.json(); })
+      .then(function(meta){
+        var b64 = btoa(unescape(encodeURIComponent(body)));
+        return fetch(apiUrl, {
+          method: 'PUT', headers: headers,
+          body: JSON.stringify({ message: 'Update products', content: b64, sha: meta.sha, branch: GH_BRANCH })
+        });
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if (res.commit) showSyncStatus('✅ Saved & synced to all devices', 'ok');
+        else showSyncStatus('⚠ Save local only — check GitHub token in Settings', 'warn');
+      })
+      .catch(function(){ showSyncStatus('⚠ Saved locally — GitHub sync failed', 'warn'); });
+  }
+
+  function showSyncStatus(msg, type) {
+    var el = document.getElementById('sync-status');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'sync-status sync-' + type;
+    setTimeout(function(){ el.textContent = ''; el.className = 'sync-status'; }, 4000);
   }
 
   /* ══════════════════════════════════════════════
@@ -600,6 +659,11 @@ var SEED_PRODUCTS = [
      SETTINGS MODAL
      ══════════════════════════════════════════════ */
   window.openSettingsModal = function() {
+    var t = getToken();
+    document.getElementById('s-gh-token').value = t;
+    var st = document.getElementById('gh-token-status');
+    st.textContent = t ? '● Token saved on this device' : '○ No token — edits save locally only';
+    st.className   = 'gh-token-status ' + (t ? 'ok' : 'warn');
     document.getElementById('settings-modal').classList.add('open');
   };
 
@@ -608,7 +672,11 @@ var SEED_PRODUCTS = [
   };
 
   window.saveSettingsModal = function() {
+    var t = document.getElementById('s-gh-token').value.trim();
+    if (t) localStorage.setItem(SK_GH_TOKEN, t);
+    else   localStorage.removeItem(SK_GH_TOKEN);
     closeSettingsModal();
+    showSyncStatus(t ? '✅ Token saved — edits will now sync to all devices' : 'Token cleared', t ? 'ok' : 'warn');
   };
 
   window.promptResetData = function() {
@@ -858,8 +926,10 @@ var SEED_PRODUCTS = [
     }
   });
 
-  /* ── INIT ───────────────────────────────────── */
-  renderCatalog();
+  /* ── INIT — load cached data immediately, then refresh from GitHub ── */
+  window._getProducts();   /* prime cache from localStorage */
+  renderCatalog();         /* show instantly */
+  fetchFromGitHub(function() { renderCatalog(); }); /* update from GitHub in background */
   $('search-input').addEventListener('input', renderCatalog);
   $('sort-select').addEventListener('change', renderCatalog);
 

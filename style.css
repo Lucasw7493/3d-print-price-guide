@@ -236,8 +236,20 @@ body > * { position: relative; z-index: 1; }
     0 0 8px  var(--neon-pink),
     0 0 20px rgba(255,0,204,.6),
     0 0 40px rgba(255,0,204,.3);
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
+.sync-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  min-height: 16px;
+  margin-bottom: 8px;
+  transition: opacity .3s;
+}
+.sync-status.sync-ok   { color: var(--neon-green); }
+.sync-status.sync-warn { color: var(--neon-orange); }
+.gh-token-status { font-family: var(--font-mono); font-size: 11px; margin-top: 6px; }
+.gh-token-status.ok   { color: var(--neon-green); }
+.gh-token-status.warn { color: var(--neon-orange); }
 
 .brand-contact {
   font-size: 13px;
