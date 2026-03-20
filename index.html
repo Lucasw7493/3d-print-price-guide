@@ -318,7 +318,7 @@ function calcItem(item) {
 // ── Photo ─────────────────────────────────────────────────────────────────
 function triggerPhoto(itemId, e) {
   if (e) e.stopPropagation();
-  photoTargetId = itemId;
+  photoTargetId = String(itemId);
   const input = document.getElementById('photo-input');
   input.value = '';
   input.click();
@@ -326,7 +326,7 @@ function triggerPhoto(itemId, e) {
 
 function viewPhoto(itemId, e) {
   if (e) e.stopPropagation();
-  const photo = photos[itemId];
+  const photo = photos[String(itemId)];
   if (!photo) return;
   document.getElementById('lightbox-img').src = photo;
   document.getElementById('lightbox').classList.add('open');
@@ -341,7 +341,7 @@ document.getElementById('photo-input').addEventListener('change', function(e) {
   if (!file || !photoTargetId) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    photos[photoTargetId] = ev.target.result;
+    photos[String(photoTargetId)] = ev.target.result;
     savePhotos(photos);
     renderGrid();
   };
@@ -360,14 +360,14 @@ function renderGrid() {
   grid.innerHTML = items.map(item => {
     const { costPerItem, profit, margin } = calcItem(item);
     const mc = margin > 0.7 ? 'var(--lime)' : margin > 0.4 ? 'var(--yellow)' : 'var(--red)';
-    const photo = photos[item.id];
+    const photo = photos[String(item.id)];
     const photoHTML = photo
       ? `<img src="${photo}" alt="${item.name}">
          <div class="photo-overlay">
-           <button class="po-btn" onclick="viewPhoto(${item.id}, event)">🔍 View</button>
-           <button class="po-btn change" onclick="triggerPhoto(${item.id}, event)">📷 Change</button>
+           <button class="po-btn" onclick="viewPhoto('${item.id}', event)">🔍 View</button>
+           <button class="po-btn change" onclick="triggerPhoto('${item.id}', event)">📷 Change</button>
          </div>`
-      : `<div class="photo-placeholder" onclick="triggerPhoto(${item.id})"><div class="cam-icon">📷</div><p>TAP TO ADD PHOTO</p></div>`;
+      : `<div class="photo-placeholder" onclick="triggerPhoto('${item.id}')"><div class="cam-icon">📷</div><p>TAP TO ADD PHOTO</p></div>`;
     return `
     <div class="item-card">
       <div class="card-photo">${photoHTML}</div>
@@ -505,7 +505,7 @@ function editItem(itemId)   { const item = items.find(i=>i.id===itemId); if(item
 function deleteItem(itemId) {
   if (!confirm('Delete this item?')) return;
   items = items.filter(i => i.id !== itemId);
-  delete photos[itemId];
+  delete photos[String(itemId)];
   saveItems(items); savePhotos(photos);
   render();
 }
