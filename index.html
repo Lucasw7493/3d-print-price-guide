@@ -56,7 +56,7 @@
         </button>
         <input type="file" id="slicer-file" accept="image/*" style="display:none"
                onchange="handleSlicerFile(this)">
-        <div class="scan-hint">Extracts weight (g), print time &amp; qty · select your spool below to calculate exact cost</div>
+        <div class="scan-hint">Scans filament cost, print time &amp; qty directly from the slicer screenshot</div>
         <div class="scan-status" id="scan-status"></div>
       </div>
 
@@ -70,17 +70,6 @@
         <div class="form-group full">
           <label class="form-label">IMAGE (filename or URL)</label>
           <input type="text" id="f-image" class="form-input" placeholder="e.g. ironbite.jpg">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">CALCULATE FILAMENT COST FROM WEIGHT</label>
-          <div class="filament-calc-row">
-            <input type="number" id="f-weight" class="form-input" step="0.1" min="0" placeholder="grams used">
-            <select id="f-filament-select" class="form-input fil-select">
-              <option value="">— pick spool from library —</option>
-            </select>
-            <button class="btn-ghost btn-calc" type="button" onclick="calcFilamentFromWeight()">CALC →</button>
-          </div>
-          <div class="form-hint" id="fil-calc-hint"></div>
         </div>
         <div class="form-group">
           <label class="form-label">FILAMENT COST ($)</label>
@@ -201,69 +190,6 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     FILAMENT LIBRARY MODAL
-     ═══════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="filaments-modal">
-  <div class="modal-backdrop" onclick="closeFilamentsModal()"></div>
-  <div class="modal-box">
-    <div class="modal-header">
-      <span>🧵 FILAMENT LIBRARY</span>
-      <button class="modal-x" onclick="closeFilamentsModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="fil-lib-top">
-        <div class="form-hint" style="flex:1">Track your spools so filament cost is calculated from actual weight × your purchase price — not the slicer's estimate.</div>
-        <button class="admin-btn" onclick="openFilamentForm(-1)">＋ ADD SPOOL</button>
-      </div>
-
-      <!-- Add / Edit form (hidden until needed) -->
-      <div id="fil-form" class="fil-form" style="display:none">
-        <div class="form-divider" id="fil-form-title">ADD SPOOL</div>
-        <div class="form-grid">
-          <div class="form-group full">
-            <label class="form-label">SPOOL NAME</label>
-            <input type="text" id="fl-name" class="form-input" placeholder="e.g. SUNLU PLA+ Silk Multicolor 1kg">
-          </div>
-          <div class="form-group">
-            <label class="form-label">BRAND</label>
-            <input type="text" id="fl-brand" class="form-input" placeholder="SUNLU">
-          </div>
-          <div class="form-group">
-            <label class="form-label">TYPE</label>
-            <input type="text" id="fl-type" class="form-input" placeholder="PLA, PLA+, Silk, PETG...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">SPOOL WEIGHT (g)</label>
-            <input type="number" id="fl-grams" class="form-input" placeholder="1000" value="1000" min="1" oninput="updateFilCpg()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">PRICE PAID ($)</label>
-            <input type="number" id="fl-price" class="form-input" step="0.01" placeholder="18.99" oninput="updateFilCpg()">
-          </div>
-          <div class="form-group full">
-            <label class="form-label">AMAZON / REORDER LINK (optional)</label>
-            <input type="url" id="fl-link" class="form-input" placeholder="https://amazon.com/...">
-          </div>
-        </div>
-        <div class="fil-cpg-preview" id="fil-cpg-preview"></div>
-        <div class="fil-form-btns">
-          <button class="btn-danger" id="fil-delete-btn" onclick="deleteFilament()" style="display:none">⌫ DELETE</button>
-          <div class="modal-footer-right">
-            <button class="btn-ghost" onclick="cancelFilamentForm()">CANCEL</button>
-            <button class="btn-primary" onclick="saveFilament()">SAVE SPOOL</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="fil-list" class="fil-list"></div>
-    </div>
-    <div class="modal-footer">
-      <div class="form-hint">Prices dated — tap a spool's Amazon link to check current cost before reordering.</div>
-      <button class="btn-ghost" onclick="closeFilamentsModal()">CLOSE</button>
-    </div>
-  </div>
-</div>
 
 <div id="scroll-wrap">
 
@@ -272,7 +198,6 @@
   <div class="admin-badge">⚙ ADMIN MODE</div>
   <div class="admin-bar-actions">
     <button class="admin-btn" onclick="openAddModal()">＋ ADD PRODUCT</button>
-    <button class="admin-btn" onclick="openFilamentsModal()">🧵 FILAMENTS</button>
     <button class="admin-btn" onclick="openSettingsModal()">⚙ SETTINGS</button>
     <button class="admin-btn" onclick="exportJSON()">↓ EXPORT</button>
     <label class="admin-btn" for="import-file-input" style="cursor:pointer">↑ IMPORT</label>
@@ -519,7 +444,6 @@ var SEED_PRODUCTS = [
     document.getElementById('modal-title').textContent = 'ADD PRODUCT';
     document.getElementById('modal-delete-btn').style.display = 'none';
     clearForm();
-    populateFilamentSelect();
     document.getElementById('scan-status').textContent = '';
     document.getElementById('scan-status').className = 'scan-status';
     document.getElementById('product-modal').classList.add('open');
@@ -532,7 +456,6 @@ var SEED_PRODUCTS = [
     document.getElementById('modal-title').textContent = 'EDIT PRODUCT';
     document.getElementById('modal-delete-btn').style.display = '';
     fillForm(p);
-    populateFilamentSelect();
     updateModalPrice();
     document.getElementById('scan-status').textContent = '';
     document.getElementById('scan-status').className = 'scan-status';
@@ -544,12 +467,11 @@ var SEED_PRODUCTS = [
   };
 
   function clearForm() {
-    var ids = ['f-name','f-image','f-filament','f-elec','f-time','f-weight',
+    var ids = ['f-name','f-image','f-filament','f-elec','f-time',
                'f-mkt-low','f-mkt-mid','f-mkt-high','f-notes'];
     ids.forEach(function(id) { document.getElementById(id).value = ''; });
     document.getElementById('f-qty').value   = '1';
     document.getElementById('f-stock').value = '0';
-    document.getElementById('fil-calc-hint').textContent = '';
     updateModalPrice();
   }
 
@@ -680,8 +602,7 @@ var SEED_PRODUCTS = [
       '{\n' +
       '  "filamentCostTotal": <total filament material cost in USD as a number, or null>,\n' +
       '  "printTimeHours": <estimated print time in hours as a decimal, or null>,\n' +
-      '  "qtyPerPlate": <number of items/models on the build plate as an integer, default 1>,\n' +
-      '  "filamentWeightGrams": <total filament weight in grams as a number, or null>\n' +
+      '  "qtyPerPlate": <number of items/models on the build plate as an integer, default 1>\n' +
       '}';
 
     fetch('https://api.anthropic.com/v1/messages', {
@@ -719,23 +640,11 @@ var SEED_PRODUCTS = [
   }
 
   function applySlicerData(d) {
-    /* Fill weight (most accurate slicer data) — user selects spool to calc cost */
-    if (d.filamentWeightGrams != null) {
-      document.getElementById('f-weight').value = (+d.filamentWeightGrams).toFixed(1);
-    }
-    /* Fallback: fill cost directly if no weight */
-    if (d.filamentWeightGrams == null && d.filamentCostTotal != null) {
+    if (d.filamentCostTotal != null) {
       document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
     }
     if (d.printTimeHours != null) document.getElementById('f-time').value = (+d.printTimeHours).toFixed(1);
     if (d.qtyPerPlate    != null) document.getElementById('f-qty').value  = d.qtyPerPlate;
-
-    /* Remind user to pick filament spool */
-    var wt = parseFloat(document.getElementById('f-weight').value);
-    var hint = document.getElementById('fil-calc-hint');
-    if (wt > 0) {
-      hint.textContent = '\u2197 Weight scanned (' + wt + 'g) — pick your spool above and click CALC to get exact cost.';
-    }
     updateModalPrice();
   }
 
@@ -824,176 +733,6 @@ var SEED_PRODUCTS = [
     document.getElementById('confirm-modal').classList.remove('open');
     if (confirmed && _confirmCb) _confirmCb();
     _confirmCb = null;
-  };
-
-  /* ══════════════════════════════════════════════
-     FILAMENT LIBRARY
-     ══════════════════════════════════════════════ */
-  var SK_FILAMENTS  = 'smtn_filaments';
-  var _filaments    = null;
-  var _filEditIndex = -1;
-
-  function loadFilaments() {
-    if (_filaments) return _filaments;
-    var raw = localStorage.getItem(SK_FILAMENTS);
-    if (raw) { try { _filaments = JSON.parse(raw); } catch(e) { _filaments = []; } }
-    else { _filaments = []; }
-    return _filaments;
-  }
-
-  function persistFilaments() {
-    localStorage.setItem(SK_FILAMENTS, JSON.stringify(_filaments));
-  }
-
-  function cpg(f) {
-    var g = parseFloat(f.spoolGrams) || 1000;
-    var p = parseFloat(f.pricePaid)  || 0;
-    return p / g;
-  }
-
-  window.openFilamentsModal = function() {
-    renderFilamentList();
-    document.getElementById('fil-form').style.display = 'none';
-    document.getElementById('filaments-modal').classList.add('open');
-  };
-
-  window.closeFilamentsModal = function() {
-    document.getElementById('filaments-modal').classList.remove('open');
-    populateFilamentSelect(); /* refresh product form dropdown */
-  };
-
-  function renderFilamentList() {
-    var list  = loadFilaments();
-    var el    = document.getElementById('fil-list');
-    if (!list.length) {
-      el.innerHTML = '<div class="fil-empty">No spools yet — add your first SUNLU spool to get started.</div>';
-      return;
-    }
-    el.innerHTML = list.map(function(f, i) {
-      var rate = cpg(f);
-      var age  = f.dateAdded
-        ? Math.floor((Date.now() - new Date(f.dateAdded).getTime()) / 86400000) + 'd ago'
-        : '';
-      var linkBtn = f.link
-        ? '<a class="fil-link-btn" href="' + f.link + '" target="_blank" rel="noopener">🛒 CHECK PRICE</a>'
-        : '';
-      return '<div class="fil-row">'
-        + '<div class="fil-row-main">'
-        +   '<div class="fil-row-name">' + f.name + '</div>'
-        +   '<div class="fil-row-meta">'
-        +     (f.brand ? '<span>' + f.brand + '</span>' : '')
-        +     (f.type  ? '<span>' + f.type  + '</span>' : '')
-        +     (age     ? '<span class="fil-age">' + age + '</span>' : '')
-        +   '</div>'
-        + '</div>'
-        + '<div class="fil-row-right">'
-        +   '<div class="fil-cpg-big">$' + rate.toFixed(4) + '<span>/g</span></div>'
-        +   '<div class="fil-row-sub">$' + (+f.pricePaid).toFixed(2) + ' / ' + f.spoolGrams + 'g spool</div>'
-        + '</div>'
-        + '<div class="fil-row-btns">'
-        +   linkBtn
-        +   '<button class="card-edit-btn" onclick="openFilamentForm(' + i + ')">✎ EDIT</button>'
-        + '</div>'
-        + '</div>';
-    }).join('');
-  }
-
-  window.openFilamentForm = function(index) {
-    _filEditIndex = index;
-    var form = document.getElementById('fil-form');
-    form.style.display = '';
-    document.getElementById('fil-form-title').textContent = index < 0 ? 'ADD SPOOL' : 'EDIT SPOOL';
-    document.getElementById('fil-delete-btn').style.display = index < 0 ? 'none' : '';
-    if (index >= 0) {
-      var f = loadFilaments()[index];
-      document.getElementById('fl-name').value  = f.name       || '';
-      document.getElementById('fl-brand').value = f.brand      || '';
-      document.getElementById('fl-type').value  = f.type       || '';
-      document.getElementById('fl-grams').value = f.spoolGrams || 1000;
-      document.getElementById('fl-price').value = f.pricePaid  || '';
-      document.getElementById('fl-link').value  = f.link       || '';
-    } else {
-      ['fl-name','fl-brand','fl-type','fl-link'].forEach(function(id){ document.getElementById(id).value=''; });
-      document.getElementById('fl-grams').value = '1000';
-      document.getElementById('fl-price').value = '';
-    }
-    updateFilCpg();
-    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  };
-
-  window.cancelFilamentForm = function() {
-    document.getElementById('fil-form').style.display = 'none';
-  };
-
-  window.updateFilCpg = function() {
-    var g = parseFloat(document.getElementById('fl-grams').value) || 0;
-    var p = parseFloat(document.getElementById('fl-price').value) || 0;
-    var el = document.getElementById('fil-cpg-preview');
-    if (g > 0 && p > 0) {
-      var rate = p / g;
-      el.innerHTML = '<span class="fil-cpg-rate">$' + rate.toFixed(4) + ' / gram</span>'
-        + '<span class="fil-cpg-note">A 100g print costs $' + (rate * 100).toFixed(2) + '</span>';
-    } else {
-      el.textContent = '';
-    }
-  };
-
-  window.saveFilament = function() {
-    var name = document.getElementById('fl-name').value.trim();
-    if (!name) { alert('Spool name is required.'); document.getElementById('fl-name').focus(); return; }
-    var obj = {
-      name:       name,
-      brand:      document.getElementById('fl-brand').value.trim(),
-      type:       document.getElementById('fl-type').value.trim(),
-      spoolGrams: parseFloat(document.getElementById('fl-grams').value) || 1000,
-      pricePaid:  parseFloat(document.getElementById('fl-price').value) || 0,
-      link:       document.getElementById('fl-link').value.trim(),
-      dateAdded:  _filEditIndex < 0 ? new Date().toISOString() : (loadFilaments()[_filEditIndex].dateAdded || new Date().toISOString())
-    };
-    loadFilaments();
-    if (_filEditIndex >= 0) { _filaments[_filEditIndex] = obj; }
-    else                    { _filaments.push(obj); }
-    persistFilaments();
-    document.getElementById('fil-form').style.display = 'none';
-    renderFilamentList();
-  };
-
-  window.deleteFilament = function() {
-    if (_filEditIndex < 0) return;
-    showConfirm('DELETE SPOOL', 'Delete "' + _filaments[_filEditIndex].name + '"?', function() {
-      _filaments.splice(_filEditIndex, 1);
-      persistFilaments();
-      document.getElementById('fil-form').style.display = 'none';
-      renderFilamentList();
-    });
-  };
-
-  /* populate the spool dropdown in the product form */
-  function populateFilamentSelect() {
-    var sel  = document.getElementById('f-filament-select');
-    if (!sel) return;
-    var list = loadFilaments();
-    sel.innerHTML = '<option value="">— pick spool from library —</option>'
-      + list.map(function(f, i) {
-          return '<option value="' + i + '">'
-            + f.name + ' ($' + cpg(f).toFixed(4) + '/g)'
-            + '</option>';
-        }).join('');
-  }
-
-  /* calculate filament cost = weight × $/g and fill the cost field */
-  window.calcFilamentFromWeight = function() {
-    var wt  = parseFloat(document.getElementById('f-weight').value);
-    var idx = document.getElementById('f-filament-select').value;
-    var hint = document.getElementById('fil-calc-hint');
-    if (!wt || wt <= 0) { hint.textContent = '⚠ Enter weight in grams first.'; return; }
-    if (idx === '') { hint.textContent = '⚠ Pick a spool from the library first.'; return; }
-    var f    = loadFilaments()[parseInt(idx)];
-    var rate = cpg(f);
-    var cost = wt * rate;
-    document.getElementById('f-filament').value = cost.toFixed(2);
-    hint.textContent = wt + 'g × $' + rate.toFixed(4) + '/g = $' + cost.toFixed(2) + '  (' + f.name + ')';
-    updateModalPrice();
   };
 
   /* expose to render engine */
