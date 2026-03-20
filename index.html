@@ -33,421 +33,122 @@
       repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,200,255,0.015) 40px, rgba(0,200,255,0.015) 41px);
   }
 
-  /* ── Header ── */
   header {
     padding: 20px 24px 16px;
     border-bottom: 1px solid var(--border);
     background: linear-gradient(180deg, rgba(0,200,255,0.05) 0%, transparent 100%);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
   }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
+  .logo { display: flex; align-items: center; gap: 14px; }
   .logo-icon {
     width: 44px; height: 44px;
     background: linear-gradient(135deg, var(--accent), #0050ff);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    box-shadow: 0 0 20px rgba(0,200,255,0.3);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; box-shadow: 0 0 20px rgba(0,200,255,0.3);
   }
-  .logo-text h1 {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
-  .logo-text p {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 1px;
-  }
-  .header-stats {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .stat-pill {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 14px;
-    text-align: center;
-  }
-  .stat-pill .val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 18px;
-    color: var(--lime);
-    display: block;
-  }
-  .stat-pill .lbl {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  .logo-text h1 { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+  .logo-text p  { font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; letter-spacing: 1px; }
+  .header-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+  .stat-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; text-align: center; }
+  .stat-pill .val { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--lime); display: block; }
+  .stat-pill .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 
-  /* ── Main layout ── */
   main { padding: 20px; max-width: 1100px; margin: 0 auto; }
 
-  /* ── Section headers ── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 28px 0 14px;
-    gap: 10px;
-  }
-  .section-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-title::before {
-    content: '';
-    display: block;
-    width: 3px; height: 14px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 14px; gap: 10px; }
+  .section-title { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .section-title::before { content: ''; display: block; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
 
-  /* ── Add button ── */
-  .btn {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    letter-spacing: 1px;
-    font-size: 13px;
-    padding: 8px 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #0077dd);
-    color: #000;
-    box-shadow: 0 0 16px rgba(0,200,255,0.25);
-  }
+  .btn { font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; font-size: 13px; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #0077dd); color: #000; box-shadow: 0 0 16px rgba(0,200,255,0.25); }
   .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
-  .btn-danger { background: rgba(255,77,109,0.15); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
+  .btn-danger  { background: rgba(255,77,109,0.15); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
   .btn-danger:hover { background: rgba(255,77,109,0.25); }
-  .btn-ghost { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost   { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
   .btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--text); }
   .btn-sm { padding: 5px 10px; font-size: 11px; }
 
-  /* ── Item cards ── */
-  .items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 14px;
-  }
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
 
-  .item-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s;
-    animation: fadeIn 0.3s ease;
-  }
+  .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; animation: fadeIn 0.3s ease; }
   .item-card:hover { border-color: rgba(0,200,255,0.3); transform: translateY(-2px); }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  /* Photo */
+  .card-photo { position: relative; width: 100%; height: 200px; background: var(--input-bg); overflow: hidden; cursor: pointer; }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+  .card-photo:hover img { transform: scale(1.04); }
+  .photo-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); border-bottom: 1px solid var(--border); transition: background 0.2s; }
+  .photo-placeholder:hover { background: rgba(0,200,255,0.04); }
+  .photo-placeholder .cam-icon { font-size: 40px; opacity: 0.35; }
+  .photo-placeholder p { font-size: 11px; font-family: 'Share Tech Mono', monospace; letter-spacing: 2px; }
+  .photo-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+  .card-photo:hover .photo-overlay { opacity: 1; }
+  .photo-overlay span { background: rgba(0,200,255,0.15); border: 1px solid var(--accent); border-radius: 8px; padding: 8px 18px; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; color: var(--accent); }
+  #photo-input { display: none; }
 
-  .card-top {
-    padding: 16px 18px 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .item-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 0.5px;
-  }
-  .item-qty {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'Share Tech Mono', monospace;
-  }
+  .card-top { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .item-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+  .item-qty  { font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
   .card-actions { display: flex; gap: 6px; }
-
   .card-body { padding: 14px 18px; }
 
-  .cost-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .cost-box {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 10px;
-    text-align: center;
-  }
-  .cost-box .val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 15px;
-    color: var(--lime);
-    display: block;
-  }
-  .cost-box .lbl {
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-top: 2px;
-  }
+  .cost-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .cost-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .cost-box .val { font-family: 'Share Tech Mono', monospace; font-size: 15px; color: var(--lime); display: block; }
+  .cost-box .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
   .cost-box.highlight .val { color: var(--yellow); }
 
-  .price-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(0,255,157,0.05);
-    border: 1px solid rgba(0,255,157,0.15);
-    border-radius: 10px;
-    padding: 10px 14px;
-  }
+  .price-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.15); border-radius: 10px; padding: 10px 14px; }
   .price-label { font-size: 12px; color: var(--muted); }
-  .price-sell {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--lime);
-  }
-  .margin-badge {
-    background: rgba(0,255,157,0.1);
-    border: 1px solid rgba(0,255,157,0.25);
-    border-radius: 6px;
-    padding: 3px 8px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: var(--lime);
-  }
-
-  .mkt-range {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'Share Tech Mono', monospace;
-  }
+  .price-sell  { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: var(--lime); }
+  .margin-badge { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.25); border-radius: 6px; padding: 3px 8px; font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--lime); }
+  .mkt-range { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
   .mkt-range span { color: var(--accent); }
 
-  /* ── Modal ── */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    width: 100%;
-    max-width: 480px;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: modalIn 0.2s ease;
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  .modal-header {
-    padding: 20px 22px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .modal-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--accent);
-  }
-  .modal-body { padding: 20px 22px; }
-  .modal-footer {
-    padding: 14px 22px 20px;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-  }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.2s ease; }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+  .modal-header { padding: 20px 22px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title  { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: var(--accent); }
+  .modal-body   { padding: 20px 22px; }
+  .modal-footer { padding: 14px 22px 20px; display: flex; gap: 10px; justify-content: flex-end; }
 
   .form-group { margin-bottom: 16px; }
-  .form-label {
-    display: block;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-  }
-  .form-input {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    transition: border-color 0.15s;
-    outline: none;
-  }
+  .form-label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+  .form-input { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 14px; transition: border-color 0.15s; outline: none; }
   .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,200,255,0.1); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .form-hint { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: 'Share Tech Mono', monospace; }
 
-  .cost-preview {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    margin-top: 16px;
-  }
-  .cost-preview-title {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    font-family: 'Rajdhani', sans-serif;
-  }
-  .preview-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    margin-bottom: 6px;
-    font-family: 'Share Tech Mono', monospace;
-  }
-  .preview-row.total {
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
-    margin-top: 4px;
-    color: var(--lime);
-    font-weight: bold;
-  }
+  .cost-preview { background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 16px; }
+  .cost-preview-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-family: 'Rajdhani', sans-serif; }
+  .preview-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+  .preview-row.total { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; color: var(--lime); font-weight: bold; }
 
-  /* ── Scenarios ── */
-  .scenarios-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .scenarios-table th {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    letter-spacing: 1px;
-    font-size: 11px;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 8px 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-  .scenarios-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid rgba(30,45,69,0.5);
-    font-family: 'Share Tech Mono', monospace;
-  }
-  .scenarios-table tr:last-child td { border-bottom: none; }
-  .scenarios-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
-  .scenario-label {
-    font-family: 'Exo 2', sans-serif;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .profit-val { color: var(--lime); font-weight: bold; }
-  .revenue-val { color: var(--yellow); }
-
-  .scenarios-wrapper {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-
-  /* ── Empty state ── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-    grid-column: 1/-1;
-  }
-  .empty-state .icon { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
-  .empty-state p { font-size: 14px; }
-
-  /* ── Qty controls in modal ── */
-  .qty-input-wrap { display: flex; align-items: center; gap: 0; }
-  .qty-btn {
-    width: 36px; height: 40px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.1s;
-  }
+  .qty-input-wrap { display: flex; align-items: center; }
+  .qty-btn { width: 36px; height: 40px; background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
   .qty-btn:first-child { border-radius: 8px 0 0 8px; border-right: none; }
   .qty-btn:last-child  { border-radius: 0 8px 8px 0; border-left: none; }
   .qty-btn:hover { background: var(--card); }
-  .qty-num {
-    flex: 1;
-    text-align: center;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    padding: 10px;
-    color: var(--lime);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    font-weight: bold;
-    outline: none;
-  }
+  .qty-num { flex: 1; text-align: center; background: var(--input-bg); border: 1px solid var(--border); padding: 10px; color: var(--lime); font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: bold; outline: none; }
 
-  /* ── Scrollbar ── */
+  .scenarios-wrapper { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .scenarios-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scenarios-table th { font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; font-size: 11px; text-transform: uppercase; color: var(--muted); padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .scenarios-table td { padding: 12px 14px; border-bottom: 1px solid rgba(30,45,69,0.5); font-family: 'Share Tech Mono', monospace; }
+  .scenarios-table tr:last-child td { border-bottom: none; }
+  .scenarios-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .scenario-label { font-family: 'Exo 2', sans-serif; font-weight: 600; color: var(--text); }
+  .profit-val  { color: var(--lime); font-weight: bold; }
+  .revenue-val { color: var(--yellow); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); grid-column: 1/-1; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
+  .empty-state p { font-size: 14px; }
+
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -480,42 +181,26 @@
 </header>
 
 <main>
-  <!-- Catalog -->
   <div class="section-header">
     <div class="section-title">Product Catalog</div>
     <button class="btn btn-primary" onclick="openModal()">+ Add Item</button>
   </div>
+  <div class="items-grid" id="items-grid"></div>
 
-  <div class="items-grid" id="items-grid">
-    <div class="empty-state">
-      <div class="icon">📦</div>
-      <p>No items yet. Hit <strong>+ Add Item</strong> to get started.</p>
-    </div>
-  </div>
-
-  <!-- Monthly Scenarios -->
   <div class="section-header" style="margin-top:36px;">
     <div class="section-title">Monthly Revenue Scenarios</div>
   </div>
   <div class="scenarios-wrapper">
     <table class="scenarios-table">
       <thead>
-        <tr>
-          <th>Scenario</th>
-          <th>Units Sold</th>
-          <th>Revenue</th>
-          <th>Cost</th>
-          <th>Net Profit</th>
-        </tr>
+        <tr><th>Scenario</th><th>Units Sold</th><th>Revenue</th><th>Cost</th><th>Net Profit</th></tr>
       </thead>
-      <tbody id="scenarios-body">
-        <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;font-family:'Share Tech Mono',monospace;">Add items to see projections</td></tr>
-      </tbody>
+      <tbody id="scenarios-body"></tbody>
     </table>
   </div>
 </main>
 
-<!-- Add/Edit Modal -->
+<!-- Modal -->
 <div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-header">
@@ -527,7 +212,6 @@
         <label class="form-label">Item Name</label>
         <input class="form-input" id="f-name" placeholder="e.g. Ironbite Dragon" oninput="updatePreview()">
       </div>
-
       <div class="form-group">
         <label class="form-label">Quantity per Plate</label>
         <div class="qty-input-wrap">
@@ -536,7 +220,6 @@
           <button class="qty-btn" onclick="adjustQty(1)">+</button>
         </div>
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Filament Cost ($)</label>
@@ -549,7 +232,6 @@
           <div class="form-hint">Est. electricity + printer wear</div>
         </div>
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Market Low ($)</label>
@@ -560,13 +242,10 @@
           <input class="form-input" id="f-mkt-mid" type="number" step="0.01" placeholder="0.00">
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Your Sell Price ($)</label>
         <input class="form-input" id="f-sell" type="number" step="0.01" placeholder="0.00" oninput="updatePreview()" style="font-size:18px;color:var(--lime);">
       </div>
-
-      <!-- Live preview -->
       <div class="cost-preview">
         <div class="cost-preview-title">💡 Cost Breakdown Preview</div>
         <div class="preview-row"><span>Filament cost</span><span id="prev-filament">$0.00</span></div>
@@ -584,25 +263,23 @@
   </div>
 </div>
 
+<!-- Hidden file input — opens camera/gallery -->
+<input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none">
+
 <script>
-// ── Storage ──────────────────────────────────────────────────────────────
 const STORE_KEY = 'printshop_items';
+const PHOTO_KEY = 'printshop_photos';
 
-function loadItems() {
-  try {
-    return JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
-  } catch { return []; }
-}
+function loadItems()  { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch { return []; } }
+function saveItems(a) { localStorage.setItem(STORE_KEY, JSON.stringify(a)); }
+function loadPhotos() { try { return JSON.parse(localStorage.getItem(PHOTO_KEY) || '{}'); } catch { return {}; } }
+function savePhotos(o){ localStorage.setItem(PHOTO_KEY, JSON.stringify(o)); }
 
-function saveItems(items) {
-  localStorage.setItem(STORE_KEY, JSON.stringify(items));
-}
+let items  = loadItems();
+let photos = loadPhotos();
+let editingId     = null;
+let photoTargetId = null;
 
-// ── State ────────────────────────────────────────────────────────────────
-let items = loadItems();
-let editingId = null;
-
-// Seed default items if empty
 if (items.length === 0) {
   items = [
     { id: 1, name: 'Ironbite Dragon', qty: 5, filament: 3.85, elec: 0.98, mktLow: 12, mktMid: 18, sell: 18 },
@@ -611,25 +288,40 @@ if (items.length === 0) {
   saveItems(items);
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────
 const fmt = v => '$' + (+v).toFixed(2);
 const pct = v => (v * 100).toFixed(1) + '%';
-const id  = () => Date.now();
+const uid = () => Date.now();
 
 function calcItem(item) {
-  const plateCost = item.filament + item.elec;
+  const plateCost   = item.filament + item.elec;
   const costPerItem = plateCost / item.qty;
-  const profit = item.sell - costPerItem;
-  const margin = item.sell > 0 ? profit / item.sell : 0;
+  const profit      = item.sell - costPerItem;
+  const margin      = item.sell > 0 ? profit / item.sell : 0;
   return { plateCost, costPerItem, profit, margin };
 }
 
-// ── Render ───────────────────────────────────────────────────────────────
-function render() {
-  renderGrid();
-  renderScenarios();
-  renderStats();
+// ── Photo ─────────────────────────────────────────────────────────────────
+function triggerPhoto(itemId) {
+  photoTargetId = itemId;
+  const input = document.getElementById('photo-input');
+  input.value = '';
+  input.click();
 }
+
+document.getElementById('photo-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file || !photoTargetId) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    photos[photoTargetId] = ev.target.result;
+    savePhotos(photos);
+    renderGrid();
+  };
+  reader.readAsDataURL(file);
+});
+
+// ── Render ────────────────────────────────────────────────────────────────
+function render() { renderGrid(); renderScenarios(); renderStats(); }
 
 function renderGrid() {
   const grid = document.getElementById('items-grid');
@@ -638,10 +330,15 @@ function renderGrid() {
     return;
   }
   grid.innerHTML = items.map(item => {
-    const { plateCost, costPerItem, profit, margin } = calcItem(item);
-    const marginColor = margin > 0.7 ? 'var(--lime)' : margin > 0.4 ? 'var(--yellow)' : 'var(--red)';
+    const { costPerItem, profit, margin } = calcItem(item);
+    const mc = margin > 0.7 ? 'var(--lime)' : margin > 0.4 ? 'var(--yellow)' : 'var(--red)';
+    const photo = photos[item.id];
+    const photoHTML = photo
+      ? `<img src="${photo}" alt="${item.name}"><div class="photo-overlay"><span>📷 Change Photo</span></div>`
+      : `<div class="photo-placeholder"><div class="cam-icon">📷</div><p>TAP TO ADD PHOTO</p></div>`;
     return `
     <div class="item-card">
+      <div class="card-photo" onclick="triggerPhoto(${item.id})">${photoHTML}</div>
       <div class="card-top">
         <div>
           <div class="item-name">${item.name}</div>
@@ -654,18 +351,9 @@ function renderGrid() {
       </div>
       <div class="card-body">
         <div class="cost-row">
-          <div class="cost-box">
-            <span class="val">${fmt(item.filament)}</span>
-            <div class="lbl">Filament</div>
-          </div>
-          <div class="cost-box">
-            <span class="val">${fmt(item.elec)}</span>
-            <div class="lbl">Elec+Wear</div>
-          </div>
-          <div class="cost-box highlight">
-            <span class="val">${fmt(costPerItem)}</span>
-            <div class="lbl">Cost/Item</div>
-          </div>
+          <div class="cost-box"><span class="val">${fmt(item.filament)}</span><div class="lbl">Filament</div></div>
+          <div class="cost-box"><span class="val">${fmt(item.elec)}</span><div class="lbl">Elec+Wear</div></div>
+          <div class="cost-box highlight"><span class="val">${fmt(costPerItem)}</span><div class="lbl">Cost/Item</div></div>
         </div>
         <div class="price-row">
           <div>
@@ -676,7 +364,7 @@ function renderGrid() {
           <div style="text-align:right">
             <div class="price-label">Profit / Item</div>
             <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--lime);margin:4px 0">${fmt(profit)}</div>
-            <div class="margin-badge" style="color:${marginColor};border-color:${marginColor}33;background:${marginColor}11">${pct(margin)}</div>
+            <div class="margin-badge" style="color:${mc};border-color:${mc}33;background:${mc}11">${pct(margin)}</div>
           </div>
         </div>
       </div>
@@ -690,93 +378,71 @@ function renderScenarios() {
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;font-family:'Share Tech Mono',monospace;">Add items to see projections</td></tr>`;
     return;
   }
-
-  const scenarios = [
-    { label: 'Conservative', multiplier: 1 },
-    { label: 'Moderate',     multiplier: 2 },
-    { label: 'Aggressive',   multiplier: 4 },
-  ];
-
-  tbody.innerHTML = scenarios.map(sc => {
-    let totalRevenue = 0, totalCost = 0, totalUnits = 0;
-    const breakdown = items.map(item => {
+  [{ label:'Conservative', m:1 },{ label:'Moderate', m:2 },{ label:'Aggressive', m:4 }].forEach(sc => {
+    let rev=0, cost=0, units=0;
+    const bd = items.map(item => {
       const { costPerItem } = calcItem(item);
-      const units = item.qty * sc.multiplier;
-      const rev   = units * item.sell;
-      const cost  = units * costPerItem;
-      totalRevenue += rev;
-      totalCost    += cost;
-      totalUnits   += units;
-      return `${item.name.split(' ')[0]}: ${units}u`;
+      const u = item.qty * sc.m;
+      rev   += u * item.sell;
+      cost  += u * costPerItem;
+      units += u;
+      return `${item.name.split(' ')[0]}: ${u}u`;
     }).join(' · ');
-    const netProfit = totalRevenue - totalCost;
-    return `
+    tbody.innerHTML += `
     <tr>
-      <td><div class="scenario-label">${sc.label}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace">${breakdown}</div></td>
-      <td>${totalUnits}</td>
-      <td class="revenue-val">${fmt(totalRevenue)}</td>
-      <td style="color:var(--muted)">${fmt(totalCost)}</td>
-      <td class="profit-val">${fmt(netProfit)}</td>
+      <td><div class="scenario-label">${sc.label}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace">${bd}</div></td>
+      <td>${units}</td>
+      <td class="revenue-val">${fmt(rev)}</td>
+      <td style="color:var(--muted)">${fmt(cost)}</td>
+      <td class="profit-val">${fmt(rev-cost)}</td>
     </tr>`;
-  }).join('');
+  });
 }
 
 function renderStats() {
   document.getElementById('stat-items').textContent = items.length;
-  if (items.length === 0) {
-    document.getElementById('stat-avg-margin').textContent = '0%';
-    document.getElementById('stat-best-profit').textContent = '$0';
-    return;
-  }
+  if (!items.length) { document.getElementById('stat-avg-margin').textContent='0%'; document.getElementById('stat-best-profit').textContent='$0'; return; }
   const margins = items.map(i => calcItem(i).margin);
-  const avgMargin = margins.reduce((a,b) => a+b, 0) / margins.length;
-  const bestProfit = Math.max(...items.map(i => calcItem(i).profit));
-  document.getElementById('stat-avg-margin').textContent = pct(avgMargin);
-  document.getElementById('stat-best-profit').textContent = fmt(bestProfit);
+  document.getElementById('stat-avg-margin').textContent  = pct(margins.reduce((a,b)=>a+b,0)/margins.length);
+  document.getElementById('stat-best-profit').textContent = fmt(Math.max(...items.map(i=>calcItem(i).profit)));
 }
 
-// ── Modal ────────────────────────────────────────────────────────────────
-function openModal(item = null) {
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openModal(item=null) {
   editingId = item ? item.id : null;
-  document.getElementById('modal-title').textContent = item ? 'EDIT ITEM' : 'ADD NEW ITEM';
-  document.getElementById('f-name').value     = item ? item.name     : '';
-  document.getElementById('f-qty').value      = item ? item.qty      : 1;
-  document.getElementById('f-filament').value = item ? item.filament : '';
-  document.getElementById('f-elec').value     = item ? item.elec     : '';
-  document.getElementById('f-mkt-low').value  = item ? item.mktLow   : '';
-  document.getElementById('f-mkt-mid').value  = item ? item.mktMid   : '';
-  document.getElementById('f-sell').value     = item ? item.sell     : '';
+  document.getElementById('modal-title').textContent  = item ? 'EDIT ITEM' : 'ADD NEW ITEM';
+  document.getElementById('f-name').value     = item?.name     ?? '';
+  document.getElementById('f-qty').value      = item?.qty      ?? 1;
+  document.getElementById('f-filament').value = item?.filament ?? '';
+  document.getElementById('f-elec').value     = item?.elec     ?? '';
+  document.getElementById('f-mkt-low').value  = item?.mktLow   ?? '';
+  document.getElementById('f-mkt-mid').value  = item?.mktMid   ?? '';
+  document.getElementById('f-sell').value     = item?.sell     ?? '';
   document.getElementById('modal').classList.add('open');
   updatePreview();
   setTimeout(() => document.getElementById('f-name').focus(), 50);
 }
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  editingId = null;
-}
+function closeModal() { document.getElementById('modal').classList.remove('open'); editingId = null; }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modal')) closeModal(); }
 
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modal')) closeModal();
-}
-
-function adjustQty(delta) {
+function adjustQty(d) {
   const el = document.getElementById('f-qty');
-  el.value = Math.max(1, (parseInt(el.value) || 1) + delta);
+  el.value = Math.max(1, (parseInt(el.value)||1) + d);
   updatePreview();
 }
 
 function updatePreview() {
-  const filament = parseFloat(document.getElementById('f-filament').value) || 0;
-  const elec     = parseFloat(document.getElementById('f-elec').value)     || 0;
-  const qty      = parseInt(document.getElementById('f-qty').value)        || 1;
-  const sell     = parseFloat(document.getElementById('f-sell').value)     || 0;
-  const plate    = filament + elec;
-  const perItem  = plate / qty;
-  const profit   = sell - perItem;
-  const margin   = sell > 0 ? profit / sell : 0;
-  document.getElementById('prev-filament').textContent = fmt(filament);
-  document.getElementById('prev-elec').textContent     = fmt(elec);
+  const f = parseFloat(document.getElementById('f-filament').value)||0;
+  const e = parseFloat(document.getElementById('f-elec').value)||0;
+  const q = parseInt(document.getElementById('f-qty').value)||1;
+  const s = parseFloat(document.getElementById('f-sell').value)||0;
+  const plate   = f + e;
+  const perItem = plate / q;
+  const profit  = s - perItem;
+  const margin  = s > 0 ? profit/s : 0;
+  document.getElementById('prev-filament').textContent = fmt(f);
+  document.getElementById('prev-elec').textContent     = fmt(e);
   document.getElementById('prev-plate').textContent    = fmt(plate);
   document.getElementById('prev-item').textContent     = fmt(perItem);
   document.getElementById('prev-profit').textContent   = fmt(profit);
@@ -785,40 +451,33 @@ function updatePreview() {
 
 function saveItem() {
   const name     = document.getElementById('f-name').value.trim();
-  const qty      = parseInt(document.getElementById('f-qty').value) || 1;
-  const filament = parseFloat(document.getElementById('f-filament').value) || 0;
-  const elec     = parseFloat(document.getElementById('f-elec').value)     || 0;
-  const mktLow   = parseFloat(document.getElementById('f-mkt-low').value)  || 0;
-  const mktMid   = parseFloat(document.getElementById('f-mkt-mid').value)  || 0;
-  const sell     = parseFloat(document.getElementById('f-sell').value)     || 0;
-
+  const qty      = parseInt(document.getElementById('f-qty').value)||1;
+  const filament = parseFloat(document.getElementById('f-filament').value)||0;
+  const elec     = parseFloat(document.getElementById('f-elec').value)||0;
+  const mktLow   = parseFloat(document.getElementById('f-mkt-low').value)||0;
+  const mktMid   = parseFloat(document.getElementById('f-mkt-mid').value)||0;
+  const sell     = parseFloat(document.getElementById('f-sell').value)||0;
   if (!name) { alert('Please enter an item name.'); return; }
-
   if (editingId) {
     const idx = items.findIndex(i => i.id === editingId);
-    if (idx > -1) items[idx] = { id: editingId, name, qty, filament, elec, mktLow, mktMid, sell };
+    if (idx > -1) items[idx] = { id:editingId, name, qty, filament, elec, mktLow, mktMid, sell };
   } else {
-    items.push({ id: id(), name, qty, filament, elec, mktLow, mktMid, sell });
+    items.push({ id:uid(), name, qty, filament, elec, mktLow, mktMid, sell });
   }
-
   saveItems(items);
   closeModal();
   render();
 }
 
-function editItem(itemId) {
-  const item = items.find(i => i.id === itemId);
-  if (item) openModal(item);
-}
-
+function editItem(itemId)   { const item = items.find(i=>i.id===itemId); if(item) openModal(item); }
 function deleteItem(itemId) {
   if (!confirm('Delete this item?')) return;
   items = items.filter(i => i.id !== itemId);
-  saveItems(items);
+  delete photos[itemId];
+  saveItems(items); savePhotos(photos);
   render();
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────
 render();
 </script>
 </body>
