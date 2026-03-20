@@ -252,6 +252,10 @@
         </div>
       </div>
       <div class="form-group">
+        <label class="form-label">Market High ($)</label>
+        <input class="form-input" id="f-mkt-high" type="number" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group">
         <label class="form-label">Your Sell Price ($)</label>
         <input class="form-input" id="f-sell" type="number" step="0.01" placeholder="0.00" oninput="updatePreview()" style="font-size:18px;color:var(--lime);">
       </div>
@@ -297,8 +301,8 @@ let photoTargetId = null;
 
 if (items.length === 0) {
   items = [
-    { id: 1, name: 'Ironbite Dragon', qty: 5, filament: 3.85, elec: 0.98, mktLow: 12, mktMid: 18, sell: 18 },
-    { id: 2, name: 'Bat Shadow',      qty: 1, filament: 9.21, elec: 3.55, mktLow: 45, mktMid: 65, sell: 65 },
+    { id: 1, name: 'Ironbite Dragon', qty: 5, filament: 3.85, elec: 0.98, mktLow: 12, mktMid: 18, mktHigh: 28, sell: 18 },
+    { id: 2, name: 'Bat Shadow',      qty: 1, filament: 9.21, elec: 3.55, mktLow: 45, mktMid: 65, mktHigh: 85, sell: 65 },
   ];
   saveItems(items);
 }
@@ -407,15 +411,30 @@ function renderGrid() {
           <div class="cost-box highlight"><span class="val">${fmt(costPerItem)}</span><div class="lbl">Cost/Item</div></div>
         </div>
         <div class="price-row">
-          <div>
-            <div class="price-label">Sell Price</div>
-            <div class="price-sell">${fmt(item.sell)}</div>
-            <div class="mkt-range">Mkt: <span>${fmt(item.mktLow)}</span> – <span>${fmt(item.mktMid)}</span></div>
-          </div>
-          <div style="text-align:right">
-            <div class="price-label">Profit / Item</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--lime);margin:4px 0">${fmt(profit)}</div>
-            <div class="margin-badge" style="color:${mc};border-color:${mc}33;background:${mc}11">${pct(margin)}</div>
+          <div style="width:100%">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div class="price-label">Price Range</div>
+              <div class="price-label">Profit / Item &nbsp; <span style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--lime)">${fmt(profit)}</span> &nbsp; <span class="margin-badge" style="color:${mc};border-color:${mc}33;background:${mc}11">${pct(margin)}</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+              <div style="text-align:center">
+                <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted)">LOW</div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--muted)">${fmt(item.mktLow)}</div>
+              </div>
+              <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--muted),var(--accent),var(--lime));border-radius:2px;position:relative">
+                <div style="position:absolute;top:50%;transform:translate(-50%,-50%);left:${Math.min(100,Math.max(0,((item.sell-item.mktLow)/(item.mktHigh-item.mktLow))*100))}%">
+                  <div style="background:var(--lime);border-radius:50%;width:10px;height:10px;box-shadow:0 0 8px var(--lime)"></div>
+                </div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted)">HIGH</div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--lime)">${fmt(item.mktHigh)}</div>
+              </div>
+            </div>
+            <div style="text-align:center;margin-top:8px">
+              <div style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace">YOUR PRICE</div>
+              <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--lime)">${fmt(item.sell)}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -468,6 +487,7 @@ function openModal(item=null) {
   document.getElementById('f-elec').value     = item?.elec     ?? '';
   document.getElementById('f-mkt-low').value  = item?.mktLow   ?? '';
   document.getElementById('f-mkt-mid').value  = item?.mktMid   ?? '';
+  document.getElementById('f-mkt-high').value = item?.mktHigh  ?? '';
   document.getElementById('f-sell').value     = item?.sell     ?? '';
   document.getElementById('modal').classList.add('open');
   updatePreview();
@@ -507,13 +527,14 @@ function saveItem() {
   const elec     = parseFloat(document.getElementById('f-elec').value)||0;
   const mktLow   = parseFloat(document.getElementById('f-mkt-low').value)||0;
   const mktMid   = parseFloat(document.getElementById('f-mkt-mid').value)||0;
+  const mktHigh  = parseFloat(document.getElementById('f-mkt-high').value)||0;
   const sell     = parseFloat(document.getElementById('f-sell').value)||0;
   if (!name) { alert('Please enter an item name.'); return; }
   if (editingId) {
     const idx = items.findIndex(i => i.id === editingId);
-    if (idx > -1) items[idx] = { id:editingId, name, qty, filament, elec, mktLow, mktMid, sell };
+    if (idx > -1) items[idx] = { id:editingId, name, qty, filament, elec, mktLow, mktMid, mktHigh, sell };
   } else {
-    items.push({ id:uid(), name, qty, filament, elec, mktLow, mktMid, sell });
+    items.push({ id:uid(), name, qty, filament, elec, mktLow, mktMid, mktHigh, sell });
   }
   saveItems(items);
   closeModal();
