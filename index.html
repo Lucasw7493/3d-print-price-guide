@@ -318,6 +318,7 @@ function calcItem(item) {
 // ── Photo ─────────────────────────────────────────────────────────────────
 function triggerPhoto(itemId) {
   photoTargetId = String(itemId);
+  alert('triggerPhoto called for: ' + photoTargetId);
   const input = document.getElementById('photo-input');
   input.value = '';
   input.click();
@@ -335,13 +336,15 @@ function closeLightbox() {
 }
 
 document.getElementById('photo-input').addEventListener('change', function() {
+  alert('file input changed, files: ' + this.files.length + ', targetId: ' + photoTargetId);
   const file = this.files[0];
-  if (!file) return;
+  if (!file) { alert('no file!'); return; }
   const targetId = photoTargetId;
-  if (!targetId) return;
+  if (!targetId) { alert('no targetId!'); return; }
   const reader = new FileReader();
   reader.onload = function() {
-    photos = loadPhotos(); // always reload fresh before writing
+    alert('reader loaded, saving photo for: ' + targetId);
+    photos = loadPhotos();
     photos[targetId] = reader.result;
     savePhotos(photos);
     renderGrid();
