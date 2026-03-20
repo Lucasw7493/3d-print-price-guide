@@ -640,3 +640,213 @@ body > * { position: relative; z-index: 1; }
   .stats-row { grid-template-columns: 1fr; gap: 6px; }
   .brand-name { letter-spacing: 0; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATED BG — STAR FIELD · RETRO SUN · HORIZON
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── STAR FIELDS ─────────────────────────────────── */
+.sf-far, .sf-mid, .sf-near {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 42%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sf-far {
+  background-image: radial-gradient(circle, rgba(255,255,255,.45) 1px, transparent 1px);
+  background-size: 197px 131px;
+  background-position: 0 0;
+  opacity: .55;
+  animation: driftFar 100s linear infinite;
+}
+.sf-mid {
+  background-image: radial-gradient(circle, rgba(190,155,255,.65) 1px, transparent 1px);
+  background-size: 127px 89px;
+  background-position: 63px 44px;
+  opacity: .65;
+  animation: driftMid 60s linear infinite;
+}
+.sf-near {
+  background-image: radial-gradient(circle, rgba(255,255,255,.82) 1.5px, transparent 1.5px);
+  background-size: 79px 57px;
+  background-position: 39px 28px;
+  opacity: .75;
+  animation: driftNear 35s linear infinite;
+}
+
+@keyframes driftFar  { to { background-position: 197px 131px; } }
+@keyframes driftMid  { to { background-position: 190px 133px; } }
+@keyframes driftNear { to { background-position: 118px  85px; } }
+
+/* ── SHOOTING STARS ──────────────────────────────── */
+.sf-far::before {
+  content: '';
+  position: absolute;
+  width: 240px; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), rgba(255,255,255,.3), transparent);
+  filter: blur(.5px);
+  border-radius: 2px;
+  top: 14%; left: -250px;
+  animation: shoot 14s ease-in infinite 4s;
+}
+.sf-far::after {
+  content: '';
+  position: absolute;
+  width: 170px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,255,255,.9), transparent);
+  top: 52%; left: -180px;
+  animation: shoot 20s ease-in infinite 11s;
+}
+.sf-near::after {
+  content: '';
+  position: absolute;
+  width: 280px; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,50,200,.85), rgba(255,200,255,.35), transparent);
+  filter: blur(.5px);
+  border-radius: 2px;
+  top: 30%; left: -290px;
+  animation: shoot 23s ease-in infinite 7s;
+}
+
+@keyframes shoot {
+  0%   { transform: translate(0, 0);        opacity: 0;  }
+  3%   { opacity: 1; }
+  97%  { opacity: .9; }
+  100% { transform: translate(130vw, 30vh); opacity: 0;  }
+}
+
+/* ── RETRO SYNTHWAVE SUN ─────────────────────────── */
+.retro-sun {
+  position: fixed;
+  bottom: 42%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(320px, 55vw);
+  height: min(160px, 27.5vw);
+  border-radius: 9999px 9999px 0 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg,
+    #ffff00  0%,
+    #ffcc00  8%,
+    #ff9900  22%,
+    #ff4400  40%,
+    #ff0066  58%,
+    #cc00ee  78%,
+    #5500cc  100%
+  );
+  box-shadow:
+    0   0  50px rgba(255,136,0,.95),
+    0   0 130px rgba(255,0,100,.65),
+    0   0 280px rgba(200,0,255,.45),
+    0 -20px 90px rgba(255,220,0,.3);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+
+/* Perspective stripe lines — denser at bottom */
+.retro-sun::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent       0px, transparent       9px,
+    rgba(4,0,14,.9)   9px, rgba(4,0,14,.9)  11px,
+    transparent      11px, transparent      18px,
+    rgba(4,0,14,.9)  18px, rgba(4,0,14,.9)  20px,
+    transparent      20px, transparent      26px,
+    rgba(4,0,14,.9)  26px, rgba(4,0,14,.9)  27px,
+    transparent      27px, transparent      32px,
+    rgba(4,0,14,.9)  32px, rgba(4,0,14,.9)  33px,
+    transparent      33px, transparent      37px,
+    rgba(4,0,14,.9)  37px, rgba(4,0,14,.9)  38px,
+    transparent      38px, transparent      41px,
+    rgba(4,0,14,.9)  41px, rgba(4,0,14,.9)  42px,
+    transparent      42px, transparent      44px,
+    rgba(4,0,14,.9)  44px, rgba(4,0,14,.9)  45px,
+    transparent      45px, transparent      47px,
+    rgba(4,0,14,.9)  47px, rgba(4,0,14,.9)  48px
+  );
+}
+
+/* Glow halo */
+.retro-sun::after {
+  content: '';
+  position: absolute;
+  inset: -40% -15%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 85%,
+    rgba(255,200,0,.22)  0%,
+    rgba(255,100,0,.1)  40%,
+    transparent         65%
+  );
+  animation: halo 4s ease-in-out infinite;
+}
+
+@keyframes sunPulse {
+  0%,100% {
+    box-shadow:
+      0   0  50px rgba(255,136,0,.95),
+      0   0 130px rgba(255,0,100,.65),
+      0   0 280px rgba(200,0,255,.45),
+      0 -20px 90px rgba(255,220,0,.3);
+  }
+  50% {
+    box-shadow:
+      0   0  85px rgba(255,136,0,1),
+      0   0 210px rgba(255,0,100,.9),
+      0   0 430px rgba(200,0,255,.65),
+      0 -35px 130px rgba(255,220,0,.5);
+  }
+}
+@keyframes halo { 0%,100%{opacity:.65} 50%{opacity:1} }
+
+/* ── HORIZON GLOW LINE ───────────────────────────── */
+.horizon-line {
+  position: fixed;
+  bottom: 42%;
+  left: 0; right: 0;
+  height: 2px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(90deg,
+    transparent          0%,
+    rgba(255,100,0,.55) 12%,
+    #ffff00             28%,
+    #ff8800             42%,
+    #ffffff             50%,
+    #ff8800             58%,
+    #ffff00             72%,
+    rgba(255,100,0,.55) 88%,
+    transparent         100%
+  );
+  box-shadow:
+    0  0  8px rgba(255,200,0,.9),
+    0  0 26px rgba(255,100,0,.7),
+    0  0 65px rgba(255,0,100,.4),
+    0 -6px 32px rgba(255,200,0,.3);
+  animation: horizonBright 4s ease-in-out infinite;
+}
+@keyframes horizonBright { 0%,100%{opacity:.8} 50%{opacity:1} }
+
+/* ── VHS SWEEP LINE ──────────────────────────────── */
+body > .scanlines::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 90px;
+  top: -90px;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(0,255,255,.025) 45%,
+    rgba(0,255,255,.055)  50%,
+    rgba(0,255,255,.025) 55%,
+    transparent
+  );
+  animation: vhsSweep 8s linear infinite;
+}
+@keyframes vhsSweep { from{top:-90px} to{top:100vh} }
