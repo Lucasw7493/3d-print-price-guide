@@ -590,40 +590,37 @@ body > * { position: relative; z-index: 1; }
   .brand-name { letter-spacing: 0; }
 }
 
-/* ── MOBILE: OLD SCHOOL ARCADE CABINET ───────────── */
-/* Strip expensive layers, replace with CRT vignette  */
+/* ── MOBILE: ARCADE CRT — ZERO COMPOSITOR LAYERS ─── */
 @media (max-width: 768px) {
 
-  /* Kill the heavy background layers */
-  .sf-mid, .sf-near,
-  .retro-sun, .horizon-line { display: none; }
+  /* Kill every separate background element so there is
+     nothing behind #scroll-wrap to composite during scroll */
+  .sf-far, .sf-mid, .sf-near,
+  .retro-sun, .horizon-line,
+  .scanlines { display: none; }
+  body::before { display: none; }
+  body::after  { display: none; }
 
-  /* Remove grid floor */
-  body::after { display: none; }
-
-  /* Single faint star field — full screen */
-  .sf-far { bottom: 0; opacity: 0.25; }
-
-  /* Simple dark sky gradient */
-  body::before {
-    background: linear-gradient(180deg, #160028 0%, #06000f 55%);
-  }
-
-  /* CRT scanlines + edge vignette — one cheap element */
-  body > .scanlines {
+  /* Bake sky + scanlines + CRT vignette into one single
+     CSS background on body — one layer, zero compositing */
+  body {
     background:
-      radial-gradient(ellipse 100% 100% at 50% 50%,
-        transparent 48%, rgba(0,0,0,.82) 100%),
+      radial-gradient(ellipse 110% 110% at 50% 50%,
+        transparent 50%, rgba(0,0,0,.78) 100%),
       repeating-linear-gradient(
         0deg,
-        transparent        0px,
-        transparent        2px,
-        rgba(0,0,0,.28)    2px,
-        rgba(0,0,0,.28)    4px
-      );
+        transparent     0px,
+        transparent     2px,
+        rgba(0,0,0,.2)  2px,
+        rgba(0,0,0,.2)  4px
+      ),
+      linear-gradient(180deg, #160028 0%, #06000f 60%);
   }
 
-  /* Simpler card glow — no huge blur radii */
+  /* Drop the deprecated momentum-scroll hint */
+  #scroll-wrap { -webkit-overflow-scrolling: unset; }
+
+  /* Simpler card shadows — no giant blur radii */
   .product {
     box-shadow: 0 0 8px rgba(255,0,204,.35);
   }
