@@ -220,7 +220,7 @@ var PRODUCTS = [
         : (p.qty > 1 ? '<div class="product-time">' + p.qty + ' per plate</div>' : '');
 
       return ''
-        + '<div class="product" style="animation-delay:' + (i * .07) + 's">'
+        + '<div class="product">'
         +   '<div class="product-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
         +     img
         +   '</div>'
