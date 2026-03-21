@@ -77,9 +77,8 @@
     "mktLow": 15,
     "mktMid": 25,
     "mktHigh": 35,
-    "stock": 3,
     "notes": "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item.",
-    "priceOverride": 10
+    "stock": 3
   },
   {
     "name": "Demogorgon Flexi",
@@ -104,7 +103,8 @@
     "mktLow": 18,
     "mktMid": 24,
     "mktHigh": 32,
+    "stock": 3,
     "notes": "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish",
-    "stock": 3
+    "priceOverride": 10
   }
 ]
