@@ -294,12 +294,27 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending...';
 
-    var formData = new FormData(form);
+    /* Build JSON from form fields */
+    var delivery = (document.querySelector('#custom-form input[name="delivery"]:checked') || {}).value || '';
+    var data = {
+      name: document.getElementById('cf-name').value,
+      email: document.getElementById('cf-email').value,
+      phone: document.getElementById('cf-phone').value || 'Not provided',
+      budget: document.getElementById('cf-budget').value || 'Not specified',
+      item_type: document.getElementById('cf-type').value,
+      description: document.getElementById('cf-desc').value,
+      delivery: delivery,
+      shipping_address: document.getElementById('cf-address').value || 'N/A',
+      timeline: document.getElementById('cf-timeline').value || 'No rush'
+    };
 
-    fetch(form.action, {
+    fetch('https://formspree.io/f/mnjgrkpv', {
       method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
+      body: JSON.stringify(data),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
     })
     .then(function(r) {
       if (r.ok) {
@@ -311,12 +326,7 @@
       }
     })
     .catch(function() {
-      /* Fallback: open mailto */
-      var name = document.getElementById('cf-name').value;
-      var desc = document.getElementById('cf-desc').value;
-      var type = document.getElementById('cf-type').value;
-      var body = 'Name: ' + name + '%0A%0AItem Type: ' + type + '%0A%0ADescription: ' + desc;
-      window.location.href = 'mailto:smokymtn3dprints@gmail.com?subject=Custom Order Request&body=' + body;
+      alert('Something went wrong. Please try again or email us at smokymtn3dprints@gmail.com');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Send Custom Order Request';
     });

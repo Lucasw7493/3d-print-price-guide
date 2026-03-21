@@ -659,11 +659,25 @@ var SEED_PRODUCTS = [
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending...';
 
-      var formData = new FormData(form);
-      fetch(form.action, {
+      /* Build JSON body from form fields */
+      var data = {
+        name: $('co-name').value,
+        email: $('co-email').value,
+        phone: $('co-phone').value || 'Not provided',
+        delivery: (document.querySelector('#checkout-form input[name="delivery"]:checked') || {}).value || '',
+        shipping_address: $('co-address').value || 'N/A',
+        notes: $('co-notes').value || '',
+        order_items: itemsText.join('\n'),
+        order_total: '$' + total
+      };
+
+      fetch('https://formspree.io/f/mnjgrkpv', {
         method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
+        body: JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
       })
       .then(function(r) {
         if (r.ok) {
@@ -674,13 +688,12 @@ var SEED_PRODUCTS = [
           $('checkout-step-success').style.display = '';
           _cart = [];
           saveCart();
-        } else { throw new Error('fail'); }
+        } else {
+          throw new Error('fail');
+        }
       })
       .catch(function() {
-        /* Fallback: mailto */
-        var name = $('co-name').value;
-        var body = 'Name: ' + name + '%0A%0AOrder:%0A' + encodeURIComponent(itemsText.join('\n')) + '%0A%0ATotal: $' + total;
-        window.location.href = 'mailto:smokymtn3dprints@gmail.com?subject=New Order — Smoky Mtn 3D Prints&body=' + body;
+        alert('Something went wrong. Please try again or email us at smokymtn3dprints@gmail.com');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Place Order';
       });
