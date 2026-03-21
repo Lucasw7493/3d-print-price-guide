@@ -330,28 +330,34 @@ a { text-decoration: none; color: inherit; }
       .catch(function() { cb(); });
   }
 
+  var _pushQueue = Promise.resolve();
+
   function pushToGitHub(cb) {
     var token = getToken();
     if (!token) { toast('Set up GitHub token first', 'err'); if (cb) cb(false); return; }
-    var body = JSON.stringify(_products, null, 2);
-    var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
-    var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
 
-    fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
-      .then(function(r) { return r.json(); })
-      .then(function(meta) {
-        var b64 = btoa(unescape(encodeURIComponent(body)));
-        return fetch(apiUrl, {
-          method: 'PUT', headers: headers,
-          body: JSON.stringify({ message: 'Update products', content: b64, sha: meta.sha, branch: GH_BRANCH })
-        });
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(res) {
-        if (res.commit) { toast('Saved & synced to all devices', 'ok'); if (cb) cb(true); }
-        else { toast('Saved locally — check GitHub token', 'err'); if (cb) cb(false); }
-      })
-      .catch(function() { toast('Saved locally — sync failed', 'err'); if (cb) cb(false); });
+    /* Queue pushes so they never overlap and cause SHA conflicts */
+    _pushQueue = _pushQueue.then(function() {
+      var body = JSON.stringify(_products, null, 2);
+      var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
+      var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+      return fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
+        .then(function(r) { return r.json(); })
+        .then(function(meta) {
+          var b64 = btoa(unescape(encodeURIComponent(body)));
+          return fetch(apiUrl, {
+            method: 'PUT', headers: headers,
+            body: JSON.stringify({ message: 'Update products', content: b64, sha: meta.sha, branch: GH_BRANCH })
+          });
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (res.commit) { toast('Saved & synced to all devices', 'ok'); if (cb) cb(true); }
+          else { toast('Saved locally — check GitHub token', 'err'); if (cb) cb(false); }
+        })
+        .catch(function(err) { toast('Saved locally — sync failed: ' + err.message, 'err'); if (cb) cb(false); });
+    });
   }
 
   function uploadImage(file, filename, cb) {
