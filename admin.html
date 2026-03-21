@@ -3,658 +3,599 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMOKYMTN 3D — Admin</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <title>Admin — Smoky Mtn 3D Prints</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
 :root {
-  --bg: #06000f;
-  --card: #0a001e;
-  --border: #3a0060;
-  --neon-cyan: #00ffff;
-  --neon-pink: #ff00cc;
-  --neon-green: #00ff88;
-  --neon-yellow: #ffe600;
-  --neon-purple: #cc00ff;
-  --neon-red: #ff0055;
-  --text: #ffffff;
-  --text-dim: #cc99ff;
-  --muted: #6633aa;
-  --font-display: 'Orbitron', sans-serif;
-  --font-mono: 'Share Tech Mono', monospace;
+  --bg: #171717;
+  --bg-alt: #1e1e1e;
+  --surface: #2a2a2a;
+  --surface-lt: #333;
+  --cream: #f5f1e8;
+  --cream-dim: #c4bfb3;
+  --brown: #6b4f3a;
+  --orange: #ff8200;
+  --orange-dk: #d96e00;
+  --muted: #666;
+  --border: #333;
+  --border-lt: #444;
+  --green: #43a047;
+  --red: #e53935;
+  --radius: 8px;
+  --font-head: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --transition: .25s cubic-bezier(.4,0,.2,1);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  background-image: linear-gradient(180deg, #1a0030 0%, #0c001a 30%, #06000f 100%);
-  color: var(--text);
-  font-family: var(--font-mono);
-  min-height: 100vh;
-  padding: 0 12px 60px;
-  -webkit-font-smoothing: antialiased;
-}
+body { background: var(--bg); color: var(--cream); font-family: var(--font-body); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: inherit; }
+a { text-decoration: none; color: inherit; }
 
-/* ── HEADER ──────────────────────── */
-.admin-header {
-  text-align: center;
-  padding: 24px 0 18px;
-  border-bottom: 2px solid var(--neon-pink);
-  margin-bottom: 20px;
-  box-shadow: 0 2px 20px rgba(255,0,204,.3);
-}
-.admin-header h1 {
-  font-family: var(--font-display);
-  font-size: clamp(16px, 4.5vw, 22px);
-  font-weight: 900;
-  color: var(--neon-cyan);
-  letter-spacing: 3px;
-  text-shadow: 0 0 12px var(--neon-cyan), 0 0 30px rgba(0,255,255,.5);
-}
-.admin-header p {
-  font-size: 10px;
-  color: var(--neon-pink);
-  letter-spacing: 2px;
-  margin-top: 6px;
-  text-shadow: 0 0 8px rgba(255,0,204,.5);
-}
-.back-link {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--muted);
-  text-decoration: none;
-}
-.back-link:hover { color: var(--neon-cyan); }
+/* ── NAV ── */
+.admin-nav { background: var(--bg-alt); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.admin-nav-left { display: flex; align-items: center; gap: 12px; }
+.admin-nav img { width: 36px; height: 36px; border-radius: 6px; }
+.admin-nav h1 { font-family: var(--font-head); font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.admin-nav h1 span { color: var(--orange); }
+.admin-nav-right { display: flex; gap: 10px; }
+.nav-btn { font-family: var(--font-head); font-size: 12px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; padding: 8px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--cream-dim); transition: all var(--transition); }
+.nav-btn:hover { border-color: var(--orange); color: var(--orange); }
 
-/* ── SECTIONS ────────────────────── */
-section {
-  max-width: 600px;
-  margin: 0 auto 18px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 18px;
-}
-section h2 {
-  font-family: var(--font-display);
-  font-size: 12px;
-  color: var(--neon-purple);
-  letter-spacing: 2px;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  text-shadow: 0 0 8px rgba(204,0,255,.5);
-}
+/* ── LAYOUT ── */
+.container { max-width: 900px; margin: 0 auto; padding: 24px; }
 
-/* ── FORM ─────────────────────────── */
-label {
-  display: block;
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-input, textarea {
-  width: 100%;
-  background: rgba(0,0,0,.45);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 15px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  outline: none;
-  transition: border-color .2s, box-shadow .2s;
-}
-input:focus, textarea:focus {
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 8px rgba(0,255,255,.3);
-}
-input[type="number"] { -moz-appearance: textfield; }
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-textarea { resize: vertical; }
+/* ── SETUP ── */
+.setup-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; }
+.setup-bar summary { font-family: var(--font-head); font-size: 13px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--cream-dim); cursor: pointer; display: flex; align-items: center; gap: 8px; list-style: none; }
+.setup-bar summary::-webkit-details-marker { display: none; }
+.setup-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.setup-dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.setup-dot.off { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.setup-content { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.setup-content label { font-size: 11px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 4px; }
+.setup-content input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--cream); padding: 10px 14px; font-size: 13px; width: 100%; outline: none; }
+.setup-content input:focus { border-color: var(--orange); }
+.setup-field { flex: 1; min-width: 200px; }
 
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+/* ── TOOLBAR ── */
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.toolbar-left { display: flex; gap: 10px; align-items: center; }
+.toolbar h2 { font-family: var(--font-head); font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.product-count { font-size: 13px; color: var(--cream-dim); }
 
-/* ── BUTTONS ──────────────────────── */
-.btn {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  border: 2px solid var(--neon-green);
-  border-radius: 4px;
-  background: rgba(0,255,136,.08);
-  color: var(--neon-green);
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all .2s;
-  text-transform: uppercase;
-  text-shadow: 0 0 8px var(--neon-green);
-  box-shadow: 0 0 12px rgba(0,255,136,.2);
-  margin-top: 6px;
-}
-.btn:hover:not(:disabled) {
-  background: rgba(0,255,136,.18);
-  box-shadow: 0 0 28px rgba(0,255,136,.45);
-}
-.btn:disabled { opacity: .35; cursor: not-allowed; }
+/* ── BUTTONS ── */
+.btn { font-family: var(--font-head); font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 10px 20px; border-radius: var(--radius); border: none; transition: all var(--transition); }
+.btn-orange { background: var(--orange); color: #fff; box-shadow: 0 2px 8px rgba(255,130,0,.25); }
+.btn-orange:hover { background: var(--orange-dk); box-shadow: 0 4px 15px rgba(255,130,0,.35); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--cream-dim); }
+.btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+.btn-red { background: rgba(229,57,53,.1); border: 1px solid rgba(229,57,53,.3); color: #ef5350; }
+.btn-red:hover { background: rgba(229,57,53,.2); }
+.btn-green { background: rgba(67,160,71,.1); border: 1px solid rgba(67,160,71,.3); color: #66bb6a; }
+.btn-green:hover { background: rgba(67,160,71,.2); }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
 
-.btn-sm {
-  padding: 10px;
-  font-size: 11px;
-}
-.btn-pink {
-  border-color: var(--neon-pink);
-  background: rgba(255,0,204,.08);
-  color: var(--neon-pink);
-  text-shadow: 0 0 8px var(--neon-pink);
-  box-shadow: 0 0 12px rgba(255,0,204,.2);
-}
-.btn-pink:hover:not(:disabled) {
-  background: rgba(255,0,204,.18);
-  box-shadow: 0 0 28px rgba(255,0,204,.45);
-}
-.btn-cyan {
-  border-color: var(--neon-cyan);
-  background: rgba(0,255,255,.06);
-  color: var(--neon-cyan);
-  text-shadow: 0 0 8px var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(0,255,255,.15);
-}
-.btn-cyan:hover:not(:disabled) {
-  background: rgba(0,255,255,.14);
-  box-shadow: 0 0 24px rgba(0,255,255,.35);
-}
+/* ── PRODUCT LIST ── */
+.product-list { display: flex; flex-direction: column; gap: 12px; }
+.product-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: center; gap: 16px; transition: border-color var(--transition); }
+.product-row:hover { border-color: var(--border-lt); }
+.product-row-img { width: 64px; height: 64px; border-radius: 6px; object-fit: cover; background: #111; flex-shrink: 0; border: 1px solid var(--border); }
+.product-row-no-img { width: 64px; height: 64px; border-radius: 6px; background: #111; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: .15; flex-shrink: 0; border: 1px solid var(--border); }
+.product-row-info { flex: 1; min-width: 0; }
+.product-row-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--cream); margin-bottom: 2px; }
+.product-row-meta { font-size: 12px; color: var(--cream-dim); }
+.product-row-price { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--orange); flex-shrink: 0; min-width: 60px; text-align: right; }
+.product-row-stock { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.stock-btn { width: 28px; height: 28px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--cream); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
+.stock-btn:hover { border-color: var(--orange); color: var(--orange); }
+.stock-val { font-family: var(--font-head); font-size: 14px; font-weight: 600; min-width: 24px; text-align: center; }
+.product-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-/* ── SETUP TOGGLE ─────────────────── */
-.setup-toggle {
-  max-width: 600px;
-  margin: 0 auto 6px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 8px;
-  user-select: none;
-}
-.setup-toggle:hover { color: var(--neon-cyan); }
-.setup-toggle .dot {
-  display: inline-block;
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  margin-right: 6px;
-}
-.dot-green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
-.dot-red { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.open { display: flex; }
+.modal-bg { position: absolute; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(6px); }
+.modal-box { position: relative; background: var(--bg-alt); border: 1px solid var(--border-lt); border-radius: 12px; width: min(600px, 95vw); max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.5); z-index: 1; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.modal-header h3 { font-family: var(--font-head); font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.modal-close { background: transparent; border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; color: var(--cream-dim); font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
+.modal-close:hover { background: var(--surface); color: var(--cream); }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 10px; }
+.modal-footer-right { display: flex; gap: 8px; }
 
-#setup-fields { overflow: hidden; transition: max-height .35s ease, opacity .25s; }
-#setup-fields.collapsed { max-height: 0 !important; opacity: 0; }
+/* ── FORM ── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-family: var(--font-head); font-size: 12px; font-weight: 500; letter-spacing: .5px; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 4px; }
+.form-group input, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--cream); font-family: var(--font-body); font-size: 14px; padding: 10px 14px; outline: none; transition: border-color var(--transition); }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--orange); }
+.form-group textarea { resize: vertical; min-height: 60px; }
+.form-group input::placeholder, .form-group textarea::placeholder { color: var(--muted); }
+.form-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
-/* ── IMAGE PREVIEW ────────────────── */
-#img-preview {
-  max-width: 100%;
-  max-height: 180px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  margin: 4px 0 10px;
-  display: none;
-  object-fit: contain;
-}
-input[type="file"] { font-size: 13px; padding: 8px; }
-input[type="file"]::file-selector-button {
-  background: rgba(204,0,255,.12);
-  border: 1px solid var(--neon-purple);
-  color: var(--neon-purple);
-  border-radius: 4px;
-  padding: 6px 14px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  cursor: pointer;
-  margin-right: 10px;
-}
+.img-preview { max-width: 100%; max-height: 160px; border-radius: 6px; border: 1px solid var(--border); margin-top: 8px; object-fit: contain; background: #111; }
+.price-preview { background: rgba(255,130,0,.06); border: 1px solid rgba(255,130,0,.2); border-radius: var(--radius); padding: 14px; text-align: center; margin-bottom: 16px; }
+.price-preview-label { font-size: 11px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.price-preview-val { font-family: var(--font-head); font-size: 32px; font-weight: 700; color: var(--orange); }
+.price-preview-basis { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-/* ── STATUS ────────────────────────── */
-#status {
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 4px;
-  font-size: 13px;
-  line-height: 1.6;
-  display: none;
-}
-#status.ok {
-  display: block;
-  border: 1px solid var(--neon-green);
-  color: var(--neon-green);
-  background: rgba(0,255,136,.06);
-}
-#status.err {
-  display: block;
-  border: 1px solid var(--neon-red);
-  color: var(--neon-red);
-  background: rgba(255,0,85,.06);
-}
-#status.info {
-  display: block;
-  border: 1px solid var(--neon-cyan);
-  color: var(--neon-cyan);
-  background: rgba(0,255,255,.06);
-}
-#status a { color: var(--neon-cyan); }
+/* ── STATUS TOAST ── */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: var(--radius); font-size: 13px; font-weight: 500; z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,.4); transition: opacity .3s, transform .3s; }
+.toast.ok { background: #1b5e20; color: #a5d6a7; border: 1px solid rgba(67,160,71,.4); }
+.toast.err { background: #b71c1c; color: #ef9a9a; border: 1px solid rgba(229,57,53,.4); }
+.toast.info { background: #1a237e; color: #90caf9; border: 1px solid rgba(66,165,245,.4); }
+.toast.hidden { opacity: 0; transform: translateX(-50%) translateY(10px); pointer-events: none; }
 
-/* ── RESPONSIVE ───────────────────── */
-@media (max-width: 480px) {
+/* ── EMPTY ── */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty-state p { font-size: 14px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .product-row { flex-wrap: wrap; }
+  .product-row-price { order: -1; text-align: left; }
+  .product-row-actions { width: 100%; justify-content: flex-end; }
   .form-row { grid-template-columns: 1fr; }
-  body { padding: 0 8px 40px; }
-  section { padding: 14px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .admin-nav { flex-wrap: wrap; gap: 8px; }
 }
   </style>
 </head>
 <body>
 
-<header class="admin-header">
-  <h1>SMOKYMTN 3D PRINTS</h1>
-  <p>ADMIN — ADD PRODUCTS</p>
-  <a href="index.html" class="back-link">View pricing guide</a>
-</header>
+<nav class="admin-nav">
+  <div class="admin-nav-left">
+    <img src="logo.png" alt="Logo">
+    <h1>Admin <span>Panel</span></h1>
+  </div>
+  <div class="admin-nav-right">
+    <a href="index.html" class="nav-btn">View Store</a>
+  </div>
+</nav>
 
-<!-- ═══ SETUP ═══════════════════════════════ -->
-<div class="setup-toggle" id="setup-toggle" onclick="toggleSetup()">
-  <span class="dot dot-red" id="setup-dot"></span>
-  <span id="setup-label">GitHub not connected — tap to set up</span>
+<div class="container">
+
+  <!-- Setup -->
+  <details class="setup-bar" id="setup-bar">
+    <summary>
+      <span class="setup-dot off" id="setup-dot"></span>
+      <span id="setup-label">GitHub not connected</span>
+    </summary>
+    <div class="setup-content">
+      <div class="setup-field">
+        <label>GitHub Personal Access Token</label>
+        <input id="s-token" type="password" placeholder="ghp_xxxxxxxxxxxx or github_pat_xxx">
+      </div>
+      <button class="btn btn-orange btn-sm" onclick="saveSetup()">Save</button>
+    </div>
+  </details>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <h2>Products</h2>
+      <span class="product-count" id="product-count"></span>
+    </div>
+    <div>
+      <button class="btn btn-orange" onclick="openAddModal()">+ Add Product</button>
+    </div>
+  </div>
+
+  <!-- Product list -->
+  <div class="product-list" id="product-list"></div>
+
 </div>
 
-<section id="setup-section">
-  <div id="setup-fields">
-    <h2>GitHub Connection</h2>
-    <label>Personal Access Token</label>
-    <input id="pat" type="password" placeholder="ghp_xxxxxxxxxxxx">
-    <div class="form-row">
-      <div>
-        <label>Owner</label>
-        <input id="owner" value="Lucasw7493">
+<!-- ══ ADD / EDIT MODAL ══ -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-bg" onclick="closeModal()"></div>
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Product</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input id="f-name" type="text" placeholder="e.g. Ironbite Dragon">
       </div>
-      <div>
-        <label>Repository</label>
-        <input id="repo" value="3d-print-price-guide">
+      <div class="form-group">
+        <label>Product Image</label>
+        <input type="file" id="f-image-file" accept="image/*" onchange="previewImage(this)">
+        <img id="f-image-preview" class="img-preview" style="display:none">
+        <input type="hidden" id="f-image">
+        <span class="form-hint">Upload a photo or leave as-is when editing</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Filament Cost ($)</label>
+          <input id="f-filament" type="number" step="0.01" min="0" placeholder="0.00" oninput="updatePrice()">
+        </div>
+        <div class="form-group">
+          <label>Elec + Wear ($)</label>
+          <input id="f-elec" type="number" step="0.01" min="0" placeholder="0.00" oninput="updatePrice()">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Qty per Plate</label>
+          <input id="f-qty" type="number" min="1" value="1" oninput="updatePrice()">
+        </div>
+        <div class="form-group">
+          <label>Print Time (hrs)</label>
+          <input id="f-time" type="number" step="0.1" min="0" placeholder="0.0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Market Low ($)</label>
+          <input id="f-mkt-low" type="number" step="0.01" min="0" placeholder="0.00" oninput="updatePrice()">
+        </div>
+        <div class="form-group">
+          <label>Market Mid ($)</label>
+          <input id="f-mkt-mid" type="number" step="0.01" min="0" placeholder="0.00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Market High ($)</label>
+          <input id="f-mkt-high" type="number" step="0.01" min="0" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Stock Qty</label>
+          <input id="f-stock" type="number" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Set Price ($) <span style="color:var(--muted);font-size:10px;text-transform:none">(overrides formula)</span></label>
+        <input id="f-price-override" type="number" step="0.01" min="0" placeholder="Leave blank = auto" oninput="updatePrice()">
+      </div>
+      <div class="price-preview" id="price-preview">
+        <div class="price-preview-label">Calculated Sell Price</div>
+        <div class="price-preview-val" id="price-val">$0</div>
+        <div class="price-preview-basis" id="price-basis"></div>
+      </div>
+      <div class="form-group">
+        <label>Notes / Description</label>
+        <textarea id="f-notes" rows="3" placeholder="e.g. 4-color PLA — Articulated dragon, print-in-place"></textarea>
       </div>
     </div>
-    <button class="btn btn-sm btn-cyan" onclick="saveSetup()">Save Connection</button>
+    <div class="modal-footer">
+      <button class="btn btn-red" id="modal-delete-btn" style="display:none" onclick="deleteProduct()">Delete</button>
+      <div class="modal-footer-right">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-orange" id="modal-save-btn" onclick="saveProduct()">Save Product</button>
+      </div>
+    </div>
   </div>
-</section>
+</div>
 
-<!-- ═══ PASTE FROM CLAUDE ═══════════════════ -->
-<section>
-  <h2>Paste from Claude</h2>
-  <textarea id="claude-paste" rows="5" placeholder="Paste Claude's pricing response here and tap Auto-Fill..."></textarea>
-  <button class="btn btn-sm btn-pink" onclick="autoFill()">Auto-Fill Form</button>
-</section>
-
-<!-- ═══ PRODUCT FORM ═══════════════════════ -->
-<section>
-  <h2>New Product</h2>
-
-  <label>Product Name</label>
-  <input id="name" type="text" placeholder="e.g. Custom Flexi Keychain">
-
-  <label>Product Image</label>
-  <input type="file" id="image" accept="image/*">
-  <img id="img-preview" src="" alt="Preview">
-
-  <div class="form-row">
-    <div><label>Filament Cost ($)</label><input id="filament" type="number" step="0.01" placeholder="0.00"></div>
-    <div><label>Elec + Wear ($)</label><input id="elec" type="number" step="0.01" placeholder="0.00"></div>
-  </div>
-  <div class="form-row">
-    <div><label>Qty per Plate</label><input id="qty" type="number" value="1" min="1"></div>
-    <div><label>Print Time (hours)</label><input id="printTime" type="number" step="0.1" placeholder="0.0"></div>
-  </div>
-
-  <div class="form-row">
-    <div><label>Market Low ($)</label><input id="mktLow" type="number" step="0.01" placeholder="0.00"></div>
-    <div><label>Market Mid ($)</label><input id="mktMid" type="number" step="0.01" placeholder="0.00"></div>
-  </div>
-  <div class="form-row">
-    <div><label>Market High ($)</label><input id="mktHigh" type="number" step="0.01" placeholder="0.00"></div>
-  </div>
-
-  <div id="price-preview" style="display:none;margin-bottom:10px;padding:12px;border:1px solid var(--neon-green);border-radius:4px;background:rgba(0,255,136,.05);text-align:center;">
-    <div style="font-size:10px;color:rgba(0,255,136,.6);letter-spacing:2px;margin-bottom:4px;">AUTO PRICE</div>
-    <div id="price-preview-val" style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--neon-green);text-shadow:0 0 10px var(--neon-green);"></div>
-    <div id="price-preview-basis" style="font-size:10px;color:rgba(0,255,136,.5);margin-top:4px;"></div>
-  </div>
-
-  <label>Notes</label>
-  <textarea id="notes" rows="2" placeholder="e.g. 3-color PLA — Flexi keychain, 14 color changes."></textarea>
-
-  <button class="btn" id="submit-btn" onclick="submitProduct()">PUBLISH PRODUCT</button>
-  <button class="btn btn-sm btn-pink" style="margin-top:8px" onclick="clearForm()">Clear Form</button>
-
-  <div id="status"></div>
-</section>
+<!-- Toast -->
+<div class="toast hidden" id="toast"></div>
 
 <script>
 (function() {
-
   var $ = function(id) { return document.getElementById(id); };
+  var SK_PRODUCTS = 'smtn_products';
+  var SK_TOKEN    = 'smtn_gh_token';
+  var GH_REPO    = 'Lucasw7493/3d-print-price-guide';
+  var GH_FILE    = 'products.json';
+  var GH_BRANCH  = 'main';
 
-  /* ── SETUP ─────────────────────────────── */
+  var _products = [];
+  var _editIndex = -1;
 
-  function loadSetup() {
-    $('pat').value   = localStorage.getItem('gh_pat')   || '';
-    $('owner').value = localStorage.getItem('gh_owner') || 'Lucasw7493';
-    $('repo').value  = localStorage.getItem('gh_repo')  || '3d-print-price-guide';
-    updateSetupUI();
-  }
-
-  function updateSetupUI() {
-    var connected = !!localStorage.getItem('gh_pat');
-    $('setup-dot').className = 'dot ' + (connected ? 'dot-green' : 'dot-red');
-    $('setup-label').textContent = connected
-      ? 'GitHub connected \u2714 (tap to edit)'
-      : 'GitHub not connected \u2014 tap to set up';
-    if (connected) $('setup-fields').classList.add('collapsed');
-  }
+  /* ── Token / Setup ── */
+  function getToken() { return localStorage.getItem(SK_TOKEN) || ''; }
 
   window.saveSetup = function() {
-    var pat = $('pat').value.trim();
-    if (!pat) { status('Enter a token', 'err'); return; }
-    localStorage.setItem('gh_pat',   pat);
-    localStorage.setItem('gh_owner', $('owner').value.trim());
-    localStorage.setItem('gh_repo',  $('repo').value.trim());
+    var token = $('s-token').value.trim();
+    if (!token) { toast('Enter a token', 'err'); return; }
+    localStorage.setItem(SK_TOKEN, token);
     updateSetupUI();
-    status('Connection saved!', 'ok');
+    toast('Token saved!', 'ok');
   };
 
-  window.toggleSetup = function() {
-    $('setup-fields').classList.toggle('collapsed');
-  };
-
-  /* ── STATUS ────────────────────────────── */
-
-  function status(msg, type, html) {
-    if (html) { $('status').innerHTML = msg; }
-    else      { $('status').textContent = msg; }
-    $('status').className = type;
+  function updateSetupUI() {
+    var ok = !!getToken();
+    $('setup-dot').className = 'setup-dot ' + (ok ? 'on' : 'off');
+    $('setup-label').textContent = ok ? 'GitHub connected' : 'GitHub not connected — click to set up';
+    $('s-token').value = getToken();
+    if (ok) $('setup-bar').removeAttribute('open');
   }
 
-  /* ── IMAGE PREVIEW ─────────────────────── */
+  /* ── Products ── */
+  function loadProducts() {
+    var raw = localStorage.getItem(SK_PRODUCTS);
+    if (raw) { try { _products = JSON.parse(raw); } catch(e) { _products = []; } }
+    return _products;
+  }
 
-  $('image').addEventListener('change', function() {
-    var file = this.files[0];
-    if (!file) { $('img-preview').style.display = 'none'; return; }
+  function saveLocal() {
+    localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
+  }
+
+  function fetchFromGitHub(cb) {
+    var url = 'https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + GH_FILE + '?t=' + Date.now();
+    fetch(url)
+      .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(data) {
+        if (Array.isArray(data)) { _products = data; saveLocal(); }
+        cb();
+      })
+      .catch(function() { cb(); });
+  }
+
+  function pushToGitHub(cb) {
+    var token = getToken();
+    if (!token) { toast('Set up GitHub token first', 'err'); if (cb) cb(false); return; }
+    var body = JSON.stringify(_products, null, 2);
+    var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
+    var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+    fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
+      .then(function(r) { return r.json(); })
+      .then(function(meta) {
+        var b64 = btoa(unescape(encodeURIComponent(body)));
+        return fetch(apiUrl, {
+          method: 'PUT', headers: headers,
+          body: JSON.stringify({ message: 'Update products', content: b64, sha: meta.sha, branch: GH_BRANCH })
+        });
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.commit) { toast('Saved & synced to all devices', 'ok'); if (cb) cb(true); }
+        else { toast('Saved locally — check GitHub token', 'err'); if (cb) cb(false); }
+      })
+      .catch(function() { toast('Saved locally — sync failed', 'err'); if (cb) cb(false); });
+  }
+
+  function uploadImage(file, filename, cb) {
+    var token = getToken();
+    if (!token) { cb(filename); return; }
     var reader = new FileReader();
-    reader.onload = function(e) {
-      $('img-preview').src = e.target.result;
-      $('img-preview').style.display = 'block';
+    reader.onload = function() {
+      var b64 = reader.result.split(',')[1];
+      var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + filename;
+      var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+      /* Check if file exists to get SHA */
+      fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(meta) {
+          var body = { message: 'Add ' + filename, content: b64, branch: GH_BRANCH };
+          if (meta && meta.sha) body.sha = meta.sha;
+          return fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+        })
+        .then(function() { cb(filename); })
+        .catch(function() { cb(filename); });
     };
     reader.readAsDataURL(file);
-  });
+  }
 
-  /* ── AUTO-FILL FROM CLAUDE ─────────────── */
+  /* ── Price calc ── */
+  function calcPrice(p) {
+    if (p.priceOverride > 0) return Math.round(p.priceOverride);
+    var cost = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
+    var costFloor = cost * 2.2;
+    var mktTarget = (p.mktLow || 0) * 0.85;
+    return Math.round(Math.max(costFloor, mktTarget));
+  }
 
-  window.autoFill = function() {
-    var text = $('claude-paste').value;
-    if (!text.trim()) { status('Paste Claude\'s response first', 'err'); return; }
+  window.updatePrice = function() {
+    var p = readForm();
+    var price = calcPrice(p);
+    var cost = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
+    var costFloor = Math.round(cost * 2.2);
+    var mktTarget = Math.round((p.mktLow || 0) * 0.85);
+    var basis = price === costFloor && costFloor >= mktTarget ? '2.2x floor' : 'from market low';
+    $('price-val').textContent = '$' + price;
+    $('price-basis').textContent = '2.2x floor: $' + costFloor + '  ·  85% mkt: $' + mktTarget + '  ·  ' + basis;
+  };
 
-    function findDollar() {
-      var keywords = Array.prototype.slice.call(arguments);
-      for (var i = 0; i < keywords.length; i++) {
-        var re = new RegExp(keywords[i] + '[^$\\d]*\\$?([\\d]+\\.?\\d{0,2})', 'i');
-        var m = text.match(re);
-        if (m) return parseFloat(m[1]);
-      }
-      return null;
+  /* ── Render product list ── */
+  function render() {
+    var list = $('product-list');
+    $('product-count').textContent = _products.length + ' total';
+
+    if (!_products.length) {
+      list.innerHTML = '<div class="empty-state"><p>No products yet. Click "+ Add Product" to get started.</p></div>';
+      return;
     }
 
-    function setVal(id, val) {
-      if (val !== null && val !== undefined) $(id).value = val;
-    }
+    list.innerHTML = _products.map(function(p, i) {
+      var price = calcPrice(p);
+      var stock = p.stock != null ? p.stock : 0;
+      var imgHtml = p.image
+        ? '<img src="' + p.image + '" class="product-row-img" onerror="this.style.display=\'none\'">'
+        : '<div class="product-row-no-img">📷</div>';
 
-    // Name
-    var namePatterns = [/name[:\s]+["'\*]*([^\n"'\*]+)/i, /^#+\s*(.+)/m, /product[:\s]+["'\*]*([^\n"'\*]+)/i];
-    for (var i = 0; i < namePatterns.length; i++) {
-      var m = text.match(namePatterns[i]);
-      if (m) { setVal('name', m[1].trim()); break; }
-    }
+      return '<div class="product-row">'
+        + imgHtml
+        + '<div class="product-row-info">'
+        +   '<div class="product-row-name">' + p.name + '</div>'
+        +   '<div class="product-row-meta">' + (p.notes || 'No description') + '</div>'
+        + '</div>'
+        + '<div class="product-row-stock">'
+        +   '<button class="stock-btn" onclick="adjustStock(' + i + ',-1)">&minus;</button>'
+        +   '<span class="stock-val">' + stock + '</span>'
+        +   '<button class="stock-btn" onclick="adjustStock(' + i + ',1)">+</button>'
+        + '</div>'
+        + '<div class="product-row-price">$' + price + '</div>'
+        + '<div class="product-row-actions">'
+        +   '<button class="btn btn-outline btn-sm" onclick="openEditModal(' + i + ')">Edit</button>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
 
-    // Costs
-    setVal('filament', findDollar('filament', 'plate cost', 'material'));
-    setVal('elec',     findDollar('elec', 'electricity', 'wear'));
+  /* ── Stock adjust ── */
+  window.adjustStock = function(i, delta) {
+    if (!_products[i]) return;
+    _products[i].stock = Math.max(0, (_products[i].stock || 0) + delta);
+    saveLocal();
+    render();
+    pushToGitHub();
+  };
 
-    // Qty
-    var qm = text.match(/(\d+)\s*per\s*plate/i) || text.match(/qty[:\s]*(\d+)/i);
-    if (qm) setVal('qty', parseInt(qm[1]));
+  /* ── Modal ── */
+  function clearForm() {
+    ['f-name','f-filament','f-elec','f-time','f-mkt-low','f-mkt-mid','f-mkt-high','f-notes','f-price-override'].forEach(function(id) { $(id).value = ''; });
+    $('f-qty').value = '1';
+    $('f-stock').value = '0';
+    $('f-image').value = '';
+    $('f-image-file').value = '';
+    $('f-image-preview').style.display = 'none';
+    updatePrice();
+  }
 
-    // Print time  —  "14h 18m" or "14h18m" or "14.3h"
-    var tm = text.match(/(\d+)\s*h\s*(\d+)\s*m/i);
-    if (tm) {
-      setVal('printTime', (parseInt(tm[1]) + parseInt(tm[2]) / 60).toFixed(1));
+  function fillForm(p) {
+    $('f-name').value = p.name || '';
+    $('f-filament').value = p.filament != null ? p.filament : '';
+    $('f-elec').value = p.elec != null ? p.elec : '';
+    $('f-qty').value = p.qty != null ? p.qty : 1;
+    $('f-time').value = p.printTime != null ? p.printTime : '';
+    $('f-mkt-low').value = p.mktLow != null ? p.mktLow : '';
+    $('f-mkt-mid').value = p.mktMid != null ? p.mktMid : '';
+    $('f-mkt-high').value = p.mktHigh != null ? p.mktHigh : '';
+    $('f-stock').value = p.stock != null ? p.stock : 0;
+    $('f-notes').value = p.notes || '';
+    $('f-price-override').value = p.priceOverride != null ? p.priceOverride : '';
+    $('f-image').value = p.image || '';
+    if (p.image) {
+      $('f-image-preview').src = p.image;
+      $('f-image-preview').style.display = 'block';
     } else {
-      var t2 = text.match(/(?:print|total)\s*time[:\s]*(\d+\.?\d*)/i);
-      if (t2) setVal('printTime', parseFloat(t2[1]));
+      $('f-image-preview').style.display = 'none';
+    }
+    updatePrice();
+  }
+
+  function readForm() {
+    return {
+      name: $('f-name').value.trim(),
+      image: $('f-image').value.trim(),
+      filament: parseFloat($('f-filament').value) || 0,
+      elec: parseFloat($('f-elec').value) || 0,
+      qty: parseInt($('f-qty').value) || 1,
+      printTime: parseFloat($('f-time').value) || 0,
+      mktLow: parseFloat($('f-mkt-low').value) || 0,
+      mktMid: parseFloat($('f-mkt-mid').value) || 0,
+      mktHigh: parseFloat($('f-mkt-high').value) || 0,
+      stock: parseInt($('f-stock').value) || 0,
+      notes: $('f-notes').value.trim(),
+      priceOverride: parseFloat($('f-price-override').value) || null
+    };
+  }
+
+  window.previewImage = function(input) {
+    var file = input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $('f-image-preview').src = e.target.result;
+      $('f-image-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.openAddModal = function() {
+    _editIndex = -1;
+    $('modal-title').textContent = 'Add Product';
+    $('modal-delete-btn').style.display = 'none';
+    $('modal-save-btn').textContent = 'Save Product';
+    clearForm();
+    $('product-modal').classList.add('open');
+  };
+
+  window.openEditModal = function(i) {
+    _editIndex = i;
+    $('modal-title').textContent = 'Edit Product';
+    $('modal-delete-btn').style.display = '';
+    $('modal-save-btn').textContent = 'Save Changes';
+    fillForm(_products[i]);
+    $('product-modal').classList.add('open');
+  };
+
+  window.closeModal = function() {
+    $('product-modal').classList.remove('open');
+  };
+
+  window.saveProduct = function() {
+    var p = readForm();
+    if (!p.name) { toast('Product name is required', 'err'); return; }
+
+    var file = $('f-image-file').files[0];
+    var btn = $('modal-save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    function finishSave(imageVal) {
+      p.image = imageVal || p.image;
+
+      if (_editIndex >= 0) {
+        _products[_editIndex] = p;
+      } else {
+        _products.unshift(p);
+      }
+      saveLocal();
+      render();
+      closeModal();
+      pushToGitHub(function() {
+        btn.disabled = false;
+        btn.textContent = _editIndex >= 0 ? 'Save Changes' : 'Save Product';
+      });
     }
 
-    // Market
-    setVal('mktLow',  findDollar('(?:market\\s*)?low',  'mkt.?low'));
-    setVal('mktMid',  findDollar('(?:market\\s*)?mid',  'mkt.?mid'));
-    setVal('mktHigh', findDollar('(?:market\\s*)?high', 'mkt.?high'));
-    updatePricePreview();
-
-    // Notes
-    var nm = text.match(/notes?[:\s]+["']?([^\n"']+)/i);
-    if (nm) setVal('notes', nm[1].trim());
-
-    status('Auto-fill done \u2014 review the fields below', 'ok');
+    if (file) {
+      var ext = file.name.split('.').pop().toLowerCase();
+      var slug = p.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s]+/g, '-').replace(/-+/g, '-');
+      var filename = slug + '.' + ext;
+      toast('Uploading image...', 'info');
+      uploadImage(file, filename, function(fname) {
+        finishSave(fname);
+      });
+    } else {
+      finishSave(p.image);
+    }
   };
 
-  /* ── HELPERS ───────────────────────────── */
-
-  function slugify(t) {
-    return t.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s]+/g, '-').replace(/-+/g, '-');
-  }
-
-  function fileToBase64(file) {
-    return new Promise(function(resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function() { resolve(reader.result.split(',')[1]); };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function decodeBase64(b64) {
-    var raw = atob(b64.replace(/\n/g, ''));
-    var bytes = new Uint8Array(raw.length);
-    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    return new TextDecoder().decode(bytes);
-  }
-
-  function encodeBase64(text) {
-    var bytes = new TextEncoder().encode(text);
-    var bin = '';
-    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-    return btoa(bin);
-  }
-
-  function esc(s) {
-    return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-  }
-
-  /* ── GITHUB API ────────────────────────── */
-
-  function ghHeaders(token) {
-    return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
-  }
-
-  function ghGet(owner, repo, path, token) {
-    return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, {
-      headers: ghHeaders(token)
-    }).then(function(res) {
-      if (!res.ok) throw new Error('GitHub GET ' + path + ': ' + res.status);
-      return res.json();
-    });
-  }
-
-  function ghPut(owner, repo, path, content, message, token, sha) {
-    var body = { message: message, content: content };
-    if (sha) body.sha = sha;
-    return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, {
-      method: 'PUT',
-      headers: ghHeaders(token),
-      body: JSON.stringify(body)
-    }).then(function(res) {
-      if (!res.ok) return res.json().then(function(e) { throw new Error('GitHub PUT ' + path + ': ' + (e.message || res.status)); });
-      return res.json();
-    });
-  }
-
-  /* ── BUILD PRODUCT ENTRY ───────────────── */
-
-  function buildEntry(d) {
-    return '  {\n'
-      + '    name:      "' + esc(d.name)  + '",\n'
-      + '    image:     "' + d.image      + '",\n'
-      + '    filament:  ' + d.filament    + ',\n'
-      + '    elec:      ' + d.elec        + ',\n'
-      + '    qty:       ' + d.qty         + ',\n'
-      + '    printTime: ' + d.printTime   + ',\n'
-      + '    mktLow:    ' + d.mktLow      + ',\n'
-      + '    mktMid:    ' + d.mktMid      + ',\n'
-      + '    mktHigh:   ' + d.mktHigh     + ',\n'
-      + '    notes:     "' + esc(d.notes) + '"\n'
-      + '  }';
-  }
-
-  function insertProduct(html, entry) {
-    var templateIdx = html.indexOf('TEMPLATE');
-    if (templateIdx === -1) throw new Error('Cannot find TEMPLATE marker in index.html');
-
-    var commentStart = html.lastIndexOf('/*', templateIdx);
-    var before = html.substring(0, commentStart);
-    var after  = html.substring(commentStart);
-
-    // Trim trailing whitespace from before
-    var trimmed = before.replace(/\s+$/, '');
-
-    // Check if there are existing products (last char is })
-    var comma = trimmed.charAt(trimmed.length - 1) === '}' ? ',' : '';
-
-    return trimmed + comma + '\n\n' + entry + '\n\n  ' + after;
-  }
-
-  /* ── SUBMIT ────────────────────────────── */
-
-  window.submitProduct = function() {
-    var token = localStorage.getItem('gh_pat');
-    var owner = localStorage.getItem('gh_owner') || 'Lucasw7493';
-    var repo  = localStorage.getItem('gh_repo')  || '3d-print-price-guide';
-
-    if (!token) { status('Set up your GitHub token first!', 'err'); return; }
-
-    var name = $('name').value.trim();
-    var file = $('image').files[0];
-
-    if (!name) { status('Enter a product name', 'err'); return; }
-    if (!file) { status('Upload a product image', 'err'); return; }
-
-    var ext = file.name.split('.').pop().toLowerCase();
-    var imageFilename = slugify(name) + '.' + ext;
-
-    var data = {
-      name:      name,
-      image:     imageFilename,
-      filament:  parseFloat($('filament').value)  || 0,
-      elec:      parseFloat($('elec').value)       || 0,
-      qty:       parseInt($('qty').value)          || 1,
-      printTime: parseFloat($('printTime').value)  || 0,
-      mktLow:    parseFloat($('mktLow').value)     || 0,
-      mktMid:    parseFloat($('mktMid').value)     || 0,
-      mktHigh:   parseFloat($('mktHigh').value)    || 0,
-      notes:     $('notes').value.trim()
-    };
-
-    $('submit-btn').disabled = true;
-
-    status('Uploading image\u2026', 'info');
-
-    fileToBase64(file)
-    .then(function(imgB64) {
-      return ghPut(owner, repo, imageFilename, imgB64, 'Add ' + name + ' photo', token);
-    })
-    .then(function() {
-      status('Updating product list\u2026', 'info');
-      return ghGet(owner, repo, 'index.html', token);
-    })
-    .then(function(indexFile) {
-      var current = decodeBase64(indexFile.content);
-      var entry   = buildEntry(data);
-      var updated = insertProduct(current, entry);
-      var b64     = encodeBase64(updated);
-      return ghPut(owner, repo, 'index.html', b64, 'Add ' + name + ' product', token, indexFile.sha);
-    })
-    .then(function() {
-      var url = 'https://' + owner + '.github.io/' + repo + '/';
-      status(
-        '\u2714 <strong>' + name + '</strong> published!<br>Site updates in ~1 min.<br><br>'
-        + '<a href="' + url + '" target="_blank">View your site \u2192</a>',
-        'ok', true
-      );
-      clearFormFields();
-    })
-    .catch(function(err) {
-      status('Error: ' + err.message, 'err');
-    })
-    .finally(function() {
-      $('submit-btn').disabled = false;
-    });
+  window.deleteProduct = function() {
+    if (_editIndex < 0) return;
+    var name = _products[_editIndex].name;
+    if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+    _products.splice(_editIndex, 1);
+    saveLocal();
+    render();
+    closeModal();
+    pushToGitHub();
   };
 
-  /* ── CLEAR ─────────────────────────────── */
-
-  function clearFormFields() {
-    var ids = ['name','filament','elec','printTime','mktLow','mktMid','mktHigh','notes','claude-paste'];
-    for (var i = 0; i < ids.length; i++) $(ids[i]).value = '';
-    $('qty').value = '1';
-    $('image').value = '';
-    $('img-preview').style.display = 'none';
-    $('price-preview').style.display = 'none';
+  /* ── Toast ── */
+  var _toastTimer;
+  function toast(msg, type) {
+    var el = $('toast');
+    el.textContent = msg;
+    el.className = 'toast ' + (type || 'info');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function() { el.classList.add('hidden'); }, 4000);
   }
 
-  /* ── LIVE PRICE PREVIEW ─────────────────────── */
-  function updatePricePreview() {
-    var filament  = parseFloat($('filament').value) || 0;
-    var elec      = parseFloat($('elec').value)     || 0;
-    var qty       = parseInt($('qty').value)        || 1;
-    var mktLow    = parseFloat($('mktLow').value)   || 0;
-    if (!mktLow && !filament && !elec) { $('price-preview').style.display = 'none'; return; }
-    var cost      = (filament + elec) / qty;
-    var costFloor = Math.round(cost * 3);
-    var mktTarget = Math.round(mktLow * 0.95);
-    var price     = Math.max(costFloor, mktTarget);
-    var basis     = price === costFloor && costFloor >= mktTarget ? '3× cost floor' : 'from market low';
-    $('price-preview-val').textContent = '$' + price;
-    $('price-preview-basis').textContent = '3× cost: $' + costFloor + '  ·  mkt low: $' + mktTarget + '  ·  ' + basis;
-    $('price-preview').style.display = 'block';
-  }
-
-  window.clearForm = function() {
-    clearFormFields();
-    $('status').className = '';
-    $('status').style.display = 'none';
-  };
-
-  /* ── INIT ──────────────────────────────── */
-
-  ['filament','elec','qty','mktLow'].forEach(function(id) {
-    $(id).addEventListener('input', updatePricePreview);
+  /* ── Keyboard ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
   });
 
-  loadSetup();
+  /* ── Init ── */
+  updateSetupUI();
+  loadProducts();
+  render();
+  toast('Loading latest from GitHub...', 'info');
+  fetchFromGitHub(function() { render(); toast('Products loaded', 'ok'); });
 
 })();
 </script>
