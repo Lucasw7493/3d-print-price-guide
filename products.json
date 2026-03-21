@@ -37,8 +37,9 @@
     "mktLow": 10,
     "mktMid": 18,
     "mktHigh": 28,
+    "stock": 8,
     "notes": "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller.",
-    "stock": 8
+    "priceOverride": 5
   },
   {
     "name": "Bat Shadow",
