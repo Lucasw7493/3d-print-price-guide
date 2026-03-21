@@ -113,7 +113,7 @@
     <p class="section-sub">We'll get back to you within 24 hours</p>
 
     <div class="form-wrap">
-      <form id="custom-form" action="https://formspree.io/f/mnjgrkpv" method="POST" enctype="multipart/form-data">
+      <form id="custom-form" action="https://formspree.io/f/mnjgrkpv" method="POST">
         <input type="hidden" name="_subject" value="New Custom Order Request — Smoky Mtn 3D Prints">
 
         <div class="form-row">
@@ -127,23 +127,9 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="cf-phone">Phone <span class="optional">(optional)</span></label>
-            <input type="tel" id="cf-phone" name="phone" placeholder="(555) 123-4567">
-          </div>
-          <div class="form-group">
-            <label for="cf-budget">Budget Range <span class="optional">(optional)</span></label>
-            <select id="cf-budget" name="budget">
-              <option value="">Select a range...</option>
-              <option value="Under $25">Under $25</option>
-              <option value="$25 - $50">$25 - $50</option>
-              <option value="$50 - $100">$50 - $100</option>
-              <option value="$100 - $200">$100 - $200</option>
-              <option value="$200+">$200+</option>
-              <option value="Not sure">Not sure yet</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label for="cf-phone">Phone <span class="optional">(optional)</span></label>
+          <input type="tel" id="cf-phone" name="phone" placeholder="(555) 123-4567">
         </div>
 
         <div class="form-group">
@@ -202,20 +188,8 @@
           <input type="text" id="cf-timeline" name="timeline" placeholder="e.g. Before Christmas, within 2 weeks, no rush">
         </div>
 
-        <div class="form-group">
-          <label for="cf-files">Reference Photos <span class="optional">(optional)</span></label>
-          <div class="file-upload-area" id="file-area">
-            <input type="file" id="cf-files" name="attachment" accept="image/*" multiple>
-            <div class="file-upload-text">
-              <span class="file-icon">📎</span>
-              <span>Click to attach photos or reference images</span>
-            </div>
-          </div>
-          <span class="form-hint">Photos of what you want, inspiration images, or sketches help a lot!</span>
-        </div>
-
         <button type="submit" class="btn-submit" id="submit-btn">Send Custom Order Request</button>
-        <p class="form-disclaimer">We'll email you back at the address above. No payment required until you approve the quote.</p>
+        <p class="form-disclaimer">We'll email you back with a quote. Have reference photos? Email them to <a href="mailto:smokymtn3dprints@gmail.com" style="color:var(--orange)">smokymtn3dprints@gmail.com</a></p>
       </form>
 
       <div class="form-success" id="form-success" style="display:none">
@@ -300,7 +274,6 @@
       name: document.getElementById('cf-name').value,
       email: document.getElementById('cf-email').value,
       phone: document.getElementById('cf-phone').value || 'Not provided',
-      budget: document.getElementById('cf-budget').value || 'Not specified',
       item_type: document.getElementById('cf-type').value,
       description: document.getElementById('cf-desc').value,
       delivery: delivery,
