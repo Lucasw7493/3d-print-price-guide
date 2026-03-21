@@ -3,16 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMOKYMTN 3D PRINTS</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+  <title>SMOKYMTN 3D PRINTS — Retro Arcade Store</title>
+  <meta name="description" content="Custom 3D printed collectibles, fidgets, and art. Handcrafted in the Smoky Mountains.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕹️</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script>
     var d = new Date();
-    var v = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+    var v = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + ('0'+d.getHours()).slice(-2);
     document.write('<link rel="stylesheet" href="style.css?v=' + v + '">');
   </script>
 </head>
 <body>
+
+<!-- ══ ATMOSPHERIC LAYERS ══ -->
 <div class="scanlines"></div>
 <div class="sf-far"></div>
 <div class="sf-mid"></div>
@@ -20,361 +23,278 @@
 <div class="retro-sun"></div>
 <div class="horizon-line"></div>
 
-<!-- ═══════════════════════════════════════════════════
-     PRODUCT ADD / EDIT MODAL
-     ═══════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="product-modal">
-  <div class="modal-backdrop" onclick="closeProductModal()"></div>
-  <div class="modal-box">
-    <div class="modal-header">
-      <span id="modal-title">ADD PRODUCT</span>
-      <button class="modal-x" onclick="closeProductModal()">✕</button>
+<!-- ══ CART SIDEBAR ══ -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <div class="cart-title-row">
+      <span class="cart-title">YOUR LOOT</span>
+      <span class="cart-coin-slot">🪙</span>
     </div>
-    <div class="modal-body">
-
-      <div class="scan-section">
-        <div class="scan-label">AUTO-FILL FROM CLAUDE</div>
-        <div class="scan-steps">
-          <div class="scan-step">
-            <span class="scan-step-num">1</span>
-            <span>Copy the prompt below, open <strong>Claude.ai</strong>, attach your <strong>item photo</strong> + <strong>slicer screenshot</strong>, and send</span>
-          </div>
-          <div class="scan-step">
-            <span class="scan-step-num">2</span>
-            <span>Paste Claude's response into the box below and click <strong>AUTO-FILL</strong></span>
-          </div>
-        </div>
-        <button class="btn-copy-prompt" onclick="copyClaudePrompt()">📋 &nbsp;COPY PROMPT FOR CLAUDE</button>
-        <div class="scan-copy-status" id="copy-status"></div>
-        <textarea class="paste-box" id="claude-paste" placeholder="Paste Claude's response here..."></textarea>
-        <button class="btn-scan" onclick="autoFillFromPaste()">⚡ &nbsp;AUTO-FILL FORM</button>
-        <div class="scan-status" id="scan-status"></div>
-      </div>
-
-      <div class="form-divider">PRODUCT DETAILS</div>
-
-      <div class="form-grid">
-        <div class="form-group full">
-          <label class="form-label">PRODUCT NAME</label>
-          <input type="text" id="f-name" class="form-input" placeholder="e.g. Ironbite Dragon">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">PRODUCT IMAGE</label>
-          <div class="img-pick-row">
-            <label class="btn-ghost img-pick-btn" for="f-image-file">📷 CHOOSE PHOTO</label>
-            <input type="file" id="f-image-file" accept="image/*" style="display:none" onchange="handleProductImage(this)">
-            <span class="img-pick-name" id="f-image-name">No photo chosen</span>
-          </div>
-          <input type="hidden" id="f-image">
-          <div class="img-preview-wrap" id="img-preview-wrap" style="display:none">
-            <img id="img-preview" src="" alt="preview" class="img-preview">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">FILAMENT COST ($)</label>
-          <input type="number" id="f-filament" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateModalPrice()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">ELEC + WEAR ($)</label>
-          <input type="number" id="f-elec" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateModalPrice()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">QTY PER PLATE</label>
-          <input type="number" id="f-qty" class="form-input" min="1" placeholder="1" oninput="updateModalPrice()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">PRINT TIME (hrs)</label>
-          <input type="number" id="f-time" class="form-input" step="0.1" min="0" placeholder="0.0">
-        </div>
-        <div class="form-group">
-          <label class="form-label">MARKET LOW ($)</label>
-          <input type="number" id="f-mkt-low" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateModalPrice()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">MARKET MID ($)</label>
-          <input type="number" id="f-mkt-mid" class="form-input" step="0.01" min="0" placeholder="0.00">
-        </div>
-        <div class="form-group">
-          <label class="form-label">MARKET HIGH ($)</label>
-          <input type="number" id="f-mkt-high" class="form-input" step="0.01" min="0" placeholder="0.00">
-        </div>
-        <div class="form-group">
-          <label class="form-label">STOCK QTY</label>
-          <input type="number" id="f-stock" class="form-input" min="0" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label class="form-label">SET PRICE ($) <span class="form-label-hint">overrides formula</span></label>
-          <input type="number" id="f-price-override" class="form-input" step="0.01" min="0" placeholder="leave blank = auto" oninput="updateModalPrice()">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">NOTES</label>
-          <textarea id="f-notes" class="form-input form-textarea" placeholder="e.g. 4-color PLA — Articulated, print-in-place..."></textarea>
-        </div>
-      </div>
-
-      <div class="modal-price-preview">
-        <span class="mpp-label">CALCULATED SELL PRICE</span>
-        <span class="mpp-value" id="modal-price-val">$0</span>
-        <span class="mpp-basis" id="modal-price-basis"></span>
-      </div>
-
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty" id="cart-empty">
+      <div class="cart-empty-icon">🕹️</div>
+      <p>NO ITEMS YET</p>
+      <p class="cart-empty-sub">INSERT COIN TO BEGIN</p>
     </div>
-    <div class="modal-footer">
-      <button class="btn-danger" id="modal-delete-btn" onclick="promptDeleteProduct()">⌫ DELETE</button>
-      <div class="modal-footer-right">
-        <button class="btn-ghost" onclick="closeProductModal()">CANCEL</button>
-        <button class="btn-primary" onclick="saveProduct()">SAVE PRODUCT</button>
-      </div>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total-row">
+      <span class="cart-total-label">TOTAL</span>
+      <span class="cart-total-val" id="cart-total">$0</span>
     </div>
+    <div class="cart-note">
+      Local pickup · No shipping fees · Cash or card
+    </div>
+    <button class="btn-checkout" onclick="checkout()">⚡ CHECKOUT</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SETTINGS MODAL
-     ═══════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="settings-modal">
-  <div class="modal-backdrop" onclick="closeSettingsModal()"></div>
+<!-- ══ PRODUCT QUICK VIEW MODAL ══ -->
+<div class="modal-overlay" id="quickview-modal">
+  <div class="modal-backdrop" onclick="closeQuickView()"></div>
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeQuickView()">✕</button>
+    <div class="qv-content" id="qv-content"></div>
+  </div>
+</div>
+
+<!-- ══ CHECKOUT MODAL ══ -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal-backdrop" onclick="closeCheckoutModal()"></div>
   <div class="modal-box modal-sm">
     <div class="modal-header">
-      <span>SETTINGS</span>
-      <button class="modal-x" onclick="closeSettingsModal()">✕</button>
+      <span>ORDER SUBMITTED</span>
+      <button class="modal-x" onclick="closeCheckoutModal()">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="form-divider">SYNC — ALL DEVICES</div>
-      <div class="form-group full">
-        <label class="form-label">GITHUB TOKEN <span class="form-label-hint">set once to sync across all devices</span></label>
-        <input type="password" id="s-gh-token" class="form-input" placeholder="github_pat_...">
-        <div class="form-hint">
-          Get a free token: GitHub → Settings → Developer Settings → Personal access tokens → Fine-grained tokens → New token → select this repo → Contents: Read &amp; Write.<br>
-          Paste it here on the device you use to make edits. Staff devices only need to open the page — no token needed to view.
-        </div>
-        <div class="gh-token-status" id="gh-token-status"></div>
-      </div>
-      <div class="form-divider">DATA</div>
-      <div class="form-group full">
-        <button class="btn-danger-outline" onclick="promptResetData()">⚠ RESET TO DEFAULTS</button>
-        <div class="form-hint">Clears all changes and restores the original seed product list.</div>
-      </div>
+    <div class="modal-body checkout-success">
+      <div class="checkout-icon">🏆</div>
+      <h2 class="checkout-heading">HIGH SCORE!</h2>
+      <p class="checkout-msg">Your order has been received! We'll reach out to arrange pickup or delivery.</p>
+      <div class="checkout-details" id="checkout-details"></div>
+      <p class="checkout-contact">Questions? Reach us on Facebook or at the market!</p>
     </div>
     <div class="modal-footer">
       <div></div>
-      <div class="modal-footer-right">
-        <button class="btn-ghost" onclick="closeSettingsModal()">CANCEL</button>
-        <button class="btn-primary" onclick="saveSettingsModal()">SAVE</button>
-      </div>
+      <button class="btn-primary" onclick="closeCheckoutModal()">CONTINUE SHOPPING</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     CONFIRM DIALOG
-     ═══════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="confirm-modal">
-  <div class="modal-backdrop" onclick="closeConfirm(false)"></div>
-  <div class="modal-box modal-xs">
-    <div class="modal-header">
-      <span id="confirm-title">CONFIRM</span>
-    </div>
-    <div class="modal-body">
-      <p id="confirm-message" class="confirm-msg"></p>
-    </div>
-    <div class="modal-footer">
-      <div></div>
-      <div class="modal-footer-right">
-        <button class="btn-ghost" onclick="closeConfirm(false)">CANCEL</button>
-        <button class="btn-danger" id="confirm-ok">CONFIRM</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div id="scroll-wrap">
-
-<!-- TOOLBAR -->
-<div class="admin-bar">
-  <div class="admin-bar-actions">
-    <button class="admin-btn" onclick="openAddModal()">＋ ADD PRODUCT</button>
-    <button class="admin-btn" onclick="openSettingsModal()">⚙ SETTINGS</button>
-    <button class="admin-btn" onclick="exportJSON()">↓ EXPORT</button>
-    <label class="admin-btn" for="import-file-input" style="cursor:pointer">↑ IMPORT</label>
-    <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importJSON(this)">
-  </div>
-</div>
-
-<div class="neon-line"></div>
-
-<header class="site-header">
-  <div class="brand-row">
-    <div class="brand-icon">
-      <div class="p-gantry"></div>
-      <div class="p-nozzle"></div>
-      <div class="p-print"></div>
-      <div class="p-frame"></div>
-      <div class="p-bed"></div>
-      <div class="p-led"></div>
-    </div>
-    <h1 class="brand-name">SMOKYMTN 3D PRINTS</h1>
-  </div>
-  <p class="brand-tagline">INTERNAL PRICING GUIDE ◆ STAFF USE ONLY</p>
-  <div class="sync-status" id="sync-status"></div>
-</header>
-
-<div class="catalog-meta">
-  <span><span class="hl" id="product-count">0</span> PRODUCTS</span>
-  <span>◆</span>
-  <span>STOCK VALUE <span class="hl" id="stock-value">$0</span></span>
-  <span>◆</span>
-  <span>COST · MARKET · PRICE</span>
-</div>
-
-<div class="filter-bar">
-  <input type="text" id="search-input" class="search-input" placeholder="SEARCH BY NAME...">
-  <select id="sort-select" class="sort-select">
-    <option value="newest">&#11015; NEWEST FIRST</option>
-    <option value="oldest">&#11014; OLDEST FIRST</option>
-    <option value="price-asc">$ LOW &#8594; HIGH</option>
-    <option value="price-desc">$ HIGH &#8594; LOW</option>
-    <option value="name">A &#8594; Z</option>
-  </select>
-</div>
-
-<div class="catalog" id="catalog"></div>
-
-<footer class="site-footer">
-  <span>SMOKYMTN 3D PRINTS</span><br>
-  Internal pricing reference · Staff only<br>
-  © 2026
-</footer>
-
-</div><!-- /#scroll-wrap -->
-
+<!-- ══ LIGHTBOX ══ -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lb-close" onclick="closeLightbox()">✕</button>
   <img id="lb-img" src="" alt="Product photo">
 </div>
 
+<!-- ══ MAIN SCROLL WRAPPER ══ -->
+<div id="scroll-wrap">
+
+<!-- ══ TOP BAR ══ -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-marquee">
+      <span>★ HANDCRAFTED IN THE SMOKY MOUNTAINS ★ LOCAL PICKUP AVAILABLE ★ NO SHIPPING FEES ★ CUSTOM ORDERS WELCOME ★</span>
+    </div>
+    <button class="cart-btn" id="cart-btn" onclick="openCart()">
+      <span class="cart-btn-icon">🛒</span>
+      <span class="cart-btn-count" id="cart-count" style="display:none">0</span>
+    </button>
+  </div>
+</div>
+
+<div class="neon-line"></div>
+
+<!-- ══ HERO ══ -->
+<header class="hero">
+  <div class="hero-content">
+    <div class="brand-row">
+      <div class="brand-icon">
+        <div class="p-gantry"></div>
+        <div class="p-nozzle"></div>
+        <div class="p-print"></div>
+        <div class="p-frame"></div>
+        <div class="p-bed"></div>
+        <div class="p-led"></div>
+      </div>
+      <div>
+        <h1 class="brand-name">SMOKYMTN</h1>
+        <h1 class="brand-name brand-name-sub">3D PRINTS</h1>
+      </div>
+    </div>
+    <p class="hero-tagline">PLAYER 1 — SELECT YOUR ITEM</p>
+    <p class="hero-sub">Custom 3D printed collectibles, fidgets &amp; art<br>Handcrafted in the Smoky Mountains</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-val" id="product-count">0</span>
+        <span class="hero-stat-label">ITEMS</span>
+      </div>
+      <div class="hero-stat-sep">◆</div>
+      <div class="hero-stat">
+        <span class="hero-stat-val" id="in-stock-count">0</span>
+        <span class="hero-stat-label">IN STOCK</span>
+      </div>
+      <div class="hero-stat-sep">◆</div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">LOCAL</span>
+        <span class="hero-stat-label">PICKUP</span>
+      </div>
+    </div>
+    <a href="#shop" class="hero-cta">
+      <span class="cta-blink">▶</span> START SHOPPING <span class="cta-blink">◀</span>
+    </a>
+  </div>
+  <div class="hero-decor-left">
+    <div class="pac-dot"></div><div class="pac-dot"></div><div class="pac-dot"></div>
+    <div class="pac-dot"></div><div class="pac-dot"></div>
+  </div>
+  <div class="hero-decor-right">
+    <div class="pac-dot"></div><div class="pac-dot"></div><div class="pac-dot"></div>
+    <div class="pac-dot"></div><div class="pac-dot"></div>
+  </div>
+</header>
+
+<!-- ══ SHOP SECTION ══ -->
+<section id="shop">
+  <div class="section-header">
+    <div class="section-line"></div>
+    <h2 class="section-title">SELECT YOUR CHARACTER</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" id="search-input" class="search-input" placeholder="🔍 SEARCH ITEMS...">
+    <select id="sort-select" class="sort-select">
+      <option value="newest">⬇ NEWEST</option>
+      <option value="oldest">⬆ OLDEST</option>
+      <option value="price-asc">$ LOW → HIGH</option>
+      <option value="price-desc">$ HIGH → LOW</option>
+      <option value="name">A → Z</option>
+    </select>
+  </div>
+
+  <div class="catalog" id="catalog"></div>
+</section>
+
+<!-- ══ ABOUT / CONTACT ══ -->
+<section class="about-section">
+  <div class="section-header">
+    <div class="section-line"></div>
+    <h2 class="section-title">ABOUT THE GAME</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="about-icon">🖨️</div>
+      <h3 class="about-heading">HANDCRAFTED</h3>
+      <p>Every item is 3D printed with premium PLA filament on professional-grade printers. Quality you can see and feel.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-icon">🎨</div>
+      <h3 class="about-heading">MULTICOLOR</h3>
+      <p>Using advanced AMS (Automatic Material System) technology for stunning multi-color prints with zero painting needed.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-icon">📍</div>
+      <h3 class="about-heading">LOCAL PICKUP</h3>
+      <p>No shipping fees, no waiting. Pick up your order locally or find us at craft markets in the Smoky Mountain area.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-icon">✨</div>
+      <h3 class="about-heading">CUSTOM ORDERS</h3>
+      <p>Want something unique? We do custom prints! Message us with your idea and we'll make it happen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="footer-brand">SMOKYMTN 3D PRINTS</div>
+  <div class="footer-tagline">GAME OVER? NEVER. — INSERT COIN TO CONTINUE.</div>
+  <div class="footer-links">
+    <span>Smoky Mountains, TN</span>
+    <span>◆</span>
+    <span>Custom Orders Welcome</span>
+  </div>
+  <div class="footer-copy">© 2026 SMOKYMTN 3D PRINTS — ALL RIGHTS RESERVED</div>
+  <div class="footer-pixels">
+    <span>◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼</span>
+  </div>
+</footer>
+
+</div><!-- /#scroll-wrap -->
+
 <script>
-/* ═════════════════════════════════════════════════════════════
-   ██  DEFAULT PRODUCT DATA  ██
-
-   These are the SEED products loaded on first run.
-   After that, all changes are saved to your browser's storage.
-   To add / edit products use the Admin panel (⚙ in the header).
-   To reset back to this list: Admin → Settings → Reset to Defaults.
-   ═════════════════════════════════════════════════════════════ */
-
+/* ═══════════════════════════════════════════════════════════
+   SEED PRODUCTS — loaded on first run only
+   ═══════════════════════════════════════════════════════════ */
 var SEED_PRODUCTS = [
-
   {
     name:      "Ironbite Dragon",
     image:     "ironbite.jpg",
-    filament:  0.77,
-    elec:      0.20,
-    qty:       5,
-    printTime: 9.3,
-    mktLow:    10.00,
-    mktMid:    18.00,
-    mktHigh:   28.00,
-    notes:     "4-color PLA — Articulated, multicolor print-in-place. 5 per plate. Great seller.",
-    stock:     8
+    filament:  0.77, elec: 0.20, qty: 5, printTime: 9.3,
+    mktLow: 10.00, mktMid: 18.00, mktHigh: 28.00,
+    notes:     "4-color PLA — Articulated, multicolor print-in-place. Fully poseable dragon with vibrant colors!",
+    stock: 8
   },
-
   {
     name:      "Bat Shadow",
     image:     "batshadow.webp",
-    filament:  9.21,
-    elec:      3.50,
-    qty:       1,
-    printTime: 27.6,
-    mktLow:    45.00,
-    mktMid:    65.00,
-    mktHigh:   90.00,
-    notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece.",
-    stock:     1
+    filament:  9.21, elec: 3.50, qty: 1, printTime: 27.6,
+    mktLow: 45.00, mktMid: 65.00, mktHigh: 90.00,
+    notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. A premium collector's piece!",
+    stock: 1
   },
-
   {
     name:      "Custom Flexi Keychain",
     image:     "flexi-keychain.jpg",
-    filament:  1.88,
-    elec:      1.00,
-    qty:       1,
-    printTime: 14.3,
-    mktLow:     8.00,
-    mktMid:    15.00,
-    mktHigh:   22.00,
-    notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy.",
-    stock:     5
+    filament:  1.88, elec: 1.00, qty: 1, printTime: 14.3,
+    mktLow: 8.00, mktMid: 15.00, mktHigh: 22.00,
+    notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Perfect gift or everyday carry!",
+    stock: 5
   },
-
   {
     name:      "Spiky Sensory Twisty Sphere",
     image:     "twisty-sphere.jpg",
-    filament:  3.85,
-    elec:      0.85,
-    qty:       1,
-    printTime: 8.6,
-    mktLow:    15.00,
-    mktMid:    25.00,
-    mktHigh:   35.00,
-    notes:     "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item.",
-    stock:     3
+    filament:  3.85, elec: 0.85, qty: 1, printTime: 8.6,
+    mktLow: 15.00, mktMid: 25.00, mktHigh: 35.00,
+    notes:     "PLA Silk — Spiky fidget sphere with mesmerizing twist action. Great stress relief toy!",
+    stock: 3
   },
-
   {
     name:      "Demogorgon Flexi",
     image:     "demogorgon.jpg",
-    filament:  0.28,
-    elec:      0.15,
-    qty:       9,
-    printTime: 11.8,
-    mktLow:    12.00,
-    mktMid:    20.00,
-    mktHigh:   32.00,
-    notes:     "3-color PLA — Stranger Things Demogorgon, flexi/articulated print-in-place. 9 per plate.",
-    stock:     12
+    filament:  0.28, elec: 0.15, qty: 9, printTime: 11.8,
+    mktLow: 12.00, mktMid: 20.00, mktHigh: 32.00,
+    notes:     "3-color PLA — Stranger Things Demogorgon, flexi articulated print-in-place. Fan favorite!",
+    stock: 12
   },
-
   {
     name:      "Flexi Manta Ray",
     image:     "flexi-manta-ray.jpg",
-    filament:  2.06,
-    elec:      3.25,
-    qty:       2,
-    printTime: 13.1,
-    mktLow:    18,
-    mktMid:    24,
-    mktHigh:   32,
-    notes:     "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish",
-    stock:     4
+    filament:  2.06, elec: 3.25, qty: 2, printTime: 13.1,
+    mktLow: 18, mktMid: 24, mktHigh: 32,
+    notes:     "3-color PLA — AMS flexi manta ray with iridescent blue finish. 90 color changes for stunning detail!",
+    stock: 4
   }
-
 ];
 </script>
 
 <script>
-/* ═══════════════════════════════════════════════════
-   ADMIN + STORAGE ENGINE
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   DATA LAYER — loads products from GitHub / localStorage
+   ═══════════════════════════════════════════════════════════ */
 (function() {
   'use strict';
 
-  var SK_PRODUCTS  = 'smtn_products';
-  var SK_GH_TOKEN  = 'smtn_gh_token';
-  var GH_REPO      = 'Lucasw7493/3d-print-price-guide';
-  var GH_FILE      = 'products.json';
-  var GH_BRANCH    = 'main';
-
+  var SK_PRODUCTS = 'smtn_products';
+  var GH_REPO    = 'Lucasw7493/3d-print-price-guide';
+  var GH_FILE    = 'products.json';
+  var GH_BRANCH  = 'main';
   var _products  = null;
-  var _editIndex = -1;
-  var _confirmCb = null;
 
-  function getToken() { return localStorage.getItem(SK_GH_TOKEN) || ''; }
-
-  /* ══════════════════════════════════════════════
-     STORAGE — loads from GitHub, falls back to localStorage
-     ══════════════════════════════════════════════ */
   function loadProducts() {
     if (_products) return _products;
     var raw = localStorage.getItem(SK_PRODUCTS);
@@ -383,7 +303,6 @@ var SEED_PRODUCTS = [
     return _products;
   }
 
-  /* fetch fresh from GitHub on every page load */
   function fetchFromGitHub(cb) {
     var url = 'https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + GH_FILE + '?t=' + Date.now();
     fetch(url)
@@ -395,372 +314,25 @@ var SEED_PRODUCTS = [
         }
         cb();
       })
-      .catch(function(){ cb(); }); /* fall back silently */
+      .catch(function(){ cb(); });
   }
 
-  /* save locally + push to GitHub */
-  function persist() {
-    localStorage.setItem(SK_PRODUCTS, JSON.stringify(_products));
-    var token = getToken();
-    if (!token) return;
-    var body = JSON.stringify(_products, null, 2);
-    /* GitHub API needs base64 content + current file SHA */
-    var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
-    var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
-    fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
-      .then(function(r){ return r.json(); })
-      .then(function(meta){
-        var b64 = btoa(unescape(encodeURIComponent(body)));
-        return fetch(apiUrl, {
-          method: 'PUT', headers: headers,
-          body: JSON.stringify({ message: 'Update products', content: b64, sha: meta.sha, branch: GH_BRANCH })
-        });
-      })
-      .then(function(r){ return r.json(); })
-      .then(function(res){
-        if (res.commit) showSyncStatus('✅ Saved & synced to all devices', 'ok');
-        else showSyncStatus('⚠ Save local only — check GitHub token in Settings', 'warn');
-      })
-      .catch(function(){ showSyncStatus('⚠ Saved locally — GitHub sync failed', 'warn'); });
-  }
-
-  function showSyncStatus(msg, type) {
-    var el = document.getElementById('sync-status');
-    if (!el) return;
-    el.textContent = msg;
-    el.className = 'sync-status sync-' + type;
-    setTimeout(function(){ el.textContent = ''; el.className = 'sync-status'; }, 4000);
-  }
-
-  /* ══════════════════════════════════════════════
-     PRODUCT MODAL
-     ══════════════════════════════════════════════ */
-  window.openAddModal = function() {
-    _editIndex = -1;
-    document.getElementById('modal-title').textContent = 'ADD PRODUCT';
-    document.getElementById('modal-delete-btn').style.display = 'none';
-    clearForm();
-    document.getElementById('claude-paste').value = '';
-    setScanStatus('', '');
-    document.getElementById('product-modal').classList.add('open');
-  };
-
-  window.openEditModal = function(index) {
-    var p = loadProducts()[index];
-    if (!p) return;
-    _editIndex = index;
-    document.getElementById('modal-title').textContent = 'EDIT PRODUCT';
-    document.getElementById('modal-delete-btn').style.display = '';
-    fillForm(p);
-    updateModalPrice();
-    document.getElementById('claude-paste').value = '';
-    setScanStatus('', '');
-    document.getElementById('product-modal').classList.add('open');
-  };
-
-  window.closeProductModal = function() {
-    document.getElementById('product-modal').classList.remove('open');
-  };
-
-  function setProductImage(src, label) {
-    document.getElementById('f-image').value = src || '';
-    document.getElementById('f-image-name').textContent = label || 'No photo chosen';
-    var wrap = document.getElementById('img-preview-wrap');
-    var img  = document.getElementById('img-preview');
-    if (src) { img.src = src; wrap.style.display = ''; }
-    else     { img.src = ''; wrap.style.display = 'none'; }
-  }
-
-  window.handleProductImage = function(input) {
-    var file = input.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e) { setProductImage(e.target.result, file.name); };
-    reader.readAsDataURL(file);
-    input.value = '';
-  };
-
-  function clearForm() {
-    var ids = ['f-name','f-filament','f-elec','f-time',
-               'f-mkt-low','f-mkt-mid','f-mkt-high','f-notes','f-price-override'];
-    ids.forEach(function(id) { document.getElementById(id).value = ''; });
-    document.getElementById('f-qty').value   = '1';
-    document.getElementById('f-stock').value = '0';
-    setProductImage('', '');
-    updateModalPrice();
-  }
-
-  function fillForm(p) {
-    document.getElementById('f-name').value      = p.name      || '';
-    document.getElementById('f-filament').value  = p.filament  != null ? p.filament  : '';
-    document.getElementById('f-elec').value      = p.elec      != null ? p.elec      : '';
-    document.getElementById('f-qty').value       = p.qty       != null ? p.qty       : '1';
-    document.getElementById('f-time').value      = p.printTime != null ? p.printTime : '';
-    document.getElementById('f-mkt-low').value   = p.mktLow    != null ? p.mktLow    : '';
-    document.getElementById('f-mkt-mid').value   = p.mktMid    != null ? p.mktMid    : '';
-    document.getElementById('f-mkt-high').value  = p.mktHigh   != null ? p.mktHigh   : '';
-    document.getElementById('f-stock').value         = p.stock         != null ? p.stock         : '0';
-    document.getElementById('f-notes').value         = p.notes         || '';
-    document.getElementById('f-price-override').value = p.priceOverride != null ? p.priceOverride : '';
-    setProductImage(p.image || '', p.image ? 'Current photo' : '');
-  }
-
-  function readForm() {
-    return {
-      name:      document.getElementById('f-name').value.trim(),
-      image:     document.getElementById('f-image').value.trim(),
-      filament:  parseFloat(document.getElementById('f-filament').value) || 0,
-      elec:      parseFloat(document.getElementById('f-elec').value)     || 0,
-      qty:       parseInt(document.getElementById('f-qty').value)        || 1,
-      printTime: parseFloat(document.getElementById('f-time').value)     || 0,
-      mktLow:    parseFloat(document.getElementById('f-mkt-low').value)  || 0,
-      mktMid:    parseFloat(document.getElementById('f-mkt-mid').value)  || 0,
-      mktHigh:   parseFloat(document.getElementById('f-mkt-high').value) || 0,
-      stock:         parseInt(document.getElementById('f-stock').value)          || 0,
-      notes:         document.getElementById('f-notes').value.trim(),
-      priceOverride: parseFloat(document.getElementById('f-price-override').value) || null
-    };
-  }
-
-  window.updateModalPrice = function() {
-    var p         = readForm();
-    var price     = window.calcPrice(p);
-    var cost      = ((p.filament||0) + (p.elec||0)) / Math.max(p.qty||1, 1);
-    var costFloor = Math.round(cost * 2.2);
-    var mktTarget = Math.round((p.mktLow||0) * 0.85);
-    var basis     = price === costFloor && costFloor >= mktTarget ? '2.2× floor' : 'from market low';
-    document.getElementById('modal-price-val').textContent   = '$' + price;
-    document.getElementById('modal-price-basis').textContent =
-      '2.2\u00d7 floor: $' + costFloor + '  \u00b7  mkt 85%: $' + mktTarget + '  \u00b7  ' + basis;
-  };
-
-  window.saveProduct = function() {
-    var p = readForm();
-    if (!p.name) {
-      alert('Product name is required.');
-      document.getElementById('f-name').focus();
-      return;
-    }
-    loadProducts();
-    if (_editIndex >= 0) {
-      _products[_editIndex] = p;
-    } else {
-      _products.unshift(p); // newest first
-    }
-    persist();
-    closeProductModal();
-    window.renderCatalog();
-  };
-
-  window.promptDeleteProduct = function() {
-    if (_editIndex < 0) return;
-    showConfirm(
-      'DELETE PRODUCT',
-      'Delete "' + _products[_editIndex].name + '"? This cannot be undone.',
-      function() {
-        _products.splice(_editIndex, 1);
-        persist();
-        closeProductModal();
-        window.renderCatalog();
-      }
-    );
-  };
-
-  /* ══════════════════════════════════════════════
-     STOCK ADJUSTMENT
-     ══════════════════════════════════════════════ */
-  window.adjustStock = function(index, delta) {
-    loadProducts();
-    if (!_products[index]) return;
-    _products[index].stock = Math.max(0, (_products[index].stock || 0) + delta);
-    persist();
-    window.renderCatalog();
-  };
-
-  /* ══════════════════════════════════════════════
-     DUAL-IMAGE AI SCAN
-     ══════════════════════════════════════════════ */
-  var CLAUDE_PROMPT =
-    'I\'m adding a 3D printed product to my price guide for SMOKYMTN 3D PRINTS ' +
-    '(we sell at local craft markets — no shipping, no platform fees).\n\n' +
-    'Look at my attached images (item photo + slicer screenshot) and return ONLY this JSON, no extra text:\n\n' +
-    '{\n' +
-    '  "name": "product name",\n' +
-    '  "notes": "brief description: colors, material, key features",\n' +
-    '  "filamentCostTotal": 0.00,\n' +
-    '  "printTimeHours": 0.0,\n' +
-    '  "qtyPerPlate": 1,\n' +
-    '  "mktLow": 0.00,\n' +
-    '  "mktMid": 0.00,\n' +
-    '  "mktHigh": 0.00\n' +
-    '}\n\n' +
-    'filamentCostTotal = the material cost shown in the slicer screenshot.\n' +
-    'mktLow/Mid/High = what similar 3D printed items sell for on Etsy (realistic craft market prices).';
-
-  window.copyClaudePrompt = function() {
-    navigator.clipboard.writeText(CLAUDE_PROMPT).then(function() {
-      var el = document.getElementById('copy-status');
-      el.textContent = '✅ Copied! Paste into Claude.ai with your photos.';
-      el.className = 'scan-copy-status ok';
-      setTimeout(function() { el.textContent = ''; el.className = 'scan-copy-status'; }, 3000);
-    }).catch(function() {
-      /* fallback for older browsers */
-      var ta = document.createElement('textarea');
-      ta.value = CLAUDE_PROMPT;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      var el = document.getElementById('copy-status');
-      el.textContent = '✅ Copied!';
-      el.className = 'scan-copy-status ok';
-      setTimeout(function() { el.textContent = ''; el.className = 'scan-copy-status'; }, 3000);
-    });
-  };
-
-  function setScanStatus(msg, type) {
-    var el = document.getElementById('scan-status');
-    el.textContent = msg;
-    el.className   = 'scan-status' + (type ? ' scan-' + type : '');
-  }
-
-  function resetPasteBox() {
-    var ta = document.getElementById('claude-paste');
-    if (ta) ta.value = '';
-    setScanStatus('', '');
-  }
-
-  window.autoFillFromPaste = function() {
-    var raw = (document.getElementById('claude-paste').value || '').trim();
-    if (!raw) { setScanStatus('⚠ Paste Claude\'s response first.', 'warn'); return; }
-    try {
-      /* strip markdown fences if present */
-      raw = raw.replace(/^```[a-z]*\n?/i, '').replace(/```\s*$/, '').trim();
-      /* extract first JSON object if there's surrounding text */
-      var match = raw.match(/\{[\s\S]*\}/);
-      if (match) raw = match[0];
-      var d = JSON.parse(raw);
-      if (d.name)                  document.getElementById('f-name').value     = d.name;
-      if (d.notes)                 document.getElementById('f-notes').value    = d.notes;
-      if (d.filamentCostTotal > 0) document.getElementById('f-filament').value = (+d.filamentCostTotal).toFixed(2);
-      if (d.printTimeHours    > 0) document.getElementById('f-time').value     = (+d.printTimeHours).toFixed(1);
-      if (d.qtyPerPlate       > 0) document.getElementById('f-qty').value      = d.qtyPerPlate;
-      if (d.mktLow            > 0) document.getElementById('f-mkt-low').value  = (+d.mktLow).toFixed(2);
-      if (d.mktMid            > 0) document.getElementById('f-mkt-mid').value  = (+d.mktMid).toFixed(2);
-      if (d.mktHigh           > 0) document.getElementById('f-mkt-high').value = (+d.mktHigh).toFixed(2);
-      updateModalPrice();
-      setScanStatus('✅ Form filled — review below, pick your image, then save.', 'ok');
-    } catch(e) {
-      setScanStatus('✕ Could not read that response. Make sure you copied Claude\'s full reply.', 'error');
-    }
-  };
-
-  /* ══════════════════════════════════════════════
-     SETTINGS MODAL
-     ══════════════════════════════════════════════ */
-  window.openSettingsModal = function() {
-    var t = getToken();
-    document.getElementById('s-gh-token').value = t;
-    var st = document.getElementById('gh-token-status');
-    st.textContent = t ? '● Token saved on this device' : '○ No token — edits save locally only';
-    st.className   = 'gh-token-status ' + (t ? 'ok' : 'warn');
-    document.getElementById('settings-modal').classList.add('open');
-  };
-
-  window.closeSettingsModal = function() {
-    document.getElementById('settings-modal').classList.remove('open');
-  };
-
-  window.saveSettingsModal = function() {
-    var t = document.getElementById('s-gh-token').value.trim();
-    if (t) localStorage.setItem(SK_GH_TOKEN, t);
-    else   localStorage.removeItem(SK_GH_TOKEN);
-    closeSettingsModal();
-    showSyncStatus(t ? '✅ Token saved — edits will now sync to all devices' : 'Token cleared', t ? 'ok' : 'warn');
-  };
-
-  window.promptResetData = function() {
-    showConfirm(
-      'RESET TO DEFAULTS',
-      'This will erase all your changes and restore the original product list. Are you sure?',
-      function() {
-        _products = SEED_PRODUCTS.map(function(p) { return Object.assign({}, p); });
-        persist();
-        closeSettingsModal();
-        window.renderCatalog();
-      }
-    );
-  };
-
-  /* ══════════════════════════════════════════════
-     EXPORT / IMPORT
-     ══════════════════════════════════════════════ */
-  window.exportJSON = function() {
-    var blob = new Blob([JSON.stringify(loadProducts(), null, 2)], { type: 'application/json' });
-    var url  = URL.createObjectURL(blob);
-    var a    = document.createElement('a');
-    a.href     = url;
-    a.download = 'smokymtn-products-' + new Date().toISOString().slice(0, 10) + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  window.importJSON = function(input) {
-    var file = input.files[0];
-    if (!file) return;
-    input.value = '';
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        var data = JSON.parse(e.target.result);
-        if (!Array.isArray(data)) throw new Error('Expected an array of products');
-        showConfirm(
-          'IMPORT PRODUCTS',
-          'Replace all ' + loadProducts().length + ' current products with ' + data.length + ' imported products?',
-          function() { _products = data; persist(); window.renderCatalog(); }
-        );
-      } catch(err) { alert('Import failed: ' + err.message); }
-    };
-    reader.readAsText(file);
-  };
-
-  /* ══════════════════════════════════════════════
-     CONFIRM DIALOG
-     ══════════════════════════════════════════════ */
-  function showConfirm(title, message, onOk) {
-    _confirmCb = onOk;
-    document.getElementById('confirm-title').textContent   = title;
-    document.getElementById('confirm-message').textContent = message;
-    document.getElementById('confirm-ok').onclick = function() { closeConfirm(true); };
-    document.getElementById('confirm-modal').classList.add('open');
-  }
-
-  window.closeConfirm = function(confirmed) {
-    document.getElementById('confirm-modal').classList.remove('open');
-    if (confirmed && _confirmCb) _confirmCb();
-    _confirmCb = null;
-  };
-
-  /* expose to render engine */
   window._getProducts     = loadProducts;
   window._fetchFromGitHub = fetchFromGitHub;
-
 })();
 </script>
 
 <script>
-/* ═══════════════════════════════════════════════════
-   RENDER ENGINE
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   STORE ENGINE — rendering, cart, interactions
+   ═══════════════════════════════════════════════════════════ */
 (function() {
+  'use strict';
 
   var $ = function(id) { return document.getElementById(id); };
-  var fmt  = function(n) { return '$' + Number(n).toFixed(2); };
-  var fmtD = function(n) { return '$' + Math.round(n); };
+  var SK_CART = 'smtn_cart';
 
-  /* ── PRICE FORMULA ──────────────────────────── */
-  // No platform fees (saves ~12%) + no shipping = beat online on total price.
-  // If priceOverride is set, use it directly. Otherwise: 2.2× cost or 85% of market low.
+  /* ── PRICE FORMULA (same as admin) ── */
   window.calcPrice = function(p) {
     if (p.priceOverride > 0) return Math.round(p.priceOverride);
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
@@ -769,14 +341,207 @@ var SEED_PRODUCTS = [
     return Math.round(Math.max(costFloor, mktTarget));
   };
 
-  /* ── FILTER + SORT ──────────────────────────── */
+  /* ── CART ── */
+  var _cart = [];
+
+  function loadCart() {
+    try { _cart = JSON.parse(localStorage.getItem(SK_CART)) || []; }
+    catch(e) { _cart = []; }
+    return _cart;
+  }
+
+  function saveCart() {
+    localStorage.setItem(SK_CART, JSON.stringify(_cart));
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    var count = 0;
+    _cart.forEach(function(c){ count += c.qty; });
+    var badge = $('cart-count');
+    var btn   = $('cart-btn');
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = '';
+      btn.classList.add('has-items');
+    } else {
+      badge.style.display = 'none';
+      btn.classList.remove('has-items');
+    }
+    renderCartItems();
+  }
+
+  function renderCartItems() {
+    var container = $('cart-items');
+    var footer    = $('cart-footer');
+    var empty     = $('cart-empty');
+
+    if (!_cart.length) {
+      empty.style.display = '';
+      footer.style.display = 'none';
+      // remove non-empty items
+      var items = container.querySelectorAll('.cart-item');
+      for (var i = 0; i < items.length; i++) items[i].remove();
+      return;
+    }
+
+    empty.style.display = 'none';
+    footer.style.display = '';
+
+    var products = window._getProducts();
+    var total = 0;
+    var html = '';
+
+    _cart.forEach(function(ci, idx) {
+      // find product by name
+      var p = null;
+      for (var i = 0; i < products.length; i++) {
+        if (products[i].name === ci.name) { p = products[i]; break; }
+      }
+      if (!p) return;
+      var price = calcPrice(p);
+      var lineTotal = price * ci.qty;
+      total += lineTotal;
+
+      var imgHtml = p.image
+        ? '<img src="' + p.image + '" alt="" class="cart-item-img">'
+        : '<div class="cart-item-img cart-item-no-img">📷</div>';
+
+      html += '<div class="cart-item">'
+        + imgHtml
+        + '<div class="cart-item-info">'
+        +   '<div class="cart-item-name">' + p.name + '</div>'
+        +   '<div class="cart-item-price">$' + price + ' each</div>'
+        +   '<div class="cart-item-controls">'
+        +     '<button class="cart-qty-btn" onclick="updateCartQty(' + idx + ',-1)">−</button>'
+        +     '<span class="cart-qty-val">' + ci.qty + '</span>'
+        +     '<button class="cart-qty-btn" onclick="updateCartQty(' + idx + ',1)">+</button>'
+        +     '<button class="cart-remove-btn" onclick="removeFromCart(' + idx + ')">✕</button>'
+        +   '</div>'
+        + '</div>'
+        + '<div class="cart-item-total">$' + lineTotal + '</div>'
+        + '</div>';
+    });
+
+    // replace everything except empty div
+    var items = container.querySelectorAll('.cart-item');
+    for (var i = 0; i < items.length; i++) items[i].remove();
+    container.insertAdjacentHTML('beforeend', html);
+    $('cart-total').textContent = '$' + total;
+  }
+
+  window.addToCart = function(productName) {
+    var products = window._getProducts();
+    var p = null;
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].name === productName) { p = products[i]; break; }
+    }
+    if (!p) return;
+    if ((p.stock || 0) <= 0) return;
+
+    // check if already in cart
+    for (var j = 0; j < _cart.length; j++) {
+      if (_cart[j].name === productName) {
+        if (_cart[j].qty < (p.stock || 0)) _cart[j].qty++;
+        saveCart();
+        showAddedFeedback(productName);
+        return;
+      }
+    }
+    _cart.push({ name: productName, qty: 1 });
+    saveCart();
+    showAddedFeedback(productName);
+  };
+
+  function showAddedFeedback(name) {
+    // brief flash on cart button
+    var btn = $('cart-btn');
+    btn.classList.add('cart-flash');
+    setTimeout(function(){ btn.classList.remove('cart-flash'); }, 600);
+
+    // also flash the product card's add button
+    var cards = document.querySelectorAll('.product');
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].dataset.name === name) {
+        var addBtn = cards[i].querySelector('.btn-add-cart');
+        if (addBtn) {
+          addBtn.textContent = '✓ ADDED!';
+          addBtn.classList.add('added');
+          (function(b) {
+            setTimeout(function(){
+              b.textContent = '🛒 ADD TO CART';
+              b.classList.remove('added');
+            }, 1200);
+          })(addBtn);
+        }
+        break;
+      }
+    }
+  }
+
+  window.updateCartQty = function(idx, delta) {
+    if (!_cart[idx]) return;
+    _cart[idx].qty += delta;
+    if (_cart[idx].qty <= 0) _cart.splice(idx, 1);
+    saveCart();
+  };
+
+  window.removeFromCart = function(idx) {
+    _cart.splice(idx, 1);
+    saveCart();
+  };
+
+  window.openCart = function() {
+    $('cart-sidebar').classList.add('open');
+    $('cart-overlay').classList.add('open');
+    document.body.classList.add('cart-open');
+  };
+
+  window.closeCart = function() {
+    $('cart-sidebar').classList.remove('open');
+    $('cart-overlay').classList.remove('open');
+    document.body.classList.remove('cart-open');
+  };
+
+  window.checkout = function() {
+    if (!_cart.length) return;
+    var products = window._getProducts();
+    var total = 0;
+    var lines = [];
+    _cart.forEach(function(ci) {
+      for (var i = 0; i < products.length; i++) {
+        if (products[i].name === ci.name) {
+          var price = calcPrice(products[i]);
+          total += price * ci.qty;
+          lines.push(ci.qty + 'x ' + ci.name + ' — $' + (price * ci.qty));
+          break;
+        }
+      }
+    });
+
+    $('checkout-details').innerHTML =
+      '<div class="checkout-items">' + lines.join('<br>') + '</div>' +
+      '<div class="checkout-total">TOTAL: $' + total + '</div>';
+
+    closeCart();
+    $('checkout-modal').classList.add('open');
+    _cart = [];
+    saveCart();
+  };
+
+  window.closeCheckoutModal = function() {
+    $('checkout-modal').classList.remove('open');
+  };
+
+  /* ── FILTER + SORT ── */
   function getFiltered() {
     var all   = window._getProducts();
     var query = ($('search-input').value || '').trim().toLowerCase();
     var sort  = $('sort-select').value;
 
     var result = all.filter(function(p) {
-      return !query || p.name.toLowerCase().indexOf(query) !== -1;
+      return !query || p.name.toLowerCase().indexOf(query) !== -1 ||
+             (p.notes && p.notes.toLowerCase().indexOf(query) !== -1);
     });
 
     if (sort === 'oldest')     result = result.slice().reverse();
@@ -786,15 +551,12 @@ var SEED_PRODUCTS = [
     return result;
   }
 
-  /* ── BUILD ONE CARD ─────────────────────────── */
-  function buildCard(p, realIndex) {
-    var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
-    var price     = calcPrice(p);
-    var costFloor = Math.round(cost * 2.2);
-    var mktTarget = Math.round((p.mktLow || 0) * 0.85);
-    var basis     = price === costFloor && costFloor >= mktTarget
-      ? '2.2× floor'
-      : 'from market low';
+  /* ── BUILD PRODUCT CARD ── */
+  function buildCard(p) {
+    var price = calcPrice(p);
+    var stockQty = p.stock != null ? p.stock : null;
+    var outOfStock = stockQty === 0;
+    var lowStock = stockQty != null && stockQty > 0 && stockQty <= 2;
 
     var img = p.image
       ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') +
@@ -802,137 +564,156 @@ var SEED_PRODUCTS = [
         '<div class="no-photo" style="display:none">📷</div>'
       : '<div class="no-photo">📷</div>';
 
+    var stockBadge = '';
+    if (outOfStock) {
+      stockBadge = '<div class="stock-badge out">SOLD OUT</div>';
+    } else if (lowStock) {
+      stockBadge = '<div class="stock-badge low">ONLY ' + stockQty + ' LEFT!</div>';
+    } else if (stockQty != null && stockQty > 0) {
+      stockBadge = '<div class="stock-badge">IN STOCK</div>';
+    }
+
     var notes = p.notes
-      ? '<div class="product-notes">' + p.notes + '</div>'
+      ? '<p class="product-desc">' + p.notes + '</p>'
       : '';
 
-    var time = p.printTime
-      ? '<div class="product-time">⏱ ' + p.printTime + 'h print time' +
-        (p.qty > 1 ? ' · ' + p.qty + ' per plate' : '') + '</div>'
-      : (p.qty > 1 ? '<div class="product-time">' + p.qty + ' per plate</div>' : '');
+    var cartBtn = outOfStock
+      ? '<button class="btn-add-cart disabled" disabled>SOLD OUT</button>'
+      : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">🛒 ADD TO CART</button>';
 
-    var stockQty   = p.stock != null ? p.stock : null;
-    var stockClass = stockQty === 0 ? 'out' : (stockQty != null && stockQty <= 2 ? 'low' : '');
-    var stockBadge = stockQty != null
-      ? '<div class="stock-badge' + (stockClass ? ' ' + stockClass : '') + '">'
-        + (stockQty === 0 ? 'OUT OF STOCK' : stockQty + ' IN STOCK')
-        + '</div>'
-      : '';
-
-    /* profit display */
-    var profit = price - cost;
-    var margin = price > 0 ? Math.round(profit / price * 100) : 0;
-    var mClass = margin >= 60 ? 'profit-great'
-               : margin >= 40 ? 'profit-good'
-               : margin >= 25 ? 'profit-ok'
-               :                'profit-thin';
-    var profitRow = '<div class="profit-bar ' + mClass + '">'
-      + '<span class="profit-label">PROFIT / ITEM</span>'
-      + '<span class="profit-val">$' + profit.toFixed(2) + '</span>'
-      + '<span class="profit-sep">·</span>'
-      + '<span class="profit-margin">' + margin + '% MARGIN</span>'
-      + '</div>';
-
-    /* controls: stock +/- and edit button always visible */
-    var adminRow = '<div class="card-admin-row">'
-      + '<div class="stock-adj">'
-      + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',-1)">&#8722;</button>'
-      + '<span class="stock-adj-val">' + (stockQty != null ? stockQty : '—') + '</span>'
-      + '<button class="stock-btn" onclick="adjustStock(' + realIndex + ',1)">&#43;</button>'
-      + '<span class="stock-adj-label">STOCK</span>'
+    return '<div class="product' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
+      + '<div class="product-img">'
+      +   img
+      +   stockBadge
+      +   (lowStock ? '<div class="low-stock-pulse"></div>' : '')
       + '</div>'
-      + '<button class="card-edit-btn" onclick="openEditModal(' + realIndex + ')">&#9998; EDIT</button>'
-      + '</div>';
-
-    return ''
-      + '<div class="product">'
-      +   '<div class="product-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
-      +     img
+      + '<div class="product-body">'
+      +   '<h2 class="product-name">' + p.name + '</h2>'
+      +   notes
+      +   '<div class="product-price-row">'
+      +     '<div class="product-price">$' + price + '</div>'
+      +     cartBtn
       +   '</div>'
-      +   '<div class="product-body">'
-      +     '<div class="product-name-row">'
-      +       '<h2 class="product-name">' + p.name + '</h2>'
-      +       stockBadge
-      +     '</div>'
-      +     notes
-      +     time
-      +     '<div class="data-label">Our Investment</div>'
-      +     '<div class="stats-row">'
-      +       '<div class="stat-cell"><span class="val">' + fmt(p.filament) + '</span><span class="label">Filament</span></div>'
-      +       '<div class="stat-cell"><span class="val">' + fmt(p.elec) + '</span><span class="label">Elec + Wear</span></div>'
-      +       '<div class="stat-cell accent"><span class="val">' + fmt(cost) + '</span><span class="label">Cost / Item</span></div>'
-      +     '</div>'
-      +     '<div class="data-label">Market Value</div>'
-      +     '<div class="stats-row">'
-      +       '<div class="stat-cell mkt-lo"><span class="val">' + fmt(p.mktLow) + '</span><span class="label">Low</span></div>'
-      +       '<div class="stat-cell mkt-md"><span class="val">' + fmt(p.mktMid) + '</span><span class="label">Mid</span></div>'
-      +       '<div class="stat-cell mkt-hi"><span class="val">' + fmt(p.mktHigh) + '</span><span class="label">High</span></div>'
-      +     '</div>'
-      +     '<div class="price-box">'
-      +       '<div class="price-label">OUR PRICE</div>'
-      +       '<div class="price-value">' + fmtD(price) + '</div>'
-      +       '<div class="price-basis">2.2\u00d7 floor: ' + fmtD(costFloor) + ' &middot; 85% mkt: ' + fmtD(mktTarget) + ' &middot; ' + basis + '</div>'
-      +     '</div>'
-      +     profitRow
-      +     adminRow
-      +   '</div>'
+      + '</div>'
       + '</div>';
   }
 
-  /* ── RENDER CATALOG ─────────────────────────── */
+  /* ── QUICK VIEW MODAL ── */
+  window.openQuickView = function(name) {
+    var products = window._getProducts();
+    var p = null;
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].name === name) { p = products[i]; break; }
+    }
+    if (!p) return;
+
+    var price = calcPrice(p);
+    var stockQty = p.stock != null ? p.stock : null;
+    var outOfStock = stockQty === 0;
+    var lowStock = stockQty != null && stockQty > 0 && stockQty <= 2;
+
+    var stockHtml = '';
+    if (outOfStock) {
+      stockHtml = '<span class="qv-stock out">SOLD OUT</span>';
+    } else if (lowStock) {
+      stockHtml = '<span class="qv-stock low">ONLY ' + stockQty + ' LEFT!</span>';
+    } else if (stockQty != null) {
+      stockHtml = '<span class="qv-stock">' + stockQty + ' IN STOCK</span>';
+    }
+
+    var imgHtml = p.image
+      ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') + '" class="qv-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
+      : '<div class="qv-img qv-no-img">📷</div>';
+
+    var cartBtn = outOfStock
+      ? '<button class="btn-add-cart-lg disabled" disabled>SOLD OUT</button>'
+      : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">🛒 ADD TO CART</button>';
+
+    $('qv-content').innerHTML =
+      '<div class="qv-layout">'
+      + '<div class="qv-image-wrap">' + imgHtml + '</div>'
+      + '<div class="qv-details">'
+      +   '<h2 class="qv-name">' + p.name + '</h2>'
+      +   stockHtml
+      +   (p.notes ? '<p class="qv-desc">' + p.notes + '</p>' : '')
+      +   '<div class="qv-price">$' + price + '</div>'
+      +   '<div class="qv-features">'
+      +     '<div class="qv-feature"><span class="qv-feature-icon">🖨️</span> 3D Printed with Premium PLA</div>'
+      +     '<div class="qv-feature"><span class="qv-feature-icon">🎨</span> Multi-Color Print</div>'
+      +     '<div class="qv-feature"><span class="qv-feature-icon">📍</span> Local Pickup — No Shipping</div>'
+      +   '</div>'
+      +   cartBtn
+      + '</div>'
+      + '</div>';
+
+    $('quickview-modal').classList.add('open');
+  };
+
+  window.closeQuickView = function() {
+    $('quickview-modal').classList.remove('open');
+  };
+
+  /* ── LIGHTBOX ── */
+  window.openLightbox = function(src) {
+    if (!src) return;
+    $('lb-img').src = src;
+    $('lightbox').classList.add('open');
+  };
+  window.closeLightbox = function() {
+    $('lightbox').classList.remove('open');
+  };
+
+  /* ── RENDER CATALOG ── */
   window.renderCatalog = function() {
     var all      = window._getProducts();
     var filtered = getFiltered();
     var grid     = $('catalog');
 
-    $('product-count').textContent = filtered.length;
-
-    var totalStock = 0;
-    all.forEach(function(p) {
-      if ((p.stock || 0) > 0) totalStock += p.stock * calcPrice(p);
-    });
-    $('stock-value').textContent = '$' + Math.round(totalStock);
+    $('product-count').textContent = all.length;
+    var inStock = 0;
+    all.forEach(function(p){ if ((p.stock || 0) > 0) inStock++; });
+    $('in-stock-count').textContent = inStock;
 
     if (!all.length) {
-      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🖨️</div><p>No products yet.<br><br>Log in as admin to add products.</p></div>';
+      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🕹️</div><p>No items available yet.<br>Check back soon!</p></div>';
       return;
     }
     if (!filtered.length) {
-      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🔍</div><p>No products match your search.</p></div>';
+      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🔍</div><p>No items match your search.<br>Try a different query!</p></div>';
       return;
     }
 
     grid.innerHTML = filtered.map(function(p) {
-      return buildCard(p, all.indexOf(p));
+      return buildCard(p);
     }).join('');
   };
 
-  /* ── LIGHTBOX ───────────────────────────────── */
-  window.openLightbox = function(src) {
-    if (!src) return;
-    $('lb-img').src = src;
-    $('lightbox').classList.add('open');
-    $('scroll-wrap').style.overflow = 'hidden';
-  };
-  window.closeLightbox = function() {
-    $('lightbox').classList.remove('open');
-    $('scroll-wrap').style.overflow = '';
-  };
+  /* ── KEYBOARD ── */
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       closeLightbox();
-      closeProductModal();
-      closeSettingsModal();
-      closeConfirm(false);
+      closeQuickView();
+      closeCart();
+      closeCheckoutModal();
     }
   });
 
-  /* ── INIT — load cached data immediately, then refresh from GitHub ── */
-  window._getProducts();   /* prime cache from localStorage */
-  window.renderCatalog();  /* show instantly */
-  window._fetchFromGitHub(function() { window.renderCatalog(); }); /* update from GitHub in background */
+  /* ── INIT ── */
+  loadCart();
+  window._getProducts();
+  window.renderCatalog();
+  window._fetchFromGitHub(function() { window.renderCatalog(); });
   $('search-input').addEventListener('input', function() { window.renderCatalog(); });
   $('sort-select').addEventListener('change', function() { window.renderCatalog(); });
+
+  /* smooth scroll for hero CTA */
+  var cta = document.querySelector('.hero-cta');
+  if (cta) {
+    cta.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
 
 })();
 </script>
