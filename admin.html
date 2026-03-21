@@ -136,9 +136,47 @@ a { text-decoration: none; color: inherit; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
-  .product-row { flex-wrap: wrap; }
-  .product-row-price { order: -1; text-align: left; }
-  .product-row-actions { width: 100%; justify-content: flex-end; }
+  .container { padding: 16px; }
+  .product-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    padding: 14px;
+  }
+  .product-row-img, .product-row-no-img {
+    width: 56px; height: 56px;
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .product-row-info {
+    grid-row: 1;
+    grid-column: 2 / -1;
+  }
+  .product-row-meta {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-row-price {
+    grid-row: 2;
+    grid-column: 1;
+    text-align: left;
+    font-size: 18px;
+    align-self: center;
+  }
+  .product-row-stock {
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: start;
+    align-self: center;
+  }
+  .product-row-actions {
+    grid-row: 2;
+    grid-column: 3;
+    align-self: center;
+  }
   .form-row { grid-template-columns: 1fr; }
   .toolbar { flex-direction: column; align-items: stretch; }
   .admin-nav { flex-wrap: wrap; gap: 8px; }
@@ -354,9 +392,9 @@ a { text-decoration: none; color: inherit; }
         .then(function(r) { return r.json(); })
         .then(function(res) {
           if (res.commit) { toast('Saved & synced to all devices', 'ok'); if (cb) cb(true); }
-          else { toast('Saved locally — check GitHub token', 'err'); if (cb) cb(false); }
+          else { toast('Sync failed: ' + (res.message || 'check token permissions'), 'err'); if (cb) cb(false); }
         })
-        .catch(function(err) { toast('Saved locally — sync failed: ' + err.message, 'err'); if (cb) cb(false); });
+        .catch(function(err) { toast('Sync failed: ' + err.message, 'err'); if (cb) cb(false); });
     });
   }
 
