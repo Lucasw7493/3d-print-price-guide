@@ -63,8 +63,9 @@
     "mktLow": 8,
     "mktMid": 15,
     "mktHigh": 22,
+    "stock": 5,
     "notes": "3-color PLA — Custom flexi keychain, 14 color changes. Popular impulse buy.",
-    "stock": 5
+    "priceOverride": 5
   },
   {
     "name": "Spiky Sensory Twisty Sphere",
