@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMOKYMTN 3D PRINTS — Retro Arcade Store</title>
-  <meta name="description" content="Custom 3D printed collectibles, fidgets, and art. Handcrafted in the Smoky Mountains.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕹️</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <title>Smoky Mtn 3D Prints — Handcrafted Creations</title>
+  <meta name="description" content="Handcrafted 3D printed creations, custom signs, light boxes, fidgets and more. Built with creativity in the Smoky Mountains.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script>
     var d = new Date();
     var v = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + ('0'+d.getHours()).slice(-2);
@@ -15,48 +15,35 @@
 </head>
 <body>
 
-<!-- ══ ATMOSPHERIC LAYERS ══ -->
-<div class="scanlines"></div>
-<div class="sf-far"></div>
-<div class="sf-mid"></div>
-<div class="sf-near"></div>
-<div class="retro-sun"></div>
-<div class="horizon-line"></div>
-
 <!-- ══ CART SIDEBAR ══ -->
 <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
 <div class="cart-sidebar" id="cart-sidebar">
   <div class="cart-header">
-    <div class="cart-title-row">
-      <span class="cart-title">YOUR LOOT</span>
-      <span class="cart-coin-slot">🪙</span>
-    </div>
-    <button class="cart-close" onclick="closeCart()">✕</button>
+    <span class="cart-title">Your Cart</span>
+    <button class="cart-close" onclick="closeCart()">&times;</button>
   </div>
   <div class="cart-items" id="cart-items">
     <div class="cart-empty" id="cart-empty">
-      <div class="cart-empty-icon">🕹️</div>
-      <p>NO ITEMS YET</p>
-      <p class="cart-empty-sub">INSERT COIN TO BEGIN</p>
+      <div class="cart-empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+      <p class="cart-empty-sub">Browse our collection and add some items!</p>
     </div>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none">
     <div class="cart-total-row">
-      <span class="cart-total-label">TOTAL</span>
+      <span class="cart-total-label">Total</span>
       <span class="cart-total-val" id="cart-total">$0</span>
     </div>
-    <div class="cart-note">
-      Local pickup · No shipping fees · Cash or card
-    </div>
-    <button class="btn-checkout" onclick="checkout()">⚡ CHECKOUT</button>
+    <div class="cart-note">Local pickup &middot; No shipping fees &middot; Cash or card</div>
+    <button class="btn-checkout" onclick="checkout()">Complete Order</button>
   </div>
 </div>
 
-<!-- ══ PRODUCT QUICK VIEW MODAL ══ -->
+<!-- ══ PRODUCT QUICK VIEW ══ -->
 <div class="modal-overlay" id="quickview-modal">
   <div class="modal-backdrop" onclick="closeQuickView()"></div>
   <div class="modal-box">
-    <button class="modal-x" onclick="closeQuickView()">✕</button>
+    <button class="modal-x" onclick="closeQuickView()">&times;</button>
     <div class="qv-content" id="qv-content"></div>
   </div>
 </div>
@@ -65,230 +52,309 @@
 <div class="modal-overlay" id="checkout-modal">
   <div class="modal-backdrop" onclick="closeCheckoutModal()"></div>
   <div class="modal-box modal-sm">
-    <div class="modal-header">
-      <span>ORDER SUBMITTED</span>
-      <button class="modal-x" onclick="closeCheckoutModal()">✕</button>
-    </div>
-    <div class="modal-body checkout-success">
-      <div class="checkout-icon">🏆</div>
-      <h2 class="checkout-heading">HIGH SCORE!</h2>
-      <p class="checkout-msg">Your order has been received! We'll reach out to arrange pickup or delivery.</p>
+    <button class="modal-x" onclick="closeCheckoutModal()">&times;</button>
+    <div class="checkout-success">
+      <div class="checkout-icon">&#10003;</div>
+      <h2 class="checkout-heading">Order Received!</h2>
+      <p class="checkout-msg">Thanks for your order! We'll reach out to arrange pickup or delivery details.</p>
       <div class="checkout-details" id="checkout-details"></div>
-      <p class="checkout-contact">Questions? Reach us on Facebook or at the market!</p>
-    </div>
-    <div class="modal-footer">
-      <div></div>
-      <button class="btn-primary" onclick="closeCheckoutModal()">CONTINUE SHOPPING</button>
+      <p class="checkout-contact">Questions? Reach us on Facebook or find us at the market.</p>
+      <button class="btn-primary" onclick="closeCheckoutModal()">Continue Shopping</button>
     </div>
   </div>
 </div>
 
 <!-- ══ LIGHTBOX ══ -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-close" onclick="closeLightbox()">&times;</button>
   <img id="lb-img" src="" alt="Product photo">
 </div>
 
-<!-- ══ MAIN SCROLL WRAPPER ══ -->
-<div id="scroll-wrap">
-
-<!-- ══ TOP BAR ══ -->
-<div class="top-bar">
-  <div class="top-bar-inner">
-    <div class="top-marquee">
-      <span>★ HANDCRAFTED IN THE SMOKY MOUNTAINS ★ LOCAL PICKUP AVAILABLE ★ NO SHIPPING FEES ★ CUSTOM ORDERS WELCOME ★</span>
+<!-- ══ NAVIGATION ══ -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <span class="nav-logo">&#9650;</span>
+      <span class="nav-brand-text">SMOKY MTN<span class="nav-brand-accent"> 3D PRINTS</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#shop" class="nav-link">Shop</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#custom" class="nav-link">Custom Orders</a>
     </div>
     <button class="cart-btn" id="cart-btn" onclick="openCart()">
-      <span class="cart-btn-icon">🛒</span>
+      <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="cart-btn-count" id="cart-count" style="display:none">0</span>
     </button>
   </div>
-</div>
-
-<div class="neon-line"></div>
+</nav>
 
 <!-- ══ HERO ══ -->
-<header class="hero">
-  <div class="hero-content">
-    <div class="brand-row">
-      <div class="brand-icon">
-        <div class="p-gantry"></div>
-        <div class="p-nozzle"></div>
-        <div class="p-print"></div>
-        <div class="p-frame"></div>
-        <div class="p-bed"></div>
-        <div class="p-led"></div>
-      </div>
-      <div>
-        <h1 class="brand-name">SMOKYMTN</h1>
-        <h1 class="brand-name brand-name-sub">3D PRINTS</h1>
+<header class="hero" id="hero">
+  <div class="hero-smoke"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Handcrafted in East Tennessee</p>
+      <h1 class="hero-headline">Creative Designs<br>Built in the<br><span class="hero-highlight">Smoky Mountains</span></h1>
+      <p class="hero-sub">From 3D printed collectibles and fidget toys to custom signs, light boxes, and decor &mdash; every piece is made with attention to detail and a love for creative design.</p>
+      <div class="hero-actions">
+        <a href="#shop" class="btn-primary-lg">Shop Products</a>
+        <a href="#custom" class="btn-outline-lg">Custom Orders</a>
       </div>
     </div>
-    <p class="hero-tagline">PLAYER 1 — SELECT YOUR ITEM</p>
-    <p class="hero-sub">Custom 3D printed collectibles, fidgets &amp; art<br>Handcrafted in the Smoky Mountains</p>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="hero-stat-val" id="product-count">0</span>
-        <span class="hero-stat-label">ITEMS</span>
+    <div class="hero-visual">
+      <div class="hero-card hero-card-1">
+        <img src="ironbite.jpg" alt="Ironbite Dragon" onerror="this.parentElement.style.display='none'">
       </div>
-      <div class="hero-stat-sep">◆</div>
-      <div class="hero-stat">
-        <span class="hero-stat-val" id="in-stock-count">0</span>
-        <span class="hero-stat-label">IN STOCK</span>
+      <div class="hero-card hero-card-2">
+        <img src="batshadow.webp" alt="Bat Shadow" onerror="this.parentElement.style.display='none'">
       </div>
-      <div class="hero-stat-sep">◆</div>
-      <div class="hero-stat">
-        <span class="hero-stat-val">LOCAL</span>
-        <span class="hero-stat-label">PICKUP</span>
+      <div class="hero-card hero-card-3">
+        <img src="flexi-manta-ray.jpg" alt="Flexi Manta Ray" onerror="this.parentElement.style.display='none'">
       </div>
     </div>
-    <a href="#shop" class="hero-cta">
-      <span class="cta-blink">▶</span> START SHOPPING <span class="cta-blink">◀</span>
-    </a>
   </div>
-  <div class="hero-decor-left">
-    <div class="pac-dot"></div><div class="pac-dot"></div><div class="pac-dot"></div>
-    <div class="pac-dot"></div><div class="pac-dot"></div>
-  </div>
-  <div class="hero-decor-right">
-    <div class="pac-dot"></div><div class="pac-dot"></div><div class="pac-dot"></div>
-    <div class="pac-dot"></div><div class="pac-dot"></div>
+  <div class="hero-divider">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,60 L0,20 Q360,0 720,20 Q1080,40 1440,20 L1440,60 Z" fill="#171717"/></svg>
   </div>
 </header>
 
-<!-- ══ SHOP SECTION ══ -->
-<section id="shop">
-  <div class="section-header">
-    <div class="section-line"></div>
-    <h2 class="section-title">SELECT YOUR CHARACTER</h2>
-    <div class="section-line"></div>
+<!-- ══ FEATURED CATEGORIES ══ -->
+<section class="categories-section" id="categories">
+  <div class="container">
+    <h2 class="section-title">What We Create</h2>
+    <p class="section-sub">Handcrafted items for every style</p>
+    <div class="categories-grid">
+      <div class="category-card" onclick="filterByCategory('action figure')">
+        <div class="category-icon">🐉</div>
+        <h3>Action Figures</h3>
+        <p>Articulated, multicolor collectibles</p>
+      </div>
+      <div class="category-card" onclick="filterByCategory('fidget')">
+        <div class="category-icon">🌀</div>
+        <h3>Fidget Toys</h3>
+        <p>Sensory toys and stress relief</p>
+      </div>
+      <div class="category-card" onclick="filterByCategory('flexi')">
+        <div class="category-icon">🦈</div>
+        <h3>Flexi Prints</h3>
+        <p>Flexible, articulated creatures</p>
+      </div>
+      <div class="category-card" onclick="filterByCategory('keychain')">
+        <div class="category-icon">🔑</div>
+        <h3>Keychains</h3>
+        <p>Custom printed accessories</p>
+      </div>
+      <div class="category-card" onclick="filterByCategory('custom')">
+        <div class="category-icon">✨</div>
+        <h3>Custom Orders</h3>
+        <p>Your idea, brought to life</p>
+      </div>
+      <div class="category-card" onclick="filterByCategory('')">
+        <div class="category-icon">🏷️</div>
+        <h3>View All</h3>
+        <p>Browse the full collection</p>
+      </div>
+    </div>
   </div>
-
-  <div class="filter-bar">
-    <input type="text" id="search-input" class="search-input" placeholder="🔍 SEARCH ITEMS...">
-    <select id="sort-select" class="sort-select">
-      <option value="newest">⬇ NEWEST</option>
-      <option value="oldest">⬆ OLDEST</option>
-      <option value="price-asc">$ LOW → HIGH</option>
-      <option value="price-desc">$ HIGH → LOW</option>
-      <option value="name">A → Z</option>
-    </select>
-  </div>
-
-  <div class="catalog" id="catalog"></div>
 </section>
 
-<!-- ══ ABOUT / CONTACT ══ -->
-<section class="about-section">
-  <div class="section-header">
-    <div class="section-line"></div>
-    <h2 class="section-title">ABOUT THE GAME</h2>
-    <div class="section-line"></div>
+<!-- ══ PRODUCTS ══ -->
+<section class="shop-section" id="shop">
+  <div class="container">
+    <h2 class="section-title">Our Products</h2>
+    <p class="section-sub"><span id="product-count">0</span> items available</p>
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Search products...">
+      </div>
+      <select id="sort-select" class="sort-select">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name: A to Z</option>
+      </select>
+    </div>
+    <div class="catalog" id="catalog"></div>
   </div>
-  <div class="about-grid">
-    <div class="about-card">
-      <div class="about-icon">🖨️</div>
-      <h3 class="about-heading">HANDCRAFTED</h3>
-      <p>Every item is 3D printed with premium PLA filament on professional-grade printers. Quality you can see and feel.</p>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-layout">
+      <div class="about-text">
+        <p class="about-eyebrow">About the Maker</p>
+        <h2 class="about-heading">Built with Creativity<br>in the Smoky Mountains</h2>
+        <p class="about-body">Smoky Mtn 3D Prints creates handcrafted 3D printed products, custom designs, fidgets, collectibles, decor, and more. Every piece is made with attention to detail and a love for creative design.</p>
+        <p class="about-body">We use professional-grade printers with premium PLA filament and advanced multi-color AMS technology &mdash; no painting needed, just vibrant, precise prints right off the build plate.</p>
+        <div class="about-stats">
+          <div class="about-stat">
+            <span class="about-stat-val" id="about-product-count">0</span>
+            <span class="about-stat-label">Products</span>
+          </div>
+          <div class="about-stat">
+            <span class="about-stat-val">Multi</span>
+            <span class="about-stat-label">Color AMS</span>
+          </div>
+          <div class="about-stat">
+            <span class="about-stat-val">Local</span>
+            <span class="about-stat-label">Pickup</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-image">
+        <div class="about-img-frame">
+          <img src="twisty-sphere.jpg" alt="Handcrafted 3D print" onerror="this.style.display='none'">
+        </div>
+      </div>
     </div>
-    <div class="about-card">
-      <div class="about-icon">🎨</div>
-      <h3 class="about-heading">MULTICOLOR</h3>
-      <p>Using advanced AMS (Automatic Material System) technology for stunning multi-color prints with zero painting needed.</p>
+  </div>
+</section>
+
+<!-- ══ WHY CHOOSE US ══ -->
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title">Why Smoky Mtn 3D Prints</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🖨️</div>
+        <h3>Handcrafted Quality</h3>
+        <p>Every item is printed with premium PLA on professional-grade printers. Quality you can see and feel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Unique Designs</h3>
+        <p>Multi-color prints using advanced AMS technology. Vibrant colors with zero hand-painting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✏️</div>
+        <h3>Custom Options</h3>
+        <p>Have an idea? We create personalized items that bring your vision to life. Just ask!</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎁</div>
+        <h3>Great for Gifts</h3>
+        <p>Unique handcrafted items that make perfect gifts for any age or occasion.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <h3>Local Pickup</h3>
+        <p>No shipping fees, no waiting. Pick up locally or find us at Smoky Mountain craft markets.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💡</div>
+        <h3>Built with Creativity</h3>
+        <p>Every product is chosen and crafted with artistic taste and creative attention to detail.</p>
+      </div>
     </div>
-    <div class="about-card">
-      <div class="about-icon">📍</div>
-      <h3 class="about-heading">LOCAL PICKUP</h3>
-      <p>No shipping fees, no waiting. Pick up your order locally or find us at craft markets in the Smoky Mountain area.</p>
-    </div>
-    <div class="about-card">
-      <div class="about-icon">✨</div>
-      <h3 class="about-heading">CUSTOM ORDERS</h3>
-      <p>Want something unique? We do custom prints! Message us with your idea and we'll make it happen.</p>
+  </div>
+</section>
+
+<!-- ══ CUSTOM ORDER CTA ══ -->
+<section class="cta-section" id="custom">
+  <div class="cta-smoke"></div>
+  <div class="container">
+    <div class="cta-inner">
+      <h2 class="cta-heading">Have an Idea?<br>Let's Make It Real.</h2>
+      <p class="cta-text">Need a custom sign, decor piece, gift, or 3D print? We create personalized items that bring your ideas to life. Tell us what you're imagining.</p>
+      <a href="https://www.facebook.com" class="btn-primary-lg" target="_blank" rel="noopener">Start a Custom Order</a>
     </div>
   </div>
 </section>
 
 <!-- ══ FOOTER ══ -->
 <footer class="site-footer">
-  <div class="footer-brand">SMOKYMTN 3D PRINTS</div>
-  <div class="footer-tagline">GAME OVER? NEVER. — INSERT COIN TO CONTINUE.</div>
-  <div class="footer-links">
-    <span>Smoky Mountains, TN</span>
-    <span>◆</span>
-    <span>Custom Orders Welcome</span>
-  </div>
-  <div class="footer-copy">© 2026 SMOKYMTN 3D PRINTS — ALL RIGHTS RESERVED</div>
-  <div class="footer-pixels">
-    <span>◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼◻◼</span>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-brand">
+          <span class="footer-logo">&#9650;</span>
+          SMOKY MTN 3D PRINTS
+        </div>
+        <p class="footer-tagline">Handcrafted in East Tennessee</p>
+      </div>
+      <div class="footer-links-col">
+        <h4>Shop</h4>
+        <a href="#shop">All Products</a>
+        <a href="#categories">Categories</a>
+        <a href="#custom">Custom Orders</a>
+      </div>
+      <div class="footer-links-col">
+        <h4>Company</h4>
+        <a href="#about">About</a>
+        <a href="#custom">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smoky Mtn 3D Prints. All rights reserved.</span>
+    </div>
   </div>
 </footer>
 
-</div><!-- /#scroll-wrap -->
+<!-- ══════════════════════════════════════════════════════════════ -->
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   SEED PRODUCTS — loaded on first run only
-   ═══════════════════════════════════════════════════════════ */
 var SEED_PRODUCTS = [
   {
-    name:      "Ironbite Dragon",
-    image:     "ironbite.jpg",
-    filament:  0.77, elec: 0.20, qty: 5, printTime: 9.3,
+    name: "Ironbite Dragon",
+    image: "ironbite.jpg",
+    filament: 0.77, elec: 0.20, qty: 5, printTime: 9.3,
     mktLow: 10.00, mktMid: 18.00, mktHigh: 28.00,
-    notes:     "4-color PLA — Articulated, multicolor print-in-place. Fully poseable dragon with vibrant colors!",
+    notes: "4-color PLA — Articulated, multicolor print-in-place. Fully poseable dragon with vibrant colors!",
     stock: 8
   },
   {
-    name:      "Bat Shadow",
-    image:     "batshadow.webp",
-    filament:  9.21, elec: 3.50, qty: 1, printTime: 27.6,
+    name: "Bat Shadow",
+    image: "batshadow.webp",
+    filament: 9.21, elec: 3.50, qty: 1, printTime: 27.6,
     mktLow: 45.00, mktMid: 65.00, mktHigh: 90.00,
-    notes:     "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. A premium collector's piece!",
+    notes: "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. A premium collector's piece!",
     stock: 1
   },
   {
-    name:      "Custom Flexi Keychain",
-    image:     "flexi-keychain.jpg",
-    filament:  1.88, elec: 1.00, qty: 1, printTime: 14.3,
+    name: "Custom Flexi Keychain",
+    image: "flexi-keychain.jpg",
+    filament: 1.88, elec: 1.00, qty: 1, printTime: 14.3,
     mktLow: 8.00, mktMid: 15.00, mktHigh: 22.00,
-    notes:     "3-color PLA — Custom flexi keychain, 14 color changes. Perfect gift or everyday carry!",
+    notes: "3-color PLA — Custom flexi keychain, 14 color changes. Perfect gift or everyday carry!",
     stock: 5
   },
   {
-    name:      "Spiky Sensory Twisty Sphere",
-    image:     "twisty-sphere.jpg",
-    filament:  3.85, elec: 0.85, qty: 1, printTime: 8.6,
+    name: "Spiky Sensory Twisty Sphere",
+    image: "twisty-sphere.jpg",
+    filament: 3.85, elec: 0.85, qty: 1, printTime: 8.6,
     mktLow: 15.00, mktMid: 25.00, mktHigh: 35.00,
-    notes:     "PLA Silk — Spiky fidget sphere with mesmerizing twist action. Great stress relief toy!",
+    notes: "PLA Silk — Spiky fidget sphere with mesmerizing twist action. Great stress relief toy!",
     stock: 3
   },
   {
-    name:      "Demogorgon Flexi",
-    image:     "demogorgon.jpg",
-    filament:  0.28, elec: 0.15, qty: 9, printTime: 11.8,
+    name: "Demogorgon Flexi",
+    image: "demogorgon.jpg",
+    filament: 0.28, elec: 0.15, qty: 9, printTime: 11.8,
     mktLow: 12.00, mktMid: 20.00, mktHigh: 32.00,
-    notes:     "3-color PLA — Stranger Things Demogorgon, flexi articulated print-in-place. Fan favorite!",
+    notes: "3-color PLA — Stranger Things Demogorgon, flexi articulated print-in-place. Fan favorite!",
     stock: 12
   },
   {
-    name:      "Flexi Manta Ray",
-    image:     "flexi-manta-ray.jpg",
-    filament:  2.06, elec: 3.25, qty: 2, printTime: 13.1,
+    name: "Flexi Manta Ray",
+    image: "flexi-manta-ray.jpg",
+    filament: 2.06, elec: 3.25, qty: 2, printTime: 13.1,
     mktLow: 18, mktMid: 24, mktHigh: 32,
-    notes:     "3-color PLA — AMS flexi manta ray with iridescent blue finish. 90 color changes for stunning detail!",
+    notes: "3-color PLA — AMS flexi manta ray with iridescent blue finish. 90 color changes for stunning detail!",
     stock: 4
   }
 ];
 </script>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   DATA LAYER — loads products from GitHub / localStorage
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   DATA LAYER
+   ═══════════════════════════════════════════════ */
 (function() {
   'use strict';
-
   var SK_PRODUCTS = 'smtn_products';
   var GH_REPO    = 'Lucasw7493/3d-print-price-guide';
   var GH_FILE    = 'products.json';
@@ -323,16 +389,15 @@ var SEED_PRODUCTS = [
 </script>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   STORE ENGINE — rendering, cart, interactions
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   STORE ENGINE
+   ═══════════════════════════════════════════════ */
 (function() {
   'use strict';
-
   var $ = function(id) { return document.getElementById(id); };
   var SK_CART = 'smtn_cart';
 
-  /* ── PRICE FORMULA (same as admin) ── */
+  /* ── Price calc ── */
   window.calcPrice = function(p) {
     if (p.priceOverride > 0) return Math.round(p.priceOverride);
     var cost      = ((p.filament || 0) + (p.elec || 0)) / Math.max(p.qty || 1, 1);
@@ -341,7 +406,7 @@ var SEED_PRODUCTS = [
     return Math.round(Math.max(costFloor, mktTarget));
   };
 
-  /* ── CART ── */
+  /* ── Cart ── */
   var _cart = [];
 
   function loadCart() {
@@ -359,14 +424,11 @@ var SEED_PRODUCTS = [
     var count = 0;
     _cart.forEach(function(c){ count += c.qty; });
     var badge = $('cart-count');
-    var btn   = $('cart-btn');
     if (count > 0) {
       badge.textContent = count;
       badge.style.display = '';
-      btn.classList.add('has-items');
     } else {
       badge.style.display = 'none';
-      btn.classList.remove('has-items');
     }
     renderCartItems();
   }
@@ -375,25 +437,19 @@ var SEED_PRODUCTS = [
     var container = $('cart-items');
     var footer    = $('cart-footer');
     var empty     = $('cart-empty');
-
     if (!_cart.length) {
       empty.style.display = '';
       footer.style.display = 'none';
-      // remove non-empty items
       var items = container.querySelectorAll('.cart-item');
       for (var i = 0; i < items.length; i++) items[i].remove();
       return;
     }
-
     empty.style.display = 'none';
     footer.style.display = '';
-
     var products = window._getProducts();
     var total = 0;
     var html = '';
-
     _cart.forEach(function(ci, idx) {
-      // find product by name
       var p = null;
       for (var i = 0; i < products.length; i++) {
         if (products[i].name === ci.name) { p = products[i]; break; }
@@ -402,28 +458,24 @@ var SEED_PRODUCTS = [
       var price = calcPrice(p);
       var lineTotal = price * ci.qty;
       total += lineTotal;
-
       var imgHtml = p.image
         ? '<img src="' + p.image + '" alt="" class="cart-item-img">'
         : '<div class="cart-item-img cart-item-no-img">📷</div>';
-
       html += '<div class="cart-item">'
         + imgHtml
         + '<div class="cart-item-info">'
         +   '<div class="cart-item-name">' + p.name + '</div>'
         +   '<div class="cart-item-price">$' + price + ' each</div>'
         +   '<div class="cart-item-controls">'
-        +     '<button class="cart-qty-btn" onclick="updateCartQty(' + idx + ',-1)">−</button>'
+        +     '<button class="cart-qty-btn" onclick="updateCartQty(' + idx + ',-1)">&minus;</button>'
         +     '<span class="cart-qty-val">' + ci.qty + '</span>'
         +     '<button class="cart-qty-btn" onclick="updateCartQty(' + idx + ',1)">+</button>'
-        +     '<button class="cart-remove-btn" onclick="removeFromCart(' + idx + ')">✕</button>'
+        +     '<button class="cart-remove-btn" onclick="removeFromCart(' + idx + ')">&times;</button>'
         +   '</div>'
         + '</div>'
         + '<div class="cart-item-total">$' + lineTotal + '</div>'
         + '</div>';
     });
-
-    // replace everything except empty div
     var items = container.querySelectorAll('.cart-item');
     for (var i = 0; i < items.length; i++) items[i].remove();
     container.insertAdjacentHTML('beforeend', html);
@@ -436,10 +488,7 @@ var SEED_PRODUCTS = [
     for (var i = 0; i < products.length; i++) {
       if (products[i].name === productName) { p = products[i]; break; }
     }
-    if (!p) return;
-    if ((p.stock || 0) <= 0) return;
-
-    // check if already in cart
+    if (!p || (p.stock || 0) <= 0) return;
     for (var j = 0; j < _cart.length; j++) {
       if (_cart[j].name === productName) {
         if (_cart[j].qty < (p.stock || 0)) _cart[j].qty++;
@@ -454,25 +503,20 @@ var SEED_PRODUCTS = [
   };
 
   function showAddedFeedback(name) {
-    // brief flash on cart button
     var btn = $('cart-btn');
     btn.classList.add('cart-flash');
-    setTimeout(function(){ btn.classList.remove('cart-flash'); }, 600);
-
-    // also flash the product card's add button
-    var cards = document.querySelectorAll('.product');
+    setTimeout(function(){ btn.classList.remove('cart-flash'); }, 500);
+    var cards = document.querySelectorAll('.product-card');
     for (var i = 0; i < cards.length; i++) {
       if (cards[i].dataset.name === name) {
         var addBtn = cards[i].querySelector('.btn-add-cart');
         if (addBtn) {
-          addBtn.textContent = '✓ ADDED!';
+          var orig = addBtn.textContent;
+          addBtn.textContent = 'Added!';
           addBtn.classList.add('added');
-          (function(b) {
-            setTimeout(function(){
-              b.textContent = '🛒 ADD TO CART';
-              b.classList.remove('added');
-            }, 1200);
-          })(addBtn);
+          (function(b, o) {
+            setTimeout(function(){ b.textContent = o; b.classList.remove('added'); }, 1200);
+          })(addBtn, orig);
         }
         break;
       }
@@ -485,29 +529,23 @@ var SEED_PRODUCTS = [
     if (_cart[idx].qty <= 0) _cart.splice(idx, 1);
     saveCart();
   };
-
-  window.removeFromCart = function(idx) {
-    _cart.splice(idx, 1);
-    saveCart();
-  };
+  window.removeFromCart = function(idx) { _cart.splice(idx, 1); saveCart(); };
 
   window.openCart = function() {
     $('cart-sidebar').classList.add('open');
     $('cart-overlay').classList.add('open');
-    document.body.classList.add('cart-open');
+    document.body.classList.add('no-scroll');
   };
-
   window.closeCart = function() {
     $('cart-sidebar').classList.remove('open');
     $('cart-overlay').classList.remove('open');
-    document.body.classList.remove('cart-open');
+    document.body.classList.remove('no-scroll');
   };
 
   window.checkout = function() {
     if (!_cart.length) return;
     var products = window._getProducts();
-    var total = 0;
-    var lines = [];
+    var total = 0; var lines = [];
     _cart.forEach(function(ci) {
       for (var i = 0; i < products.length; i++) {
         if (products[i].name === ci.name) {
@@ -518,32 +556,32 @@ var SEED_PRODUCTS = [
         }
       }
     });
-
     $('checkout-details').innerHTML =
-      '<div class="checkout-items">' + lines.join('<br>') + '</div>' +
-      '<div class="checkout-total">TOTAL: $' + total + '</div>';
-
+      '<div class="checkout-items">' + lines.join('<br>') + '</div>'
+      + '<div class="checkout-total">Total: $' + total + '</div>';
     closeCart();
     $('checkout-modal').classList.add('open');
     _cart = [];
     saveCart();
   };
+  window.closeCheckoutModal = function() { $('checkout-modal').classList.remove('open'); };
 
-  window.closeCheckoutModal = function() {
-    $('checkout-modal').classList.remove('open');
+  /* ── Category filter ── */
+  window.filterByCategory = function(keyword) {
+    $('search-input').value = keyword;
+    window.renderCatalog();
+    document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
   };
 
-  /* ── FILTER + SORT ── */
+  /* ── Filter + Sort ── */
   function getFiltered() {
     var all   = window._getProducts();
     var query = ($('search-input').value || '').trim().toLowerCase();
     var sort  = $('sort-select').value;
-
     var result = all.filter(function(p) {
       return !query || p.name.toLowerCase().indexOf(query) !== -1 ||
              (p.notes && p.notes.toLowerCase().indexOf(query) !== -1);
     });
-
     if (sort === 'oldest')     result = result.slice().reverse();
     if (sort === 'price-asc')  result = result.slice().sort(function(a,b){ return calcPrice(a) - calcPrice(b); });
     if (sort === 'price-desc') result = result.slice().sort(function(a,b){ return calcPrice(b) - calcPrice(a); });
@@ -551,7 +589,7 @@ var SEED_PRODUCTS = [
     return result;
   }
 
-  /* ── BUILD PRODUCT CARD ── */
+  /* ── Build product card ── */
   function buildCard(p) {
     var price = calcPrice(p);
     var stockQty = p.stock != null ? p.stock : null;
@@ -560,45 +598,33 @@ var SEED_PRODUCTS = [
 
     var img = p.image
       ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') +
-        '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
-        '<div class="no-photo" style="display:none">📷</div>'
+        '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+        + '<div class="no-photo" style="display:none">📷</div>'
       : '<div class="no-photo">📷</div>';
 
-    var stockBadge = '';
-    if (outOfStock) {
-      stockBadge = '<div class="stock-badge out">SOLD OUT</div>';
-    } else if (lowStock) {
-      stockBadge = '<div class="stock-badge low">ONLY ' + stockQty + ' LEFT!</div>';
-    } else if (stockQty != null && stockQty > 0) {
-      stockBadge = '<div class="stock-badge">IN STOCK</div>';
-    }
-
-    var notes = p.notes
-      ? '<p class="product-desc">' + p.notes + '</p>'
-      : '';
+    var badge = '';
+    if (outOfStock) badge = '<span class="badge badge-out">Sold Out</span>';
+    else if (lowStock) badge = '<span class="badge badge-low">Only ' + stockQty + ' left</span>';
+    else if (stockQty != null && stockQty > 0) badge = '<span class="badge badge-in">In Stock</span>';
 
     var cartBtn = outOfStock
-      ? '<button class="btn-add-cart disabled" disabled>SOLD OUT</button>'
-      : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">🛒 ADD TO CART</button>';
+      ? '<button class="btn-add-cart disabled" disabled>Sold Out</button>'
+      : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
-    return '<div class="product' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
-      + '<div class="product-img">'
-      +   img
-      +   stockBadge
-      +   (lowStock ? '<div class="low-stock-pulse"></div>' : '')
-      + '</div>'
+    return '<div class="product-card' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
+      + '<div class="product-img">' + img + badge + '</div>'
       + '<div class="product-body">'
-      +   '<h2 class="product-name">' + p.name + '</h2>'
-      +   notes
-      +   '<div class="product-price-row">'
-      +     '<div class="product-price">$' + price + '</div>'
+      +   '<h3 class="product-name">' + p.name + '</h3>'
+      +   (p.notes ? '<p class="product-desc">' + p.notes + '</p>' : '')
+      +   '<div class="product-footer">'
+      +     '<span class="product-price">$' + price + '</span>'
       +     cartBtn
       +   '</div>'
       + '</div>'
       + '</div>';
   }
 
-  /* ── QUICK VIEW MODAL ── */
+  /* ── Quick view ── */
   window.openQuickView = function(name) {
     var products = window._getProducts();
     var p = null;
@@ -606,28 +632,23 @@ var SEED_PRODUCTS = [
       if (products[i].name === name) { p = products[i]; break; }
     }
     if (!p) return;
-
     var price = calcPrice(p);
     var stockQty = p.stock != null ? p.stock : null;
     var outOfStock = stockQty === 0;
     var lowStock = stockQty != null && stockQty > 0 && stockQty <= 2;
 
     var stockHtml = '';
-    if (outOfStock) {
-      stockHtml = '<span class="qv-stock out">SOLD OUT</span>';
-    } else if (lowStock) {
-      stockHtml = '<span class="qv-stock low">ONLY ' + stockQty + ' LEFT!</span>';
-    } else if (stockQty != null) {
-      stockHtml = '<span class="qv-stock">' + stockQty + ' IN STOCK</span>';
-    }
+    if (outOfStock) stockHtml = '<span class="qv-stock out">Sold Out</span>';
+    else if (lowStock) stockHtml = '<span class="qv-stock low">Only ' + stockQty + ' left!</span>';
+    else if (stockQty != null) stockHtml = '<span class="qv-stock in">' + stockQty + ' in stock</span>';
 
     var imgHtml = p.image
-      ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') + '" class="qv-img" onclick="openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
+      ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'&quot;') + '" class="qv-img" onclick="event.stopPropagation();openLightbox(\'' + (p.image || '').replace(/'/g,"\\'") + '\')">'
       : '<div class="qv-img qv-no-img">📷</div>';
 
     var cartBtn = outOfStock
-      ? '<button class="btn-add-cart-lg disabled" disabled>SOLD OUT</button>'
-      : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">🛒 ADD TO CART</button>';
+      ? '<button class="btn-add-cart-lg disabled" disabled>Sold Out</button>'
+      : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
     $('qv-content').innerHTML =
       '<div class="qv-layout">'
@@ -638,82 +659,75 @@ var SEED_PRODUCTS = [
       +   (p.notes ? '<p class="qv-desc">' + p.notes + '</p>' : '')
       +   '<div class="qv-price">$' + price + '</div>'
       +   '<div class="qv-features">'
-      +     '<div class="qv-feature"><span class="qv-feature-icon">🖨️</span> 3D Printed with Premium PLA</div>'
-      +     '<div class="qv-feature"><span class="qv-feature-icon">🎨</span> Multi-Color Print</div>'
-      +     '<div class="qv-feature"><span class="qv-feature-icon">📍</span> Local Pickup — No Shipping</div>'
+      +     '<div class="qv-feature"><span>🖨️</span> Printed with Premium PLA Filament</div>'
+      +     '<div class="qv-feature"><span>🎨</span> Multi-Color AMS Print</div>'
+      +     '<div class="qv-feature"><span>📍</span> Local Pickup — No Shipping Fees</div>'
+      +     '<div class="qv-feature"><span>🎁</span> Great for Gifts</div>'
       +   '</div>'
       +   cartBtn
       + '</div>'
       + '</div>';
-
     $('quickview-modal').classList.add('open');
   };
+  window.closeQuickView = function() { $('quickview-modal').classList.remove('open'); };
 
-  window.closeQuickView = function() {
-    $('quickview-modal').classList.remove('open');
-  };
-
-  /* ── LIGHTBOX ── */
+  /* ── Lightbox ── */
   window.openLightbox = function(src) {
     if (!src) return;
     $('lb-img').src = src;
     $('lightbox').classList.add('open');
   };
-  window.closeLightbox = function() {
-    $('lightbox').classList.remove('open');
-  };
+  window.closeLightbox = function() { $('lightbox').classList.remove('open'); };
 
-  /* ── RENDER CATALOG ── */
+  /* ── Render ── */
   window.renderCatalog = function() {
     var all      = window._getProducts();
     var filtered = getFiltered();
     var grid     = $('catalog');
-
-    $('product-count').textContent = all.length;
-    var inStock = 0;
-    all.forEach(function(p){ if ((p.stock || 0) > 0) inStock++; });
-    $('in-stock-count').textContent = inStock;
+    $('product-count').textContent = filtered.length;
+    var el = $('about-product-count');
+    if (el) el.textContent = all.length;
 
     if (!all.length) {
-      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🕹️</div><p>No items available yet.<br>Check back soon!</p></div>';
+      grid.innerHTML = '<div class="empty-state"><p>No products available yet. Check back soon!</p></div>';
       return;
     }
     if (!filtered.length) {
-      grid.innerHTML = '<div class="empty-catalog"><div class="ico">🔍</div><p>No items match your search.<br>Try a different query!</p></div>';
+      grid.innerHTML = '<div class="empty-state"><p>No products match your search.</p></div>';
       return;
     }
-
-    grid.innerHTML = filtered.map(function(p) {
-      return buildCard(p);
-    }).join('');
+    grid.innerHTML = filtered.map(function(p){ return buildCard(p); }).join('');
   };
 
-  /* ── KEYBOARD ── */
+  /* ── Keyboard ── */
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeLightbox();
-      closeQuickView();
-      closeCart();
-      closeCheckoutModal();
-    }
+    if (e.key === 'Escape') { closeLightbox(); closeQuickView(); closeCart(); closeCheckoutModal(); }
   });
 
-  /* ── INIT ── */
+  /* ── Smooth scroll for nav links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  /* ── Nav background on scroll ── */
+  var nav = document.querySelector('.site-nav');
+  var scrollWrap = $('scroll-wrap') || window;
+  (scrollWrap === window ? window : scrollWrap).addEventListener('scroll', function() {
+    var scrollY = scrollWrap === window ? window.scrollY : scrollWrap.scrollTop;
+    if (scrollY > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  /* ── Init ── */
   loadCart();
   window._getProducts();
   window.renderCatalog();
   window._fetchFromGitHub(function() { window.renderCatalog(); });
   $('search-input').addEventListener('input', function() { window.renderCatalog(); });
   $('sort-select').addEventListener('change', function() { window.renderCatalog(); });
-
-  /* smooth scroll for hero CTA */
-  var cta = document.querySelector('.hero-cta');
-  if (cta) {
-    cta.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
-    });
-  }
 
 })();
 </script>
