@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Orders — Smoky Mtn 3D Prints</title>
+  <meta name="description" content="Request a custom 3D print, sign, light box, or decor piece. We bring your ideas to life.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    var d = new Date();
+    var v = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + ('0'+d.getHours()).slice(-2);
+    document.write('<link rel="stylesheet" href="style.css?v=' + v + '">');
+  </script>
+</head>
+<body>
+
+<!-- ══ NAVIGATION ══ -->
+<nav class="site-nav scrolled">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <img src="logo.png" alt="Smoky Mtn 3D Prints" class="nav-logo-img">
+      <span class="nav-brand-text">SMOKY MTN<span class="nav-brand-accent"> 3D PRINTS</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#shop" class="nav-link">Shop</a>
+      <a href="index.html#about" class="nav-link">About</a>
+      <a href="custom.html" class="nav-link active">Custom Orders</a>
+    </div>
+    <a href="index.html#shop" class="cart-btn">
+      <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="custom-hero">
+  <div class="container">
+    <p class="hero-eyebrow">Custom Orders</p>
+    <h1 class="custom-hero-headline">Have an Idea?<br>Let's Make It <span class="hero-highlight">Real</span>.</h1>
+    <p class="custom-hero-sub">Whether it's a custom sign, unique decor piece, a gift for someone special, or a 3D print you've been dreaming about &mdash; we'll work with you to bring your vision to life.</p>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="how-section">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Tell Us Your Idea</h3>
+        <p>Fill out the form below with what you have in mind. Include photos, links, or descriptions &mdash; the more detail the better!</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>We'll Send a Quote</h3>
+        <p>We'll review your request and email you back with pricing, timeline, and any questions we have. Usually within 24 hours.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>We Build It</h3>
+        <p>Once approved, we get to work. We'll send you progress photos and let you know when it's ready for pickup or shipping.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ IDEAS GALLERY ══ -->
+<section class="ideas-section">
+  <div class="container">
+    <h2 class="section-title">What We Can Make</h2>
+    <p class="section-sub">Just a few ideas to get you started</p>
+    <div class="ideas-grid">
+      <div class="idea-card">
+        <div class="idea-icon">🪧</div>
+        <h3>Custom Signs</h3>
+        <p>Names, addresses, business signs, welcome signs &mdash; in wood or 3D printed materials.</p>
+      </div>
+      <div class="idea-card">
+        <div class="idea-icon">💡</div>
+        <h3>Light Boxes</h3>
+        <p>Illuminated art pieces, name signs, and custom designs that glow beautifully.</p>
+      </div>
+      <div class="idea-card">
+        <div class="idea-icon">🖼️</div>
+        <h3>HueForge Art</h3>
+        <p>Stunning layered 3D printed artwork from photos. Perfect for portraits and landscapes.</p>
+      </div>
+      <div class="idea-card">
+        <div class="idea-icon">🏠</div>
+        <h3>Home Decor</h3>
+        <p>Planters, organizers, shelf art, holiday decorations, and functional pieces.</p>
+      </div>
+      <div class="idea-card">
+        <div class="idea-icon">🎁</div>
+        <h3>Personalized Gifts</h3>
+        <p>Keychains, ornaments, figurines, name plates &mdash; unique gifts they'll actually love.</p>
+      </div>
+      <div class="idea-card">
+        <div class="idea-icon">🤔</div>
+        <h3>Your Idea Here</h3>
+        <p>Don't see what you want? Tell us anyway! If we can print it, we'll make it happen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CUSTOM ORDER FORM ══ -->
+<section class="form-section" id="form">
+  <div class="container">
+    <h2 class="section-title">Request a Custom Order</h2>
+    <p class="section-sub">We'll get back to you within 24 hours</p>
+
+    <div class="form-wrap">
+      <form id="custom-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_subject" value="New Custom Order Request — Smoky Mtn 3D Prints">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cf-name">Your Name <span class="req">*</span></label>
+            <input type="text" id="cf-name" name="name" required placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label for="cf-email">Email Address <span class="req">*</span></label>
+            <input type="email" id="cf-email" name="email" required placeholder="you@email.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cf-phone">Phone <span class="optional">(optional)</span></label>
+            <input type="tel" id="cf-phone" name="phone" placeholder="(555) 123-4567">
+          </div>
+          <div class="form-group">
+            <label for="cf-budget">Budget Range <span class="optional">(optional)</span></label>
+            <select id="cf-budget" name="budget">
+              <option value="">Select a range...</option>
+              <option value="Under $25">Under $25</option>
+              <option value="$25 - $50">$25 - $50</option>
+              <option value="$50 - $100">$50 - $100</option>
+              <option value="$100 - $200">$100 - $200</option>
+              <option value="$200+">$200+</option>
+              <option value="Not sure">Not sure yet</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cf-type">What type of item? <span class="req">*</span></label>
+          <select id="cf-type" name="item_type" required>
+            <option value="">Choose one...</option>
+            <option value="3D Print - Figure/Toy">3D Print — Figure / Toy</option>
+            <option value="3D Print - Functional">3D Print — Functional Item</option>
+            <option value="Custom Sign">Custom Sign</option>
+            <option value="Light Box">Light Box</option>
+            <option value="HueForge Art">HueForge Art</option>
+            <option value="Home Decor">Home Decor</option>
+            <option value="Personalized Gift">Personalized Gift</option>
+            <option value="Other">Other / Not Sure</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="cf-desc">Describe Your Idea <span class="req">*</span></label>
+          <textarea id="cf-desc" name="description" required rows="5" placeholder="Tell us what you're imagining! Include colors, size, text, or anything else that helps us understand your vision."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="cf-delivery">Pickup or Shipping? <span class="req">*</span></label>
+          <div class="delivery-options">
+            <label class="delivery-option">
+              <input type="radio" name="delivery" value="Local Pickup — Elizabethton, TN" required>
+              <div class="delivery-card">
+                <div class="delivery-icon">📍</div>
+                <div>
+                  <strong>Local Pickup</strong>
+                  <span>Elizabethton, TN &mdash; Free</span>
+                </div>
+              </div>
+            </label>
+            <label class="delivery-option">
+              <input type="radio" name="delivery" value="Ship to my address">
+              <div class="delivery-card">
+                <div class="delivery-icon">📦</div>
+                <div>
+                  <strong>Ship to Me</strong>
+                  <span>Shipping cost added to quote</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="shipping-address-group" style="display:none">
+          <label for="cf-address">Shipping Address</label>
+          <textarea id="cf-address" name="shipping_address" rows="3" placeholder="Street address, city, state, ZIP"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="cf-timeline">When do you need it by? <span class="optional">(optional)</span></label>
+          <input type="text" id="cf-timeline" name="timeline" placeholder="e.g. Before Christmas, within 2 weeks, no rush">
+        </div>
+
+        <div class="form-group">
+          <label for="cf-files">Reference Photos <span class="optional">(optional)</span></label>
+          <div class="file-upload-area" id="file-area">
+            <input type="file" id="cf-files" name="attachment" accept="image/*" multiple>
+            <div class="file-upload-text">
+              <span class="file-icon">📎</span>
+              <span>Click to attach photos or reference images</span>
+            </div>
+          </div>
+          <span class="form-hint">Photos of what you want, inspiration images, or sketches help a lot!</span>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">Send Custom Order Request</button>
+        <p class="form-disclaimer">We'll email you back at the address above. No payment required until you approve the quote.</p>
+      </form>
+
+      <div class="form-success" id="form-success" style="display:none">
+        <div class="success-icon">&#10003;</div>
+        <h3>Request Sent!</h3>
+        <p>We got your custom order request and will email you back within 24 hours with a quote.</p>
+        <a href="index.html" class="btn-primary">Back to Shop</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ QUICK CONTACT ══ -->
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-box">
+      <div class="contact-text">
+        <h2>Prefer to Just Send Us a Message?</h2>
+        <p>Email us directly for questions, quotes, or anything else.</p>
+      </div>
+      <a href="mailto:smokymtn3dprints@gmail.com" class="btn-email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="email-icon"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        smokymtn3dprints@gmail.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-brand">
+          <img src="logo.png" alt="Smoky Mtn 3D Prints" class="footer-logo-img">
+          SMOKY MTN 3D PRINTS
+        </div>
+        <p class="footer-tagline">Handcrafted in East Tennessee</p>
+      </div>
+      <div class="footer-links-col">
+        <h4>Shop</h4>
+        <a href="index.html#shop">All Products</a>
+        <a href="index.html#categories">Categories</a>
+        <a href="custom.html">Custom Orders</a>
+      </div>
+      <div class="footer-links-col">
+        <h4>Contact</h4>
+        <a href="mailto:smokymtn3dprints@gmail.com">Email Us</a>
+        <a href="index.html#about">About</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smoky Mtn 3D Prints. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  /* Show shipping address field when "Ship to Me" is selected */
+  var radios = document.querySelectorAll('input[name="delivery"]');
+  var addrGroup = document.getElementById('shipping-address-group');
+  radios.forEach(function(r) {
+    r.addEventListener('change', function() {
+      addrGroup.style.display = this.value.indexOf('Ship') !== -1 ? '' : 'none';
+    });
+  });
+
+  /* Form submission via Formspree with success state */
+  var form = document.getElementById('custom-form');
+  var successDiv = document.getElementById('form-success');
+  var submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(r) {
+      if (r.ok) {
+        form.style.display = 'none';
+        successDiv.style.display = '';
+        window.scrollTo({ top: document.getElementById('form').offsetTop - 100, behavior: 'smooth' });
+      } else {
+        throw new Error('Form submission failed');
+      }
+    })
+    .catch(function() {
+      /* Fallback: open mailto */
+      var name = document.getElementById('cf-name').value;
+      var desc = document.getElementById('cf-desc').value;
+      var type = document.getElementById('cf-type').value;
+      var body = 'Name: ' + name + '%0A%0AItem Type: ' + type + '%0A%0ADescription: ' + desc;
+      window.location.href = 'mailto:smokymtn3dprints@gmail.com?subject=Custom Order Request&body=' + body;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Custom Order Request';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

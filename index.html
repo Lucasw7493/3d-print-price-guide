@@ -51,14 +51,91 @@
 <!-- ══ CHECKOUT MODAL ══ -->
 <div class="modal-overlay" id="checkout-modal">
   <div class="modal-backdrop" onclick="closeCheckoutModal()"></div>
-  <div class="modal-box modal-sm">
+  <div class="modal-box modal-md">
     <button class="modal-x" onclick="closeCheckoutModal()">&times;</button>
-    <div class="checkout-success">
+
+    <!-- Step 1: Order form -->
+    <div class="checkout-form-wrap" id="checkout-step-form">
+      <div class="checkout-form-header">
+        <h2 class="checkout-form-title">Complete Your Order</h2>
+        <p class="checkout-form-sub">Fill in your info and we'll confirm your order via email.</p>
+      </div>
+
+      <div class="checkout-order-summary" id="checkout-summary"></div>
+
+      <form id="checkout-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="hidden" name="_subject" value="New Order — Smoky Mtn 3D Prints">
+        <input type="hidden" name="order_items" id="co-items-field">
+        <input type="hidden" name="order_total" id="co-total-field">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="co-name">Your Name <span class="req">*</span></label>
+            <input type="text" id="co-name" name="name" required placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label for="co-email">Email <span class="req">*</span></label>
+            <input type="email" id="co-email" name="email" required placeholder="you@email.com">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="co-phone">Phone <span class="optional">(optional)</span></label>
+          <input type="tel" id="co-phone" name="phone" placeholder="(555) 123-4567">
+        </div>
+
+        <div class="form-group">
+          <label>Pickup or Shipping? <span class="req">*</span></label>
+          <div class="delivery-options">
+            <label class="delivery-option">
+              <input type="radio" name="delivery" value="Local Pickup — Elizabethton, TN" required id="co-pickup">
+              <div class="delivery-card">
+                <div class="delivery-icon">📍</div>
+                <div>
+                  <strong>Local Pickup</strong>
+                  <span>Elizabethton, TN &mdash; Free</span>
+                </div>
+              </div>
+            </label>
+            <label class="delivery-option">
+              <input type="radio" name="delivery" value="Ship to my address" id="co-ship">
+              <div class="delivery-card">
+                <div class="delivery-icon">📦</div>
+                <div>
+                  <strong>Ship to Me</strong>
+                  <span>Shipping cost quoted via email</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="co-address-group" style="display:none">
+          <label for="co-address">Shipping Address <span class="req">*</span></label>
+          <textarea id="co-address" name="shipping_address" rows="3" placeholder="Street address, city, state, ZIP"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="co-notes">Order Notes <span class="optional">(optional)</span></label>
+          <textarea id="co-notes" name="notes" rows="2" placeholder="Any special requests or questions?"></textarea>
+        </div>
+
+        <div class="checkout-payment-note">
+          <div class="payment-icon">💳</div>
+          <p><strong>Payment:</strong> We'll email you with payment options (Venmo, CashApp, PayPal, or cash at pickup). No payment is taken now.</p>
+        </div>
+
+        <button type="submit" class="btn-submit" id="co-submit-btn">Place Order</button>
+      </form>
+    </div>
+
+    <!-- Step 2: Success -->
+    <div class="checkout-success" id="checkout-step-success" style="display:none">
       <div class="checkout-icon">&#10003;</div>
       <h2 class="checkout-heading">Order Received!</h2>
-      <p class="checkout-msg">Thanks for your order! We'll reach out to arrange pickup or delivery details.</p>
+      <p class="checkout-msg">Thanks for your order! We'll email you within 24 hours to confirm details and arrange payment.</p>
       <div class="checkout-details" id="checkout-details"></div>
-      <p class="checkout-contact">Questions? Reach us on Facebook or find us at the market.</p>
+      <p class="checkout-contact">Questions? Email us at <a href="mailto:smokymtn3dprints@gmail.com" style="color:var(--orange)">smokymtn3dprints@gmail.com</a></p>
       <button class="btn-primary" onclick="closeCheckoutModal()">Continue Shopping</button>
     </div>
   </div>
@@ -80,7 +157,7 @@
     <div class="nav-links">
       <a href="#shop" class="nav-link">Shop</a>
       <a href="#about" class="nav-link">About</a>
-      <a href="#custom" class="nav-link">Custom Orders</a>
+      <a href="custom.html" class="nav-link">Custom Orders</a>
     </div>
     <button class="cart-btn" id="cart-btn" onclick="openCart()">
       <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -252,7 +329,7 @@
     <div class="cta-inner">
       <h2 class="cta-heading">Have an Idea?<br>Let's Make It Real.</h2>
       <p class="cta-text">Need a custom sign, decor piece, gift, or 3D print? We create personalized items that bring your ideas to life. Tell us what you're imagining.</p>
-      <a href="https://www.facebook.com" class="btn-primary-lg" target="_blank" rel="noopener">Start a Custom Order</a>
+      <a href="custom.html" class="btn-primary-lg">Start a Custom Order</a>
     </div>
   </div>
 </section>
@@ -275,9 +352,9 @@
         <a href="#custom">Custom Orders</a>
       </div>
       <div class="footer-links-col">
-        <h4>Company</h4>
+        <h4>Contact</h4>
+        <a href="mailto:smokymtn3dprints@gmail.com">Email Us</a>
         <a href="#about">About</a>
-        <a href="#custom">Contact</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -537,26 +614,87 @@ var SEED_PRODUCTS = [
   window.checkout = function() {
     if (!_cart.length) return;
     var products = window._getProducts();
-    var total = 0; var lines = [];
+    var total = 0; var lines = []; var itemsText = [];
     _cart.forEach(function(ci) {
       for (var i = 0; i < products.length; i++) {
         if (products[i].name === ci.name) {
           var price = calcPrice(products[i]);
           total += price * ci.qty;
-          lines.push(ci.qty + 'x ' + ci.name + ' — $' + (price * ci.qty));
+          lines.push('<div class="summary-item"><span>' + ci.qty + 'x ' + ci.name + '</span><span>$' + (price * ci.qty) + '</span></div>');
+          itemsText.push(ci.qty + 'x ' + ci.name + ' — $' + (price * ci.qty));
           break;
         }
       }
     });
-    $('checkout-details').innerHTML =
-      '<div class="checkout-items">' + lines.join('<br>') + '</div>'
-      + '<div class="checkout-total">Total: $' + total + '</div>';
+
+    /* Fill summary in checkout form */
+    $('checkout-summary').innerHTML =
+      '<h3 class="summary-title">Order Summary</h3>'
+      + lines.join('')
+      + '<div class="summary-total"><span>Total</span><span>$' + total + '</span></div>';
+    $('co-items-field').value = itemsText.join('\n');
+    $('co-total-field').value = '$' + total;
+
+    /* Show form step, hide success */
+    $('checkout-step-form').style.display = '';
+    $('checkout-step-success').style.display = 'none';
+
     closeCart();
     $('checkout-modal').classList.add('open');
-    _cart = [];
-    saveCart();
+
+    /* Shipping address toggle */
+    var radios = document.querySelectorAll('#checkout-form input[name="delivery"]');
+    var addrGroup = $('co-address-group');
+    radios.forEach(function(r) {
+      r.addEventListener('change', function() {
+        addrGroup.style.display = this.value.indexOf('Ship') !== -1 ? '' : 'none';
+      });
+    });
+
+    /* Form submit */
+    var form = $('checkout-form');
+    var submitBtn = $('co-submit-btn');
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      var formData = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function(r) {
+        if (r.ok) {
+          $('checkout-step-form').style.display = 'none';
+          $('checkout-details').innerHTML =
+            '<div class="checkout-items">' + itemsText.join('<br>') + '</div>'
+            + '<div class="checkout-total">Total: $' + total + '</div>';
+          $('checkout-step-success').style.display = '';
+          _cart = [];
+          saveCart();
+        } else { throw new Error('fail'); }
+      })
+      .catch(function() {
+        /* Fallback: mailto */
+        var name = $('co-name').value;
+        var body = 'Name: ' + name + '%0A%0AOrder:%0A' + encodeURIComponent(itemsText.join('\n')) + '%0A%0ATotal: $' + total;
+        window.location.href = 'mailto:smokymtn3dprints@gmail.com?subject=New Order — Smoky Mtn 3D Prints&body=' + body;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Place Order';
+      });
+    };
   };
-  window.closeCheckoutModal = function() { $('checkout-modal').classList.remove('open'); };
+
+  window.closeCheckoutModal = function() {
+    $('checkout-modal').classList.remove('open');
+    /* Reset form state */
+    var form = $('checkout-form');
+    if (form) { form.reset(); }
+    var btn = $('co-submit-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
+  };
 
   /* ── Category filter ── */
   window.filterByCategory = function(keyword) {
