@@ -77,8 +77,9 @@
     "mktLow": 15,
     "mktMid": 25,
     "mktHigh": 35,
+    "stock": 3,
     "notes": "PLA Silk — Spiky Sensory Twisty Spiral Fidget Sphere. 154g, high detail. Popular sensory/fidget item.",
-    "stock": 3
+    "priceOverride": 10
   },
   {
     "name": "Demogorgon Flexi",
