@@ -50,8 +50,9 @@
     "mktLow": 45,
     "mktMid": 65,
     "mktHigh": 90,
+    "stock": 1,
     "notes": "6-color PLA — Shadow x Batman mashup, 11\" tall, 8-plate assembly. Premium piece.",
-    "stock": 1
+    "priceOverride": 30
   },
   {
     "name": "Custom Flexi Keychain",
