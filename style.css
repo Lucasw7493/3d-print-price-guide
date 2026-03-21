@@ -183,12 +183,6 @@ body.no-scroll { overflow: hidden; }
    ══════════════════════════════════════════════════ */
 .sv-section {
   position: relative;
-  height: 300vh;
-}
-.sv-sticky {
-  position: sticky;
-  top: 0;
-  width: 100%;
   height: 100vh;
   overflow: hidden;
 }
@@ -291,13 +285,13 @@ body.no-scroll { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
-  .sv-section { height: 250vh; }
+  .sv-section { height: 100vh; }
   .sv-logo { max-width: 160px; }
   .sv-features { grid-template-columns: 1fr; }
   .sv-content-inner { padding: 0 8px; }
 }
 @media (max-width: 480px) {
-  .sv-section { height: 200vh; }
+  .sv-section { height: 100vh; }
   .sv-feature-item { padding: 12px 14px; font-size: 12px; }
 }
 

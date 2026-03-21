@@ -172,8 +172,7 @@
 
 <!-- SCROLL VIDEO SECTION 1 — Hero / Intro -->
 <section class="sv-section" data-sv-index="0">
-  <div class="sv-sticky">
-    <video class="sv-video" muted playsinline preload="auto" src="smokymtn-intro.mp4"></video>
+  <video class="sv-video" muted playsinline preload="auto" src="smokymtn-intro.mp4"></video>
     <div class="sv-overlay"></div>
     <div class="sv-content">
       <div class="sv-content-inner">
@@ -187,13 +186,11 @@
         </div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- SCROLL VIDEO SECTION 2 — Our Story -->
 <section class="sv-section" data-sv-index="1">
-  <div class="sv-sticky">
-    <video class="sv-video" muted playsinline preload="auto" src="smokymtn-scene2.mp4"></video>
+  <video class="sv-video" muted playsinline preload="auto" src="smokymtn-scene2.mp4"></video>
     <div class="sv-overlay"></div>
     <div class="sv-content">
       <div class="sv-content-inner">
@@ -203,13 +200,11 @@
         <p class="sv-text">From our workshop in East Tennessee, we handcraft collectibles, fidget toys, custom signs, and unique decor that you won't find anywhere else.</p>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- SCROLL VIDEO SECTION 3 — Featured / CTA -->
 <section class="sv-section" data-sv-index="2">
-  <div class="sv-sticky">
-    <video class="sv-video" muted playsinline preload="auto" src="smokymtn-scene3.mp4"></video>
+  <video class="sv-video" muted playsinline preload="auto" src="smokymtn-scene3.mp4"></video>
     <div class="sv-overlay"></div>
     <div class="sv-content">
       <div class="sv-content-inner">
@@ -239,13 +234,11 @@
         </div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- SCROLL VIDEO SECTION 4 - ADD clip4.mp4 HERE -->
 <!-- <section class="sv-section" data-sv-index="3">
-  <div class="sv-sticky">
-    <video class="sv-video" muted playsinline preload="auto" src="clip4.mp4"></video>
+  <video class="sv-video" muted playsinline preload="auto" src="clip4.mp4"></video>
     <div class="sv-overlay"></div>
     <div class="sv-content">
       <div class="sv-content-inner">
@@ -253,13 +246,11 @@
         <p class="sv-text">Replace this with your content.</p>
       </div>
     </div>
-  </div>
 </section> -->
 
 <!-- SCROLL VIDEO SECTION 5 - ADD clip5.mp4 HERE -->
 <!-- <section class="sv-section" data-sv-index="4">
-  <div class="sv-sticky">
-    <video class="sv-video" muted playsinline preload="auto" src="clip5.mp4"></video>
+  <video class="sv-video" muted playsinline preload="auto" src="clip5.mp4"></video>
     <div class="sv-overlay"></div>
     <div class="sv-content">
       <div class="sv-content-inner">
@@ -267,13 +258,11 @@
         <p class="sv-text">Replace this with your content.</p>
       </div>
     </div>
-  </div>
 </section> -->
 
 <!-- SCROLL VIDEO SECTION 6 - ADD clip6.mp4 HERE -->
 <!-- <section class="sv-section" data-sv-index="5">
-  <div class="sv-sticky">
-    <video class="sv-video" muted playsinline preload="auto" src="clip6.mp4"></video>
+  <video class="sv-video" muted playsinline preload="auto" src="clip6.mp4"></video>
     <div class="sv-overlay"></div>
     <div class="sv-content">
       <div class="sv-content-inner">
@@ -281,7 +270,6 @@
         <p class="sv-text">Replace this with your content.</p>
       </div>
     </div>
-  </div>
 </section> -->
 
 <!-- ══ END SCROLL VIDEO SECTIONS ══ -->
@@ -323,7 +311,6 @@
         <p>Browse the full collection</p>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- ══ PRODUCTS ══ -->
@@ -378,7 +365,6 @@
         </div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- ══ WHY CHOOSE US ══ -->
@@ -417,7 +403,6 @@
         <p>Every product is chosen and crafted with artistic taste and creative attention to detail.</p>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- ══ CUSTOM ORDER CTA ══ -->
@@ -429,7 +414,6 @@
       <p class="cta-text">Need a custom sign, decor piece, gift, or 3D print? We create personalized items that bring your ideas to life. Tell us what you're imagining.</p>
       <a href="custom.html" class="btn-primary-lg">Start a Custom Order</a>
     </div>
-  </div>
 </section>
 
 <!-- ══ FOOTER ══ -->
@@ -975,81 +959,37 @@ var SEED_PRODUCTS = [
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   SCROLL-DRIVEN VIDEO ENGINE
+   VIDEO ENGINE — plays when scrolled into view, pauses when out
    ═══════════════════════════════════════════════════════════ */
 (function() {
   var sections = document.querySelectorAll('.sv-section');
   if (!sections.length) return;
 
-  var videos = [];
-  var ticking = false;
-
-  sections.forEach(function(section, i) {
+  /* Loop all videos */
+  sections.forEach(function(section) {
     var video = section.querySelector('.sv-video');
     if (!video) return;
-
-    videos.push({ section: section, video: video, ready: false });
-
-    /* Wait for video metadata to load */
-    video.addEventListener('loadedmetadata', function() {
-      videos[i].ready = true;
-    });
-
-    /* Force load */
+    video.loop = true;
     video.load();
   });
 
-  /* Scrub video to scroll position */
-  function scrubVideos() {
-    videos.forEach(function(v) {
-      if (!v.ready || !v.video.duration) return;
-
-      var rect = v.section.getBoundingClientRect();
-      var sectionH = v.section.offsetHeight;
-      var viewH = window.innerHeight;
-
-      /* Progress: 0 when section top hits viewport bottom, 1 when section bottom hits viewport top */
-      var scrolled = -rect.top;
-      var totalScroll = sectionH - viewH;
-      var progress = Math.max(0, Math.min(1, scrolled / totalScroll));
-
-      var targetTime = progress * v.video.duration;
-
-      /* Only update if difference is meaningful */
-      if (Math.abs(v.video.currentTime - targetTime) > 0.03) {
-        v.video.currentTime = targetTime;
-      }
-    });
-    ticking = false;
-  }
-
-  /* Throttle scroll events with rAF */
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(scrubVideos);
-    }
-  }, { passive: true });
-
-  /* IntersectionObserver — pause/play videos based on visibility */
+  /* Play when visible, pause when not */
   if ('IntersectionObserver' in window) {
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         var video = entry.target.querySelector('.sv-video');
         if (!video) return;
         if (entry.isIntersecting) {
-          video.style.willChange = 'contents';
+          video.play().catch(function() {});
         } else {
-          video.style.willChange = 'auto';
+          video.pause();
+          video.currentTime = 0;
         }
       });
-    }, { threshold: 0, rootMargin: '100px' });
+    }, { threshold: 0.15 });
 
     sections.forEach(function(s) { observer.observe(s); });
   }
-
-  /* Initial scrub */
-  requestAnimationFrame(scrubVideos);
 })();
 </script>
 
