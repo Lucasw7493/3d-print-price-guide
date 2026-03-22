@@ -220,15 +220,15 @@ body.no-scroll { overflow: hidden; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 80px 24px 24px;
 }
 .sv-content-inner {
   max-width: 680px;
   text-align: center;
 }
 .sv-logo {
-  max-width: 220px;
-  margin: 0 auto 24px;
+  max-width: 180px;
+  margin: 0 auto 16px;
   filter: drop-shadow(0 8px 24px rgba(0,0,0,.5));
 }
 .sv-heading {
