@@ -227,8 +227,8 @@ body.no-scroll { overflow: hidden; }
   text-align: center;
 }
 .sv-logo {
-  max-width: 150px;
-  margin: 0 auto 16px;
+  max-width: 120px;
+  margin: 0 auto 12px;
   filter: drop-shadow(0 8px 24px rgba(0,0,0,.5));
 }
 .sv-heading {
@@ -346,27 +346,27 @@ body.no-scroll { overflow: hidden; }
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--orange);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 .hero-headline {
   font-family: var(--font-head);
-  font-size: clamp(36px, 5.5vw, 56px);
+  font-size: clamp(32px, 5vw, 48px);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--cream);
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 .hero-highlight {
   color: var(--orange);
   text-shadow: 0 0 30px rgba(255,130,0,.25);
 }
 .hero-sub {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--cream-dim);
-  line-height: 1.7;
-  margin-bottom: 32px;
+  line-height: 1.6;
+  margin-bottom: 24px;
   max-width: 440px;
 }
 .hero-actions {
