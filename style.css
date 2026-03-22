@@ -227,7 +227,7 @@ body.no-scroll { overflow: hidden; }
   text-align: center;
 }
 .sv-logo {
-  max-width: 180px;
+  max-width: 150px;
   margin: 0 auto 16px;
   filter: drop-shadow(0 8px 24px rgba(0,0,0,.5));
 }
@@ -948,9 +948,12 @@ body.no-scroll { overflow: hidden; }
 }
 .about-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 60px;
   align-items: center;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
 }
 .about-eyebrow {
   font-family: var(--font-head);
