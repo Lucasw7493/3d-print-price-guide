@@ -263,16 +263,16 @@ body.no-scroll { overflow: hidden; }
   text-transform: uppercase;
   letter-spacing: 1px;
   line-height: 1.15;
-  color: var(--cream);
+  color: #fff;
   margin-bottom: 20px;
-  text-shadow: 0 2px 20px rgba(0,0,0,.5);
+  text-shadow: 0 2px 12px rgba(0,0,0,.7), 0 4px 30px rgba(0,0,0,.5), 0 0 60px rgba(0,0,0,.3);
 }
 .sv-text {
   font-size: 16px;
-  color: var(--cream-dim);
+  color: #e8e0d6;
   line-height: 1.7;
   margin-bottom: 16px;
-  text-shadow: 0 1px 8px rgba(0,0,0,.4);
+  text-shadow: 0 1px 6px rgba(0,0,0,.6), 0 2px 20px rgba(0,0,0,.4);
 }
 .sv-features {
   display: grid;
@@ -306,7 +306,13 @@ body.no-scroll { overflow: hidden; }
 .sv-content .hero-eyebrow,
 .sv-content .hero-headline,
 .sv-content .hero-sub {
-  text-shadow: 0 2px 20px rgba(0,0,0,.5);
+  text-shadow: 0 2px 12px rgba(0,0,0,.7), 0 4px 30px rgba(0,0,0,.5);
+}
+.sv-content .hero-headline {
+  color: #fff;
+}
+.sv-content .hero-sub {
+  color: #e8e0d6;
 }
 .sv-content .hero-sub {
   max-width: 100%;
