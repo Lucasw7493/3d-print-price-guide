@@ -105,6 +105,10 @@ body.no-scroll { overflow: hidden; }
 .nav-brand:hover .nav-printer-icon {
   transform: scale(1.08);
 }
+.feature-printer {
+  width: 48px !important;
+  height: 48px !important;
+}
 .nav-printer-icon .printer-head {
   animation: printHead 2s ease-in-out infinite;
 }
