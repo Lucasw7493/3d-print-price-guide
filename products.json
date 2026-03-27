@@ -79,8 +79,9 @@
     "mktLow": 12,
     "mktMid": 20,
     "mktHigh": 32,
+    "stock": 12,
     "notes": "A fully articulated Stranger Things Demogorgon with satisfying flex action. Poses, bends, and displays beautifully — the fan-favorite piece every Stranger Things lover needs!",
-    "stock": 12
+    "priceOverride": 2
   },
   {
     "name": "Flexi Manta Ray",
