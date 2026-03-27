@@ -1958,6 +1958,13 @@ body.no-scroll { overflow: hidden; }
   border-bottom: 1px solid var(--border);
 }
 .summary-item:last-of-type { border-bottom: none; }
+.summary-shipping { color: var(--cream-dim); }
+.shipping-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 4px 0 8px;
+  font-style: italic;
+}
 .summary-total {
   display: flex;
   justify-content: space-between;
