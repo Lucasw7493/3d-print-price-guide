@@ -164,6 +164,23 @@
         </div>
 
         <div class="form-group">
+          <label>Reference Image <span class="optional">(optional)</span></label>
+          <div class="file-upload-area" id="upload-area">
+            <input type="file" id="cf-image" accept="image/*">
+            <div class="file-upload-text">
+              <span class="file-icon">📎</span>
+              <span id="upload-label">Click to upload or drag an image here</span>
+            </div>
+          </div>
+          <div id="image-preview" style="display:none; margin-top:10px; text-align:center;">
+            <img id="preview-img" style="max-width:100%; max-height:220px; border-radius:8px; border:1px solid var(--border); object-fit:contain;" alt="Preview">
+            <br>
+            <button type="button" id="remove-image" style="margin-top:6px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; text-decoration:underline;">&#10005; Remove image</button>
+          </div>
+          <span class="form-hint" style="margin-top:6px;">JPG, PNG, WEBP &mdash; max 32 MB</span>
+        </div>
+
+        <div class="form-group">
           <label for="cf-delivery">Pickup or Shipping? <span class="req">*</span></label>
           <div class="delivery-options">
             <label class="delivery-option">
@@ -200,7 +217,7 @@
         </div>
 
         <button type="submit" class="btn-submit" id="submit-btn">Send Custom Order Request</button>
-        <p class="form-disclaimer">We'll email you back with a quote. Have reference photos? Email them to <a href="mailto:smokymtn3dprints@gmail.com" style="color:var(--orange)">smokymtn3dprints@gmail.com</a></p>
+        <p class="form-disclaimer">We'll email you back with a quote within 24 hours.</p>
       </form>
 
       <div class="form-success" id="form-success" style="display:none">
@@ -260,6 +277,9 @@
 
 <script>
 (function() {
+  /* ── ImgBB API key — get a free one at https://api.imgbb.com/ ── */
+  var IMGBB_KEY = 'f7693ee000f6c19d88f0842ebd5f38eb';
+
   /* Show shipping address field when "Ship to Me" is selected */
   var radios = document.querySelectorAll('input[name="delivery"]');
   var addrGroup = document.getElementById('shipping-address-group');
@@ -269,36 +289,78 @@
     });
   });
 
-  /* Form submission via Formspree with success state */
+  /* ── Image upload preview ── */
+  var fileInput  = document.getElementById('cf-image');
+  var uploadArea = document.getElementById('upload-area');
+  var uploadLabel = document.getElementById('upload-label');
+  var imagePreview = document.getElementById('image-preview');
+  var previewImg = document.getElementById('preview-img');
+  var removeBtn  = document.getElementById('remove-image');
+
+  function showPreview(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      imagePreview.style.display = '';
+      uploadLabel.textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  fileInput.addEventListener('change', function() {
+    if (this.files[0]) showPreview(this.files[0]);
+  });
+
+  /* Drag-and-drop */
+  uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    this.style.borderColor = 'var(--orange)';
+    this.style.background  = 'var(--orange-glow)';
+  });
+  uploadArea.addEventListener('dragleave', function() {
+    this.style.borderColor = '';
+    this.style.background  = '';
+  });
+  uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.style.borderColor = '';
+    this.style.background  = '';
+    var file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      fileInput.files = e.dataTransfer.files;
+      showPreview(file);
+    }
+  });
+
+  removeBtn.addEventListener('click', function() {
+    fileInput.value = '';
+    imagePreview.style.display = 'none';
+    uploadLabel.textContent = 'Click to upload or drag an image here';
+  });
+
+  /* ── Form submission ── */
   var form = document.getElementById('custom-form');
   var successDiv = document.getElementById('form-success');
-  var submitBtn = document.getElementById('submit-btn');
+  var submitBtn  = document.getElementById('submit-btn');
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
-
-    /* Build JSON from form fields */
+  function submitToFormspree(imageUrl) {
     var delivery = (document.querySelector('#custom-form input[name="delivery"]:checked') || {}).value || '';
     var data = {
-      name: document.getElementById('cf-name').value,
-      email: document.getElementById('cf-email').value,
-      phone: document.getElementById('cf-phone').value || 'Not provided',
-      item_type: document.getElementById('cf-type').value,
-      description: document.getElementById('cf-desc').value,
-      delivery: delivery,
+      name:             document.getElementById('cf-name').value,
+      email:            document.getElementById('cf-email').value,
+      phone:            document.getElementById('cf-phone').value || 'Not provided',
+      item_type:        document.getElementById('cf-type').value,
+      description:      document.getElementById('cf-desc').value,
+      delivery:         delivery,
       shipping_address: document.getElementById('cf-address').value || 'N/A',
-      timeline: document.getElementById('cf-timeline').value || 'No rush'
+      timeline:         document.getElementById('cf-timeline').value || 'No rush',
+      reference_image:  imageUrl || 'No image provided'
     };
 
     fetch('https://formspree.io/f/mnjgrkpv', {
       method: 'POST',
       body: JSON.stringify(data),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
     })
     .then(function(r) {
       if (r.ok) {
@@ -306,7 +368,7 @@
         successDiv.style.display = '';
         window.scrollTo({ top: document.getElementById('form').offsetTop - 100, behavior: 'smooth' });
       } else {
-        throw new Error('Form submission failed');
+        throw new Error('Submission failed');
       }
     })
     .catch(function() {
@@ -314,6 +376,32 @@
       submitBtn.disabled = false;
       submitBtn.textContent = 'Send Custom Order Request';
     });
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+
+    var file = fileInput.files[0];
+
+    if (file) {
+      submitBtn.textContent = 'Uploading image...';
+      var fd = new FormData();
+      fd.append('image', file);
+      fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_KEY, { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          submitBtn.textContent = 'Sending...';
+          submitToFormspree(res.success ? res.data.url : 'Image upload failed — customer may resend via email');
+        })
+        .catch(function() {
+          submitBtn.textContent = 'Sending...';
+          submitToFormspree('Image upload failed — customer may resend via email');
+        });
+    } else {
+      submitBtn.textContent = 'Sending...';
+      submitToFormspree(null);
+    }
   });
 })();
 </script>
