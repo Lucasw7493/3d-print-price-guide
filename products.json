@@ -109,5 +109,19 @@
     "stock": 3,
     "notes": "3-color PLA, AMS flexi manta ray, 13hr print, 2 per plate, 90 filament changes, iridescent blue finish",
     "priceOverride": 10
+  },
+  {
+    "name": "EHS Light Box",
+    "image": "ehs-lightbox.png",
+    "filament": 5.50,
+    "elec": 2.00,
+    "qty": 1,
+    "printTime": 16,
+    "mktLow": 40,
+    "mktMid": 55,
+    "mktHigh": 75,
+    "stock": 1,
+    "notes": "Multi-color PLA — Custom illuminated light box display. Vibrant backlit detail makes a stunning wall piece or gift!",
+    "priceOverride": 0
   }
 ]
