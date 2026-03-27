@@ -1958,6 +1958,23 @@ body.no-scroll { overflow: hidden; }
   border-bottom: 1px solid var(--border);
 }
 .summary-item:last-of-type { border-bottom: none; }
+
+/* Lead time notice banner */
+.lead-time-notice {
+  background: rgba(255, 130, 0, 0.07);
+  border: 1px solid rgba(255, 130, 0, 0.22);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--cream-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.5;
+}
+.lead-time-notice strong { color: var(--orange); }
+.ltn-icon { font-size: 18px; flex-shrink: 0; }
 .summary-shipping { color: var(--cream-dim); }
 .shipping-note {
   font-size: 11px;
