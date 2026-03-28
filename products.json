@@ -1,7 +1,7 @@
 [
   {
     "name": "Custom Hype Chain Necklace",
-    "image": "custom-hype-chain-necklace.jpg",
+    "image": "custom-hype-chain-necklace.png",
     "filament": 0,
     "elec": 0,
     "qty": 1,
@@ -46,7 +46,7 @@
   },
   {
     "name": "Custom  Keychains",
-    "image": "custom-keychains.png",
+    "image": "flexi-keychain.jpg",
     "filament": 1.88,
     "elec": 1,
     "qty": 1,
