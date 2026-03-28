@@ -45,7 +45,7 @@
     "priceOverride": 30
   },
   {
-    "name": "Custom Flexi Keychain",
+    "name": "Custom  Keychains",
     "image": "flexi-keychain.jpg",
     "filament": 1.88,
     "elec": 1,
@@ -56,8 +56,8 @@
     "mktHigh": 22,
     "stock": 5,
     "category": "keychain",
-    "notes": "A flexible, fun keychain you can fidget with all day. Made to order",
-    "priceOverride": 2
+    "notes": "A flexible, fun keychain you can fidget with all day. Made to order in your choice of colors and design or opt for a non flexi",
+    "priceOverride": 10
   },
   {
     "name": "Spiky Sensory Twisty Sphere",
