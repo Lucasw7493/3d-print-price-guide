@@ -1062,54 +1062,69 @@ body.no-scroll { overflow: hidden; }
 /* ══════════════════════════════════════════════════
    FEATURES / WHY US
    ══════════════════════════════════════════════════ */
-.features-section {
-  padding: 80px 0 100px;
+.fb-cta-section {
+  padding: 60px 0;
   background: var(--bg-alt);
   border-top: 1px solid var(--border);
 }
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-.feature-card {
+.fb-cta-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 32px 28px;
-  transition: all var(--transition);
-  position: relative;
-  overflow: hidden;
+  padding: 40px 48px;
 }
-.feature-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--orange), var(--copper));
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-.feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 35px rgba(0,0,0,.3);
-  border-color: rgba(255,130,0,.2);
-}
-.feature-card:hover::after { opacity: 1; }
-.feature-icon { font-size: 28px; margin-bottom: 16px; }
-.feature-card h3 {
+.fb-cta-text h2 {
   font-family: var(--font-head);
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
   letter-spacing: .5px;
   text-transform: uppercase;
   color: var(--cream);
   margin-bottom: 8px;
 }
-.feature-card p {
-  font-size: 13px;
+.fb-cta-text p {
+  font-size: 14px;
   color: var(--cream-dim);
   line-height: 1.6;
+  margin: 0;
+}
+.btn-facebook {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #1877f2;
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition), transform var(--transition);
+  flex-shrink: 0;
+}
+.btn-facebook:hover {
+  background: #1464d8;
+  transform: translateY(-2px);
+}
+.fb-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .fb-cta-box {
+    flex-direction: column;
+    text-align: center;
+    padding: 32px 24px;
+  }
 }
 
 /* ══════════════════════════════════════════════════
