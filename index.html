@@ -771,6 +771,13 @@ var SEED_PRODUCTS = [
     var submitBtn = $('co-submit-btn');
     form.onsubmit = function(e) {
       e.preventDefault();
+      /* Validate shipping address when Ship is selected */
+      var deliveryRadio = document.querySelector('#checkout-form input[name="delivery"]:checked');
+      if (deliveryRadio && deliveryRadio.value.indexOf('Ship') !== -1 && !$('co-address').value.trim()) {
+        $('co-address').focus();
+        $('co-address').style.borderColor = '#e53935';
+        return;
+      }
       submitBtn.disabled = true;
 
       var grand = total + shippingFee;
