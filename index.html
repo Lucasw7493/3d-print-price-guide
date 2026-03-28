@@ -897,17 +897,18 @@ var SEED_PRODUCTS = [
         + '<div class="no-photo" style="display:none">📷</div>'
       : '<div class="no-photo">📷</div>';
 
+    var cat = p.category || '';
+    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box';
+
     var badge = '';
     if (outOfStock) badge = '<span class="badge badge-out">Sold Out</span>';
+    else if (needsUpload) badge = '<span class="badge badge-made">Made to Order</span>';
     else if (lowStock) badge = '<span class="badge badge-low">Only ' + stockQty + ' left</span>';
     else if (stockQty != null && stockQty > 0) badge = '<span class="badge badge-in">In Stock</span>';
 
     var cartBtn = outOfStock
       ? '<button class="btn-add-cart disabled" disabled>Sold Out</button>'
       : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
-
-    var cat = p.category || '';
-    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box';
 
     return '<div class="product-card' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
       + '<div class="product-img">' + img + badge + '</div>'
@@ -938,6 +939,7 @@ var SEED_PRODUCTS = [
 
     var stockHtml = '';
     if (outOfStock) stockHtml = '<span class="qv-stock out">Sold Out</span>';
+    else if (qvNeedsUpload) stockHtml = '<span class="qv-stock made-to-order">Made to Order</span>';
     else if (lowStock) stockHtml = '<span class="qv-stock low">Only ' + stockQty + ' left!</span>';
     else if (stockQty != null) stockHtml = '<span class="qv-stock in">' + stockQty + ' in stock</span>';
 
