@@ -456,8 +456,15 @@ a { text-decoration: none; color: inherit; }
           if (meta && meta.sha) body.sha = meta.sha;
           return fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
         })
-        .then(function() { cb(filename); })
-        .catch(function() { cb(filename); });
+        .then(function(r) {
+          if (r.ok) {
+            cb(filename);
+          } else {
+            r.json().then(function(e) { toast('Image upload failed: ' + (e.message || 'check token'), 'err'); }).catch(function(){});
+            cb(null);
+          }
+        })
+        .catch(function() { toast('Image upload failed', 'err'); cb(null); });
     };
     reader.readAsDataURL(file);
   }
@@ -553,6 +560,7 @@ a { text-decoration: none; color: inherit; }
     $('f-notes').value = p.notes || '';
     $('f-price-override').value = p.priceOverride != null ? p.priceOverride : '';
     $('f-image').value = p.image || '';
+    $('f-image-file').value = '';
     if (p.image) {
       $('f-image-preview').src = p.image;
       $('f-image-preview').style.display = 'block';
