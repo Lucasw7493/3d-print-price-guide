@@ -1,5 +1,20 @@
 [
   {
+    "name": "Custom hueforge art",
+    "image": "custom-hueforge-art.jpg",
+    "filament": 0,
+    "elec": 0,
+    "qty": 1,
+    "printTime": 0,
+    "mktLow": 0,
+    "mktMid": 0,
+    "mktHigh": 0,
+    "stock": 0,
+    "category": "hueforge",
+    "notes": "Custom hueforge art price depends on size",
+    "priceOverride": null
+  },
+  {
     "name": "Custom Hype Chain Necklace",
     "image": "custom-hype-chain-necklace.png",
     "filament": 0,
