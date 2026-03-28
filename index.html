@@ -34,7 +34,7 @@
       <span class="cart-total-label">Total</span>
       <span class="cart-total-val" id="cart-total">$0</span>
     </div>
-    <div class="cart-note">Local pickup free &middot; Shipping from $8.99 &middot; Pay via Venmo/CashApp/cash</div>
+    <div class="cart-note">Local pickup free &middot; Shipping from <span id="s-ship-cart">$8.99</span> &middot; Pay via Venmo/CashApp/cash</div>
     <button class="btn-checkout" onclick="checkout()">Complete Order</button>
   </div>
 </div>
@@ -103,7 +103,7 @@
                 <div class="delivery-icon">📦</div>
                 <div>
                   <strong>Ship to Me</strong>
-                  <span>Flat rate $8.99 &mdash; may vary by size</span>
+                  <span>Flat rate <span id="s-ship-checkout">$8.99</span> &mdash; may vary by size</span>
                 </div>
               </div>
             </label>
@@ -153,7 +153,7 @@
       <h2 class="checkout-heading">Order Received!</h2>
       <p class="checkout-msg">Thanks for your order! We'll email you within 24 hours to confirm details and arrange payment. Most orders are ready within <strong>1&ndash;2 weeks</strong> of payment confirmation.</p>
       <div class="checkout-details" id="checkout-details"></div>
-      <p class="checkout-contact">Questions? Email us at <a href="mailto:smokymtn3dprints@gmail.com" style="color:var(--orange)">smokymtn3dprints@gmail.com</a></p>
+      <p class="checkout-contact">Questions? Email us at <a id="s-email-success" href="mailto:smokymtn3dprints@gmail.com" style="color:var(--orange)">smokymtn3dprints@gmail.com</a></p>
       <button class="btn-primary" onclick="closeCheckoutModal()">Continue Shopping</button>
     </div>
   </div>
@@ -306,7 +306,7 @@
     <p class="section-sub"><span id="product-count">0</span> items available</p>
     <div class="lead-time-notice">
       <span class="ltn-icon">🖨️</span>
-      <span>Small batch shop &mdash; we print every order fresh. Current lead time: <strong>1&ndash;2 weeks</strong>. We&rsquo;ll confirm your order by email before charging.</span>
+      <span>Small batch shop &mdash; we print every order fresh. Current lead time: <strong id="s-lead-time">1&ndash;2 weeks</strong>. We&rsquo;ll confirm your order by email before charging.</span>
     </div>
     <div class="filter-bar">
       <div class="search-wrap">
@@ -356,9 +356,9 @@
         <h2>Follow Us on Facebook</h2>
         <p>See new products, behind-the-scenes prints, and updates from our shop.</p>
       </div>
-      <a href="https://www.facebook.com/share/1BVK9ePUdm/" target="_blank" rel="noopener" class="btn-facebook">
+      <a href="https://www.facebook.com/share/1BVK9ePUdm/" target="_blank" rel="noopener" class="btn-facebook" id="s-fb-link">
         <svg viewBox="0 0 24 24" fill="currentColor" class="fb-icon"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-        @smokymtn3dprints
+        <span id="s-fb-handle">@smokymtn3dprints</span>
       </a>
     </div>
   </div>
@@ -383,7 +383,7 @@
       </div>
       <div class="footer-links-col">
         <h4>Contact</h4>
-        <a href="mailto:smokymtn3dprints@gmail.com">Email Us</a>
+        <a href="mailto:smokymtn3dprints@gmail.com" id="s-email-footer">Email Us</a>
         <a href="#about">About</a>
       </div>
     </div>
@@ -654,7 +654,7 @@ var SEED_PRODUCTS = [
     if (!_cart.length) return;
     var products = window._getProducts();
     var total = 0; var lines = []; var itemsText = [];
-    var SHIP_RATE = 8.99;
+    var SHIP_RATE = (window._settings && window._settings.shippingRate) || 8.99;
     var shippingFee = 0;
 
     _cart.forEach(function(ci) {
@@ -772,7 +772,7 @@ var SEED_PRODUCTS = [
           }
         })
         .catch(function() {
-          alert('Something went wrong. Please try again or email us at smokymtn3dprints@gmail.com');
+          alert('Something went wrong. Please try again or email us at ' + ((window._settings && window._settings.email) || 'smokymtn3dprints@gmail.com'));
           submitBtn.disabled = false;
           submitBtn.textContent = 'Place Order';
         });
@@ -1071,6 +1071,45 @@ var SEED_PRODUCTS = [
 
     sections.forEach(function(s) { observer.observe(s); });
   }
+})();
+</script>
+
+<script>
+/* ── Settings loader ── */
+(function() {
+  var GH_RAW = 'https://raw.githubusercontent.com/Lucasw7493/3d-print-price-guide/main/settings.json';
+  fetch(GH_RAW + '?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(s) {
+      window._settings = s;
+
+      if (s.leadTime) {
+        var el = document.getElementById('s-lead-time');
+        if (el) el.textContent = s.leadTime;
+      }
+      if (s.shippingRate != null) {
+        var rate = '$' + parseFloat(s.shippingRate).toFixed(2);
+        var sc = document.getElementById('s-ship-cart');
+        if (sc) sc.textContent = rate;
+        var sch = document.getElementById('s-ship-checkout');
+        if (sch) sch.textContent = rate;
+      }
+      if (s.email) {
+        var ef = document.getElementById('s-email-footer');
+        if (ef) ef.href = 'mailto:' + s.email;
+        var es = document.getElementById('s-email-success');
+        if (es) { es.href = 'mailto:' + s.email; es.textContent = s.email; }
+      }
+      if (s.facebookUrl) {
+        var fb = document.getElementById('s-fb-link');
+        if (fb) fb.href = s.facebookUrl;
+      }
+      if (s.facebookHandle) {
+        var fbh = document.getElementById('s-fb-handle');
+        if (fbh) fbh.textContent = s.facebookHandle;
+      }
+    })
+    .catch(function() {});
 })();
 </script>
 

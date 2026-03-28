@@ -227,6 +227,43 @@ a { text-decoration: none; color: inherit; }
   <!-- Product list -->
   <div class="product-list" id="product-list"></div>
 
+  <!-- Site Settings -->
+  <div style="margin-top:40px; border-top:1px solid var(--border); padding-top:32px;">
+    <div class="toolbar" style="margin-bottom:20px">
+      <h2 class="toolbar-left" style="font-family:var(--font-head);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:1px">Site Settings</h2>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;max-width:600px">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Lead Time</label>
+          <input id="st-lead-time" type="text" placeholder="e.g. 1–2 weeks">
+          <span class="form-hint">Shown on the shop page under the product grid</span>
+        </div>
+        <div class="form-group">
+          <label>Shipping Rate ($)</label>
+          <input id="st-ship-rate" type="number" step="0.01" min="0" placeholder="8.99">
+          <span class="form-hint">Flat rate shown in cart and checkout</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Contact Email</label>
+        <input id="st-email" type="email" placeholder="smokymtn3dprints@gmail.com">
+        <span class="form-hint">Shown in footer and checkout confirmation</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Facebook URL</label>
+          <input id="st-fb-url" type="url" placeholder="https://www.facebook.com/...">
+        </div>
+        <div class="form-group">
+          <label>Facebook Handle</label>
+          <input id="st-fb-handle" type="text" placeholder="@smokymtn3dprints">
+        </div>
+      </div>
+      <button class="btn btn-orange" id="st-save-btn" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══ ADD / EDIT MODAL ══ -->
@@ -686,12 +723,69 @@ a { text-decoration: none; color: inherit; }
     if (e.key === 'Escape') closeModal();
   });
 
+  /* ── Settings ── */
+  var GH_SETTINGS = 'settings.json';
+
+  function fetchSettings() {
+    var url = 'https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + GH_SETTINGS + '?t=' + Date.now();
+    fetch(url)
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(s) {
+        if (!s) return;
+        $('st-lead-time').value  = s.leadTime     || '';
+        $('st-ship-rate').value  = s.shippingRate != null ? s.shippingRate : '';
+        $('st-email').value      = s.email         || '';
+        $('st-fb-url').value     = s.facebookUrl   || '';
+        $('st-fb-handle').value  = s.facebookHandle || '';
+      })
+      .catch(function() {});
+  }
+
+  window.saveSettings = function() {
+    var token = getToken();
+    if (!token) { toast('Set up GitHub token first', 'err'); return; }
+    var btn = $('st-save-btn');
+    btn.disabled = true; btn.textContent = 'Saving...';
+
+    var s = {
+      leadTime:       $('st-lead-time').value.trim() || '1\u20132 weeks',
+      shippingRate:   parseFloat($('st-ship-rate').value) || 8.99,
+      email:          $('st-email').value.trim() || 'smokymtn3dprints@gmail.com',
+      facebookUrl:    $('st-fb-url').value.trim(),
+      facebookHandle: $('st-fb-handle').value.trim()
+    };
+
+    var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_SETTINGS;
+    var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+
+    fetch(apiUrl + '?ref=' + GH_BRANCH + '&_=' + Date.now(), { headers: headers })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(meta) {
+        var body = JSON.stringify(s, null, 2);
+        var b64  = btoa(unescape(encodeURIComponent(body)));
+        var payload = { message: 'Update settings', content: b64, branch: GH_BRANCH };
+        if (meta && meta.sha) payload.sha = meta.sha;
+        return fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(payload) });
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        btn.disabled = false; btn.textContent = 'Save Settings';
+        if (res.commit) toast('Settings saved!', 'ok');
+        else toast('Save failed: ' + (res.message || 'check token'), 'err');
+      })
+      .catch(function(e) {
+        btn.disabled = false; btn.textContent = 'Save Settings';
+        toast('Save failed: ' + e.message, 'err');
+      });
+  };
+
   /* ── Init ── */
   updateSetupUI();
   loadProducts();
   render();
   toast('Loading latest from GitHub...', 'info');
   fetchFromGitHub(function() { render(); toast('Products loaded', 'ok'); });
+  fetchSettings();
 
 })();
 </script>
