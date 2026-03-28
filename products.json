@@ -72,6 +72,7 @@
     "mktHigh": 22,
     "stock": 5,
     "category": "keychain",
+    "madeToOrder": true,
     "notes": "Custom keychains available also have flexi Keychain options for the fidget lovers",
     "priceOverride": 10
   },
