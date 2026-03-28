@@ -120,6 +120,24 @@
           <textarea id="co-notes" name="notes" rows="2" placeholder="Any special requests or questions?"></textarea>
         </div>
 
+        <div class="form-group" id="co-logo-section" style="display:none">
+          <label>Logo / Reference Image</label>
+          <p id="co-logo-hint" class="form-hint" style="margin-bottom:8px"></p>
+          <div class="file-upload-area" id="co-upload-area">
+            <input type="file" id="co-logo-file" accept="image/*">
+            <div class="file-upload-text">
+              <span class="file-icon">📎</span>
+              <span id="co-upload-label">Click to upload or drag an image here</span>
+            </div>
+          </div>
+          <div id="co-image-preview" style="display:none; margin-top:10px; text-align:center">
+            <img id="co-preview-img" style="max-width:100%; max-height:140px; border-radius:8px; border:1px solid var(--border); object-fit:contain;" alt="Preview">
+            <br>
+            <button type="button" id="co-remove-image" style="margin-top:6px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; text-decoration:underline;">&#10005; Remove image</button>
+          </div>
+          <span class="form-hint" style="margin-top:6px; display:block">JPG, PNG, WEBP &mdash; don't have it now? You can email us the logo after ordering.</span>
+        </div>
+
         <div class="checkout-payment-note">
           <div class="payment-icon">💳</div>
           <p><strong>Payment:</strong> We'll email you with payment options (Venmo, CashApp, PayPal, or cash at pickup). No payment is taken now.</p>
@@ -485,6 +503,7 @@ var SEED_PRODUCTS = [
   'use strict';
   var $ = function(id) { return document.getElementById(id); };
   var SK_CART = 'smtn_cart';
+  var IMGBB_KEY = 'f7693ee000f6c19d88f0842ebd5f38eb';
 
   /* ── Price calc ── */
   window.calcPrice = function(p) {
@@ -668,6 +687,27 @@ var SEED_PRODUCTS = [
     renderSummary();
     $('co-items-field').value = itemsText.join('\n');
 
+    /* Show logo upload if cart has keychain or hype chain items */
+    var logoItemNames = [];
+    _cart.forEach(function(ci) {
+      for (var i = 0; i < products.length; i++) {
+        if (products[i].name === ci.name) {
+          var cat = products[i].category || '';
+          if (cat === 'keychain' || cat === 'hype chain') logoItemNames.push(ci.name);
+          break;
+        }
+      }
+    });
+    if (logoItemNames.length) {
+      $('co-logo-hint').textContent = 'For: ' + logoItemNames.join(', ') + ' — upload the team logo or design so we know what to create.';
+      $('co-logo-section').style.display = '';
+      $('co-logo-file').value = '';
+      $('co-image-preview').style.display = 'none';
+      $('co-upload-label').textContent = 'Click to upload or drag an image here';
+    } else {
+      $('co-logo-section').style.display = 'none';
+    }
+
     /* Show form step, hide success */
     $('checkout-step-form').style.display = '';
     $('checkout-step-success').style.display = 'none';
@@ -693,48 +733,69 @@ var SEED_PRODUCTS = [
     form.onsubmit = function(e) {
       e.preventDefault();
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
 
       var grand = total + shippingFee;
-      var data = {
-        name: $('co-name').value,
-        email: $('co-email').value,
-        phone: $('co-phone').value || 'Not provided',
-        delivery: (document.querySelector('#checkout-form input[name="delivery"]:checked') || {}).value || '',
-        shipping_address: $('co-address').value || 'N/A',
-        notes: $('co-notes').value || '',
-        order_items: itemsText.join('\n'),
-        shipping_fee: shippingFee > 0 ? '$' + SHIP_RATE.toFixed(2) : 'N/A — local pickup',
-        order_total: '$' + grand.toFixed(2)
-      };
+      var logoFile = $('co-logo-file') && $('co-logo-file').files[0];
 
-      fetch('https://formspree.io/f/mnjgrkpv', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(function(r) {
-        if (r.ok) {
-          $('checkout-step-form').style.display = 'none';
-          $('checkout-details').innerHTML =
-            '<div class="checkout-items">' + itemsText.join('<br>') + '</div>'
-            + (shippingFee > 0 ? '<div class="checkout-items">Shipping: $' + SHIP_RATE.toFixed(2) + '</div>' : '')
-            + '<div class="checkout-total">Total: $' + grand.toFixed(2) + '</div>';
-          $('checkout-step-success').style.display = '';
-          _cart = [];
-          saveCart();
-        } else {
-          throw new Error('fail');
-        }
-      })
-      .catch(function() {
-        alert('Something went wrong. Please try again or email us at smokymtn3dprints@gmail.com');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Place Order';
-      });
+      function doSubmit(logoUrl) {
+        var data = {
+          name: $('co-name').value,
+          email: $('co-email').value,
+          phone: $('co-phone').value || 'Not provided',
+          delivery: (document.querySelector('#checkout-form input[name="delivery"]:checked') || {}).value || '',
+          shipping_address: $('co-address').value || 'N/A',
+          notes: $('co-notes').value || '',
+          order_items: itemsText.join('\n'),
+          shipping_fee: shippingFee > 0 ? '$' + SHIP_RATE.toFixed(2) : 'N/A — local pickup',
+          order_total: '$' + grand.toFixed(2)
+        };
+        if (logoUrl) data.logo_image = logoUrl;
+        else if ($('co-logo-section').style.display !== 'none') data.logo_image = 'Customer did not upload — will send via email';
+
+        fetch('https://formspree.io/f/mnjgrkpv', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+        })
+        .then(function(r) {
+          if (r.ok) {
+            $('checkout-step-form').style.display = 'none';
+            $('checkout-details').innerHTML =
+              '<div class="checkout-items">' + itemsText.join('<br>') + '</div>'
+              + (shippingFee > 0 ? '<div class="checkout-items">Shipping: $' + SHIP_RATE.toFixed(2) + '</div>' : '')
+              + '<div class="checkout-total">Total: $' + grand.toFixed(2) + '</div>';
+            $('checkout-step-success').style.display = '';
+            _cart = [];
+            saveCart();
+          } else {
+            throw new Error('fail');
+          }
+        })
+        .catch(function() {
+          alert('Something went wrong. Please try again or email us at smokymtn3dprints@gmail.com');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Place Order';
+        });
+      }
+
+      if (logoFile) {
+        submitBtn.textContent = 'Uploading logo...';
+        var fd = new FormData();
+        fd.append('image', logoFile);
+        fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_KEY, { method: 'POST', body: fd })
+          .then(function(r) { return r.json(); })
+          .then(function(res) {
+            submitBtn.textContent = 'Sending...';
+            doSubmit(res.success ? res.data.url : null);
+          })
+          .catch(function() {
+            submitBtn.textContent = 'Sending...';
+            doSubmit(null);
+          });
+      } else {
+        submitBtn.textContent = 'Sending...';
+        doSubmit(null);
+      }
     };
   };
 
@@ -746,6 +807,57 @@ var SEED_PRODUCTS = [
     var btn = $('co-submit-btn');
     if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
   };
+
+  /* ── Logo upload handlers (checkout) ── */
+  (function() {
+    var fileInput   = $('co-logo-file');
+    var uploadArea  = $('co-upload-area');
+    var uploadLabel = $('co-upload-label');
+    var previewWrap = $('co-image-preview');
+    var previewImg  = $('co-preview-img');
+    var removeBtn   = $('co-remove-image');
+    if (!fileInput) return;
+
+    function showPreview(file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        previewWrap.style.display = '';
+        uploadLabel.textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener('change', function() {
+      if (this.files[0]) showPreview(this.files[0]);
+    });
+
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.style.borderColor = 'var(--orange)';
+      this.style.background  = 'var(--orange-glow)';
+    });
+    uploadArea.addEventListener('dragleave', function() {
+      this.style.borderColor = '';
+      this.style.background  = '';
+    });
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.style.borderColor = '';
+      this.style.background  = '';
+      var file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        fileInput.files = e.dataTransfer.files;
+        showPreview(file);
+      }
+    });
+
+    removeBtn.addEventListener('click', function() {
+      fileInput.value = '';
+      previewWrap.style.display = 'none';
+      uploadLabel.textContent = 'Click to upload or drag an image here';
+    });
+  })();
 
   /* ── Category filter ── */
   window.filterByCategory = function(keyword) {
