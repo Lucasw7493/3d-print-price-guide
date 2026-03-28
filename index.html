@@ -906,6 +906,9 @@ var SEED_PRODUCTS = [
       ? '<button class="btn-add-cart disabled" disabled>Sold Out</button>'
       : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
+    var cat = p.category || '';
+    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box';
+
     return '<div class="product-card' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
       + '<div class="product-img">' + img + badge + '</div>'
       + '<div class="product-body">'
@@ -915,6 +918,7 @@ var SEED_PRODUCTS = [
       +     '<span class="product-price">$' + price + '</span>'
       +     cartBtn
       +   '</div>'
+      +   (needsUpload && !outOfStock ? '<span class="upload-hint">📎 You\'ll upload your design at checkout</span>' : '')
       + '</div>'
       + '</div>';
   }
@@ -945,6 +949,9 @@ var SEED_PRODUCTS = [
       ? '<button class="btn-add-cart-lg disabled" disabled>Sold Out</button>'
       : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
+    var qvCat = p.category || '';
+    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box';
+
     $('qv-content').innerHTML =
       '<div class="qv-layout">'
       + '<div class="qv-image-wrap">' + imgHtml + '</div>'
@@ -960,6 +967,7 @@ var SEED_PRODUCTS = [
       +     '<div class="qv-feature"><span>🎁</span> Great for Gifts</div>'
       +   '</div>'
       +   cartBtn
+      +   (qvNeedsUpload && !outOfStock ? '<span class="upload-hint qv-upload-hint">📎 You\'ll upload your design at checkout</span>' : '')
       + '</div>'
       + '</div>';
     $('quickview-modal').classList.add('open');
