@@ -706,7 +706,7 @@ var SEED_PRODUCTS = [
       for (var i = 0; i < products.length; i++) {
         if (products[i].name === ci.name) {
           var cat = products[i].category || '';
-          if (cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge') logoItemNames.push(ci.name);
+          if (cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge' || products[i].madeToOrder) logoItemNames.push(ci.name);
           if (cat === 'hueforge') hasHueforge = true;
           break;
         }
@@ -919,7 +919,7 @@ var SEED_PRODUCTS = [
       : '<div class="no-photo">📷</div>';
 
     var cat = p.category || '';
-    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge';
+    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge' || !!p.madeToOrder;
     var isHueforge  = cat === 'hueforge';
 
     var badge = '';
@@ -934,9 +934,13 @@ var SEED_PRODUCTS = [
 
     var hint = '';
     if (needsUpload && !outOfStock) {
-      hint = isHueforge
-        ? '<span class="upload-hint">🎨 Made to order — price varies by size &amp; colors. We\'ll design it and send you a preview for approval before printing.</span>'
-        : '<span class="upload-hint">📎 You\'ll upload your design at checkout</span>';
+      if (isHueforge) {
+        hint = '<span class="upload-hint">🎨 Made to order — price varies by size &amp; colors. We\'ll design it and send you a preview for approval before printing.</span>';
+      } else if (p.madeToOrder && cat !== 'keychain' && cat !== 'hype chain' && cat !== 'light box') {
+        hint = '<span class="upload-hint">📋 Made to Order — place your order and we\'ll be in touch to confirm the details.</span>';
+      } else {
+        hint = '<span class="upload-hint">📎 You\'ll upload your design at checkout</span>';
+      }
     }
 
     return '<div class="product-card' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
@@ -981,7 +985,7 @@ var SEED_PRODUCTS = [
       : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
     var qvCat = p.category || '';
-    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box' || qvCat === 'hueforge';
+    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box' || qvCat === 'hueforge' || !!p.madeToOrder;
     var qvIsHueforge  = qvCat === 'hueforge';
 
     $('qv-content').innerHTML =
@@ -999,7 +1003,7 @@ var SEED_PRODUCTS = [
       +     '<div class="qv-feature"><span>🎁</span> Great for Gifts</div>'
       +   '</div>'
       +   cartBtn
-      +   (qvNeedsUpload && !outOfStock ? '<span class="upload-hint qv-upload-hint">' + (qvIsHueforge ? '🎨 Custom design — we\'ll send you a preview for approval before printing' : '📎 You\'ll upload your design at checkout') + '</span>' : '')
+      +   (qvNeedsUpload && !outOfStock ? '<span class="upload-hint qv-upload-hint">' + (qvIsHueforge ? '🎨 Custom design — we\'ll send you a preview for approval before printing' : (p.madeToOrder && qvCat !== 'keychain' && qvCat !== 'hype chain' && qvCat !== 'light box' ? '📋 Made to Order — place your order and we\'ll be in touch to confirm the details.' : '📎 You\'ll upload your design at checkout')) + '</span>' : '')
       + '</div>'
       + '</div>';
     $('quickview-modal').classList.add('open');
