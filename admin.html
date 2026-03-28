@@ -111,8 +111,9 @@ a { text-decoration: none; color: inherit; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-family: var(--font-head); font-size: 12px; font-weight: 500; letter-spacing: .5px; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 4px; }
-.form-group input, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--cream); font-family: var(--font-body); font-size: 14px; padding: 10px 14px; outline: none; transition: border-color var(--transition); }
-.form-group input:focus, .form-group textarea:focus { border-color: var(--orange); }
+.form-group input, .form-group textarea, .form-group select { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--cream); font-family: var(--font-body); font-size: 14px; padding: 10px 14px; outline: none; transition: border-color var(--transition); }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--orange); }
+.form-group select option { background: var(--surface); }
 .form-group textarea { resize: vertical; min-height: 60px; }
 .form-group input::placeholder, .form-group textarea::placeholder { color: var(--muted); }
 .form-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
@@ -296,6 +297,20 @@ a { text-decoration: none; color: inherit; }
         <div class="price-preview-label">Calculated Sell Price</div>
         <div class="price-preview-val" id="price-val">$0</div>
         <div class="price-preview-basis" id="price-basis"></div>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="f-category">
+          <option value="">— None / General —</option>
+          <option value="light box">Light Box</option>
+          <option value="fidget">Fidget</option>
+          <option value="flexi">Flexi</option>
+          <option value="keychain">Keychain</option>
+          <option value="hype chain">Hype Chain</option>
+          <option value="hueforge">HueForge</option>
+          <option value="custom">Custom</option>
+        </select>
+        <span class="form-hint">Controls which category filter this product appears under on the shop</span>
       </div>
       <div class="form-group">
         <label>Notes / Description</label>
@@ -517,6 +532,7 @@ a { text-decoration: none; color: inherit; }
     ['f-name','f-filament','f-elec','f-time','f-mkt-low','f-mkt-mid','f-mkt-high','f-notes','f-price-override'].forEach(function(id) { $(id).value = ''; });
     $('f-qty').value = '1';
     $('f-stock').value = '0';
+    $('f-category').value = '';
     $('f-image').value = '';
     $('f-image-file').value = '';
     $('f-image-preview').style.display = 'none';
@@ -533,6 +549,7 @@ a { text-decoration: none; color: inherit; }
     $('f-mkt-mid').value = p.mktMid != null ? p.mktMid : '';
     $('f-mkt-high').value = p.mktHigh != null ? p.mktHigh : '';
     $('f-stock').value = p.stock != null ? p.stock : 0;
+    $('f-category').value = p.category || '';
     $('f-notes').value = p.notes || '';
     $('f-price-override').value = p.priceOverride != null ? p.priceOverride : '';
     $('f-image').value = p.image || '';
@@ -557,6 +574,7 @@ a { text-decoration: none; color: inherit; }
       mktMid: parseFloat($('f-mkt-mid').value) || 0,
       mktHigh: parseFloat($('f-mkt-high').value) || 0,
       stock: parseInt($('f-stock').value) || 0,
+      category: $('f-category').value || '',
       notes: $('f-notes').value.trim(),
       priceOverride: parseFloat($('f-price-override').value) || null
     };

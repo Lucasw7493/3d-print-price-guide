@@ -760,7 +760,9 @@ var SEED_PRODUCTS = [
     var query = ($('search-input').value || '').trim().toLowerCase();
     var sort  = $('sort-select').value;
     var result = all.filter(function(p) {
-      return !query || p.name.toLowerCase().indexOf(query) !== -1 ||
+      if (!query) return true;
+      if (p.category && p.category === query) return true;
+      return p.name.toLowerCase().indexOf(query) !== -1 ||
              (p.notes && p.notes.toLowerCase().indexOf(query) !== -1);
     });
     if (sort === 'oldest')     result = result.slice().reverse();
