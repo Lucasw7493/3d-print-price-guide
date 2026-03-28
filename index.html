@@ -138,6 +138,18 @@
           <span class="form-hint" style="margin-top:6px; display:block">JPG, PNG, WEBP &mdash; don't have it now? You can email us the logo after ordering.</span>
         </div>
 
+        <div id="co-hueforge-notice" class="hueforge-notice" style="display:none">
+          <span class="hueforge-notice-icon">🎨</span>
+          <div>
+            <strong>HueForge Art — Here's how it works:</strong>
+            <ul>
+              <li>Price depends on the size and number of colors — we'll give you a quote after reviewing your request.</li>
+              <li>This is fully made to order: we'll design your artwork from scratch based on your photo or description.</li>
+              <li>We'll send you the design for your approval before we ever start printing — you'll know exactly what you're getting!</li>
+            </ul>
+          </div>
+        </div>
+
         <div class="checkout-payment-note">
           <div class="payment-icon">💳</div>
           <p><strong>Payment:</strong> We'll email you with payment options (Venmo, CashApp, PayPal, or cash at pickup). No payment is taken now.</p>
@@ -687,25 +699,34 @@ var SEED_PRODUCTS = [
     renderSummary();
     $('co-items-field').value = itemsText.join('\n');
 
-    /* Show logo upload if cart has keychain or hype chain items */
+    /* Show logo upload if cart has keychain / hype chain / light box / hueforge items */
     var logoItemNames = [];
+    var hasHueforge = false;
     _cart.forEach(function(ci) {
       for (var i = 0; i < products.length; i++) {
         if (products[i].name === ci.name) {
           var cat = products[i].category || '';
-          if (cat === 'keychain' || cat === 'hype chain' || cat === 'light box') logoItemNames.push(ci.name);
+          if (cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge') logoItemNames.push(ci.name);
+          if (cat === 'hueforge') hasHueforge = true;
           break;
         }
       }
     });
     if (logoItemNames.length) {
-      $('co-logo-hint').textContent = 'For: ' + logoItemNames.join(', ') + ' — upload the team logo or design so we know what to create.';
+      $('co-logo-hint').textContent = hasHueforge
+        ? 'Upload a reference photo so we can match your vision (optional — you can also describe it in the notes below).'
+        : 'For: ' + logoItemNames.join(', ') + ' — upload the team logo or design so we know what to create.';
       $('co-logo-section').style.display = '';
       $('co-logo-file').value = '';
       $('co-image-preview').style.display = 'none';
       $('co-upload-label').textContent = 'Click to upload or drag an image here';
     } else {
       $('co-logo-section').style.display = 'none';
+    }
+    if (hasHueforge) {
+      $('co-hueforge-notice').style.display = '';
+    } else {
+      $('co-hueforge-notice').style.display = 'none';
     }
 
     /* Show form step, hide success */
@@ -898,7 +919,8 @@ var SEED_PRODUCTS = [
       : '<div class="no-photo">📷</div>';
 
     var cat = p.category || '';
-    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box';
+    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge';
+    var isHueforge  = cat === 'hueforge';
 
     var badge = '';
     if (outOfStock) badge = '<span class="badge badge-out">Sold Out</span>';
@@ -910,6 +932,13 @@ var SEED_PRODUCTS = [
       ? '<button class="btn-add-cart disabled" disabled>Sold Out</button>'
       : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
+    var hint = '';
+    if (needsUpload && !outOfStock) {
+      hint = isHueforge
+        ? '<span class="upload-hint">🎨 Made to order — price varies by size &amp; colors. We\'ll design it and send you a preview for approval before printing.</span>'
+        : '<span class="upload-hint">📎 You\'ll upload your design at checkout</span>';
+    }
+
     return '<div class="product-card' + (outOfStock ? ' out-of-stock' : '') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="openQuickView(\'' + p.name.replace(/'/g, "\\'") + '\')">'
       + '<div class="product-img">' + img + badge + '</div>'
       + '<div class="product-body">'
@@ -919,7 +948,7 @@ var SEED_PRODUCTS = [
       +     '<span class="product-price">$' + price + '</span>'
       +     cartBtn
       +   '</div>'
-      +   (needsUpload && !outOfStock ? '<span class="upload-hint">📎 You\'ll upload your design at checkout</span>' : '')
+      +   hint
       + '</div>'
       + '</div>';
   }
@@ -952,7 +981,8 @@ var SEED_PRODUCTS = [
       : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
     var qvCat = p.category || '';
-    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box';
+    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box' || qvCat === 'hueforge';
+    var qvIsHueforge  = qvCat === 'hueforge';
 
     $('qv-content').innerHTML =
       '<div class="qv-layout">'
@@ -969,7 +999,7 @@ var SEED_PRODUCTS = [
       +     '<div class="qv-feature"><span>🎁</span> Great for Gifts</div>'
       +   '</div>'
       +   cartBtn
-      +   (qvNeedsUpload && !outOfStock ? '<span class="upload-hint qv-upload-hint">📎 You\'ll upload your design at checkout</span>' : '')
+      +   (qvNeedsUpload && !outOfStock ? '<span class="upload-hint qv-upload-hint">' + (qvIsHueforge ? '🎨 Custom design — we\'ll send you a preview for approval before printing' : '📎 You\'ll upload your design at checkout') + '</span>' : '')
       + '</div>'
       + '</div>';
     $('quickview-modal').classList.add('open');
