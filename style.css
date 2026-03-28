@@ -726,9 +726,9 @@ body.no-scroll { overflow: hidden; }
   z-index: 2;
 }
 .badge-in {
-  background: rgba(67,160,71,.15);
-  color: #66bb6a;
-  border: 1px solid rgba(67,160,71,.3);
+  background: rgba(255,130,0,.12);
+  color: var(--orange);
+  border: 1px solid rgba(255,130,0,.3);
 }
 .badge-low {
   background: rgba(255,130,0,.12);
@@ -929,7 +929,7 @@ body.no-scroll { overflow: hidden; }
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-.qv-stock.in { color: #66bb6a; }
+.qv-stock.in { color: var(--orange); }
 .qv-stock.low { color: var(--orange); }
 .qv-stock.out { color: #ef5350; }
 .qv-desc {
