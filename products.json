@@ -52,7 +52,7 @@
     "mktMid": 15,
     "mktHigh": 22,
     "stock": 5,
-    "notes": "A flexible, fun keychain you can fidget with all day. Made to order in your choice of colors — makes a great everyday carry or an easy gift that actually gets used!",
+    "notes": "A flexible, fun keychain you can fidget with all day.",
     "priceOverride": 5
   },
   {
@@ -98,7 +98,7 @@
     "priceOverride": 10
   },
   {
-    "name": "Custom Light Box",
+    "name": "EHS Light Box",
     "image": "ehs-lightbox.png",
     "filament": 14.61,
     "elec": 1.75,
