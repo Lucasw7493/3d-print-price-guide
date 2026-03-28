@@ -400,7 +400,7 @@ a { text-decoration: none; color: inherit; }
     var apiUrl = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
     var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
 
-    fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
+    fetch(apiUrl + '?ref=' + GH_BRANCH + '&_=' + Date.now(), { headers: headers })
       .then(function(r) { return r.json(); })
       .then(function(meta) {
         var body = JSON.stringify(_products, null, 2);
@@ -449,7 +449,7 @@ a { text-decoration: none; color: inherit; }
       var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
 
       /* Check if file exists to get SHA */
-      fetch(apiUrl + '?ref=' + GH_BRANCH, { headers: headers })
+      fetch(apiUrl + '?ref=' + GH_BRANCH + '&_=' + Date.now(), { headers: headers })
         .then(function(r) { return r.ok ? r.json() : null; })
         .then(function(meta) {
           var body = { message: 'Add ' + filename, content: b64, branch: GH_BRANCH };
