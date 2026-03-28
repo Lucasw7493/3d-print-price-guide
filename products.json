@@ -55,7 +55,8 @@
     "mktMid": 65,
     "mktHigh": 90,
     "stock": 1,
-    "category": "",
+    "category": "custom",
+    "madeToOrder": true,
     "notes": "An epic 11-inch Shadow x Batman mashup that commands any display shelf. Bold detail, rich color, and serious presence — a must-have for collectors.",
     "priceOverride": 30
   },
