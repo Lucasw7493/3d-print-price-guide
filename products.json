@@ -105,7 +105,7 @@
     "priceOverride": 10
   },
   {
-    "name": "EHS Light Box",
+    "name": "Custom Light Box",
     "image": "ehs-lightbox.png",
     "filament": 14.61,
     "elec": 1.75,
