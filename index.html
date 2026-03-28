@@ -576,6 +576,7 @@ var SEED_PRODUCTS = [
       }
       if (!p) return;
       var price = calcPrice(p);
+      var isQuote = price === 0 && isMadeToOrder(p);
       var lineTotal = price * ci.qty;
       total += lineTotal;
       var imgHtml = p.image
@@ -585,7 +586,7 @@ var SEED_PRODUCTS = [
         + imgHtml
         + '<div class="cart-item-info">'
         +   '<div class="cart-item-name">' + p.name + '</div>'
-        +   '<div class="cart-item-price">$' + price + ' each</div>'
+        +   '<div class="cart-item-price">' + (isQuote ? 'Price varies' : '$' + price + ' each') + '</div>'
         +   '<div class="cart-item-controls">'
         +     '<button class="cart-qty-btn" onclick="updateCartQty(' + idx + ',-1)">&minus;</button>'
         +     '<span class="cart-qty-val">' + ci.qty + '</span>'
@@ -593,7 +594,7 @@ var SEED_PRODUCTS = [
         +     '<button class="cart-remove-btn" onclick="removeFromCart(' + idx + ')">&times;</button>'
         +   '</div>'
         + '</div>'
-        + '<div class="cart-item-total">$' + lineTotal + '</div>'
+        + '<div class="cart-item-total">' + (isQuote ? 'TBD' : '$' + lineTotal) + '</div>'
         + '</div>';
     });
     var items = container.querySelectorAll('.cart-item');
@@ -602,16 +603,28 @@ var SEED_PRODUCTS = [
     $('cart-total').textContent = '$' + total;
   }
 
+  /* "needs upload" = shows MTO badge + upload prompt (keychains etc.) */
+  function isMadeToOrder(p) {
+    var c = p.category || '';
+    return c === 'keychain' || c === 'hype chain' || c === 'light box' || c === 'hueforge' || !!p.madeToOrder;
+  }
+  /* "truly unlimited" = no stock limit (only explicit madeToOrder or hueforge) */
+  function isUnlimitedStock(p) {
+    return !!p.madeToOrder || (p.category || '') === 'hueforge';
+  }
+
   window.addToCart = function(productName) {
     var products = window._getProducts();
     var p = null;
     for (var i = 0; i < products.length; i++) {
       if (products[i].name === productName) { p = products[i]; break; }
     }
-    if (!p || (p.stock || 0) <= 0) return;
+    if (!p) return;
+    var unlimited = isUnlimitedStock(p);
+    if (!unlimited && (p.stock || 0) <= 0) return;
     for (var j = 0; j < _cart.length; j++) {
       if (_cart[j].name === productName) {
-        if (_cart[j].qty < (p.stock || 0)) _cart[j].qty++;
+        if (unlimited || _cart[j].qty < (p.stock || 0)) _cart[j].qty++;
         saveCart();
         showAddedFeedback(productName);
         return;
@@ -666,6 +679,7 @@ var SEED_PRODUCTS = [
     if (!_cart.length) return;
     var products = window._getProducts();
     var total = 0; var lines = []; var itemsText = [];
+    var hasQuoteItems = false;
     var SHIP_RATE = (window._settings && window._settings.shippingRate) || 8.99;
     var shippingFee = 0;
 
@@ -673,9 +687,11 @@ var SEED_PRODUCTS = [
       for (var i = 0; i < products.length; i++) {
         if (products[i].name === ci.name) {
           var price = calcPrice(products[i]);
+          var isQuote = price === 0 && isMadeToOrder(products[i]);
+          if (isQuote) hasQuoteItems = true;
           total += price * ci.qty;
-          lines.push('<div class="summary-item"><span>' + ci.qty + 'x ' + ci.name + '</span><span>$' + (price * ci.qty) + '</span></div>');
-          itemsText.push(ci.qty + 'x ' + ci.name + ' — $' + (price * ci.qty));
+          lines.push('<div class="summary-item"><span>' + ci.qty + 'x ' + ci.name + '</span><span>' + (isQuote ? 'TBD' : '$' + (price * ci.qty)) + '</span></div>');
+          itemsText.push(ci.qty + 'x ' + ci.name + (isQuote ? ' — Price TBD' : ' — $' + (price * ci.qty)));
           break;
         }
       }
@@ -687,12 +703,14 @@ var SEED_PRODUCTS = [
         ? '<div class="summary-item summary-shipping"><span>Shipping (flat rate)</span><span>$' + SHIP_RATE.toFixed(2) + '</span></div>'
           + '<p class="shipping-note">Actual cost may vary by size &mdash; we\'ll confirm before charging.</p>'
         : '';
+      var quoteNote = hasQuoteItems ? '<p class="shipping-note">* Items marked TBD — we\'ll confirm pricing before payment.</p>' : '';
       $('checkout-summary').innerHTML =
         '<h3 class="summary-title">Order Summary</h3>'
         + lines.join('')
+        + quoteNote
         + shippingLine
-        + '<div class="summary-total"><span>Total</span><span>$' + grand.toFixed(2) + '</span></div>';
-      $('co-total-field').value = '$' + grand.toFixed(2);
+        + '<div class="summary-total"><span>Total</span><span>$' + grand.toFixed(2) + (hasQuoteItems ? '+' : '') + '</span></div>';
+      $('co-total-field').value = '$' + grand.toFixed(2) + (hasQuoteItems ? ' + TBD items' : '');
     }
 
     /* Fill summary in checkout form */
@@ -768,7 +786,7 @@ var SEED_PRODUCTS = [
           notes: $('co-notes').value || '',
           order_items: itemsText.join('\n'),
           shipping_fee: shippingFee > 0 ? '$' + SHIP_RATE.toFixed(2) : 'N/A — local pickup',
-          order_total: '$' + grand.toFixed(2)
+          order_total: '$' + grand.toFixed(2) + (hasQuoteItems ? ' + TBD items' : '')
         };
         if (logoUrl) data.logo_image = logoUrl;
         else if ($('co-logo-section').style.display !== 'none') data.logo_image = 'Customer did not upload — will send via email';
@@ -784,7 +802,7 @@ var SEED_PRODUCTS = [
             $('checkout-details').innerHTML =
               '<div class="checkout-items">' + itemsText.join('<br>') + '</div>'
               + (shippingFee > 0 ? '<div class="checkout-items">Shipping: $' + SHIP_RATE.toFixed(2) + '</div>' : '')
-              + '<div class="checkout-total">Total: $' + grand.toFixed(2) + '</div>';
+              + '<div class="checkout-total">Total: $' + grand.toFixed(2) + (hasQuoteItems ? ' + TBD items' : '') + '</div>';
             $('checkout-step-success').style.display = '';
             _cart = [];
             saveCart();
@@ -908,8 +926,12 @@ var SEED_PRODUCTS = [
   /* ── Build product card ── */
   function buildCard(p) {
     var price = calcPrice(p);
+    var cat = p.category || '';
+    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge' || !!p.madeToOrder;
+    var isHueforge  = cat === 'hueforge';
+
     var stockQty = p.stock != null ? p.stock : null;
-    var outOfStock = stockQty === 0;
+    var outOfStock = stockQty === 0 && !isUnlimitedStock(p);
     var lowStock = stockQty != null && stockQty > 0 && stockQty <= 2;
 
     var img = p.image
@@ -917,10 +939,6 @@ var SEED_PRODUCTS = [
         '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
         + '<div class="no-photo" style="display:none">📷</div>'
       : '<div class="no-photo">📷</div>';
-
-    var cat = p.category || '';
-    var needsUpload = cat === 'keychain' || cat === 'hype chain' || cat === 'light box' || cat === 'hueforge' || !!p.madeToOrder;
-    var isHueforge  = cat === 'hueforge';
 
     var badge = '';
     if (outOfStock) badge = '<span class="badge badge-out">Sold Out</span>';
@@ -931,6 +949,8 @@ var SEED_PRODUCTS = [
     var cartBtn = outOfStock
       ? '<button class="btn-add-cart disabled" disabled>Sold Out</button>'
       : '<button class="btn-add-cart" onclick="event.stopPropagation();addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
+
+    var priceLabel = price > 0 ? '$' + price : (needsUpload ? 'Varies' : '$0');
 
     var hint = '';
     if (needsUpload && !outOfStock) {
@@ -949,7 +969,7 @@ var SEED_PRODUCTS = [
       +   '<h3 class="product-name">' + p.name + '</h3>'
       +   (p.notes ? '<p class="product-desc">' + p.notes + '</p>' : '')
       +   '<div class="product-footer">'
-      +     '<span class="product-price">$' + price + '</span>'
+      +     '<span class="product-price">' + priceLabel + '</span>'
       +     cartBtn
       +   '</div>'
       +   hint
@@ -966,8 +986,12 @@ var SEED_PRODUCTS = [
     }
     if (!p) return;
     var price = calcPrice(p);
+    var qvCat = p.category || '';
+    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box' || qvCat === 'hueforge' || !!p.madeToOrder;
+    var qvIsHueforge  = qvCat === 'hueforge';
+
     var stockQty = p.stock != null ? p.stock : null;
-    var outOfStock = stockQty === 0;
+    var outOfStock = stockQty === 0 && !isUnlimitedStock(p);
     var lowStock = stockQty != null && stockQty > 0 && stockQty <= 2;
 
     var stockHtml = '';
@@ -984,9 +1008,7 @@ var SEED_PRODUCTS = [
       ? '<button class="btn-add-cart-lg disabled" disabled>Sold Out</button>'
       : '<button class="btn-add-cart-lg" onclick="addToCart(\'' + p.name.replace(/'/g, "\\'") + '\')">Add to Cart</button>';
 
-    var qvCat = p.category || '';
-    var qvNeedsUpload = qvCat === 'keychain' || qvCat === 'hype chain' || qvCat === 'light box' || qvCat === 'hueforge' || !!p.madeToOrder;
-    var qvIsHueforge  = qvCat === 'hueforge';
+    var qvPriceLabel = price > 0 ? '$' + price : (qvNeedsUpload ? 'Varies' : '$0');
 
     $('qv-content').innerHTML =
       '<div class="qv-layout">'
@@ -995,7 +1017,7 @@ var SEED_PRODUCTS = [
       +   '<h2 class="qv-name">' + p.name + '</h2>'
       +   stockHtml
       +   (p.notes ? '<p class="qv-desc">' + p.notes + '</p>' : '')
-      +   '<div class="qv-price">$' + price + '</div>'
+      +   '<div class="qv-price">' + qvPriceLabel + '</div>'
       +   '<div class="qv-features">'
       +     '<div class="qv-feature"><span><svg class="qv-printer-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;vertical-align:middle"><rect x="6" y="18" width="36" height="24" rx="3" fill="#2a2a2a" stroke="#ff8200" stroke-width="1.5"/><rect x="8" y="8" width="32" height="4" rx="2" fill="#ff8200"/><rect x="10" y="8" width="2" height="14" fill="#888"/><rect x="36" y="8" width="2" height="14" fill="#888"/><rect x="12" y="36" width="24" height="3" rx="1" fill="#555"/><rect class="printer-object" x="18" y="28" width="12" height="8" rx="1" fill="#ff8200" opacity="0.8"/><g class="printer-head"><rect x="20" y="20" width="8" height="6" rx="1.5" fill="#ddd"/><rect x="23" y="26" width="2" height="2" fill="#ff8200"/></g></svg></span> Printed with Premium PLA Filament</div>'
       +     '<div class="qv-feature"><span>🎨</span> Multi-Color AMS Print</div>'

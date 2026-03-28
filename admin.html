@@ -558,7 +558,7 @@ a { text-decoration: none; color: inherit; }
         +   '<span class="stock-val">' + stock + '</span>'
         +   '<button class="stock-btn" onclick="adjustStock(' + i + ',1)">+</button>'
         + '</div>'
-        + '<div class="product-row-price">$' + price + '</div>'
+        + '<div class="product-row-price">' + (price > 0 ? '$' + price : (p.madeToOrder ? 'Varies' : '$0')) + '</div>'
         + '<div class="product-row-actions">'
         +   '<button class="btn btn-outline btn-sm" onclick="openEditModal(' + i + ')">Edit</button>'
         + '</div>'
