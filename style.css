@@ -798,6 +798,35 @@ body.no-scroll { overflow: hidden; }
   margin-top: 10px;
   font-size: 12px;
 }
+.hueforge-notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255,130,0,.08);
+  border: 1px solid rgba(255,130,0,.3);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text);
+}
+.hueforge-notice-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.hueforge-notice strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--orange);
+}
+.hueforge-notice ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.hueforge-notice ul li {
+  margin-bottom: 4px;
+}
 .btn-add-cart {
   font-family: var(--font-head);
   font-size: 12px;
@@ -1080,6 +1109,57 @@ body.no-scroll { overflow: hidden; }
 /* ══════════════════════════════════════════════════
    FEATURES / WHY US
    ══════════════════════════════════════════════════ */
+/* ══ LIVE STREAM ══ */
+.live-section {
+  padding: 60px 0;
+  background: var(--bg);
+}
+.live-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.live-badge {
+  display: inline-block;
+  background: #e00;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  animation: livepulse 2s infinite;
+}
+@keyframes livepulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+.live-title {
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--cream);
+  margin: 0 0 8px;
+}
+.live-sub {
+  color: var(--cream-dim);
+  font-size: .95rem;
+  margin: 0;
+}
+.live-embed-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--surface-lt);
+}
+.live-embed-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 12px;
+}
+
 .fb-cta-section {
   padding: 60px 0;
   background: var(--bg-alt);
