@@ -47,7 +47,7 @@
   },
   {
     "name": "Bat Shadow",
-    "image": "batshadow.webp",
+    "image": "bat-shadow.png",
     "filament": 9.21,
     "elec": 3.5,
     "qty": 1,
