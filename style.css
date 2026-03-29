@@ -1203,6 +1203,7 @@ body.no-scroll { overflow: hidden; }
   top: 0; right: -420px;
   width: min(400px, 90vw);
   height: 100vh;
+  height: 100dvh;
   background: var(--bg-alt);
   border-left: 1px solid var(--border);
   z-index: 501;
