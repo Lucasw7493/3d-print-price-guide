@@ -1159,6 +1159,45 @@ body.no-scroll { overflow: hidden; }
   width: 100%; height: 100%;
   border-radius: 12px;
 }
+.live-poster {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #0d0d0d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 12px;
+  gap: 14px;
+  transition: background .2s;
+}
+.live-poster:hover { background: #1a1a1a; }
+.live-play-btn {
+  width: 72px; height: 72px;
+  background: var(--orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s, background .2s;
+}
+.live-poster:hover .live-play-btn {
+  transform: scale(1.08);
+  background: var(--orange-dk);
+}
+.live-play-btn svg {
+  width: 28px; height: 28px;
+  color: #fff;
+  margin-left: 4px;
+}
+.live-play-label {
+  color: var(--cream);
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  letter-spacing: .05em;
+}
 
 .fb-cta-section {
   padding: 60px 0;

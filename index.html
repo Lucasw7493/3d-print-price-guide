@@ -368,15 +368,31 @@
       <h2 class="live-title">Watch Us Print Live</h2>
       <p class="live-sub">Tune in to see our printers in action in real time.</p>
     </div>
-    <div class="live-embed-wrap">
+    <div class="live-embed-wrap" id="live-wrap">
+      <div class="live-poster" id="live-poster" onclick="startLiveStream()">
+        <div class="live-play-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+        <span class="live-play-label">Watch Live</span>
+      </div>
       <iframe
-        src="https://player.kick.com/smokymtn3dprints?muted=false"
+        id="live-iframe"
+        src=""
         title="Smoky Mtn 3D Prints Live Stream"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
+        allowfullscreen
+        style="display:none">
       </iframe>
     </div>
+    <script>
+      function startLiveStream() {
+        document.getElementById('live-poster').style.display = 'none';
+        var iframe = document.getElementById('live-iframe');
+        iframe.src = 'https://player.kick.com/smokymtn3dprints?autoplay=1&muted=false';
+        iframe.style.display = 'block';
+      }
+    </script>
   </div>
 </section>
 
