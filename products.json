@@ -1,7 +1,7 @@
 [
   {
-    "name": "Cyclone flexi keychains",
-    "image": "cyclone-flexi-keychains.png",
+    "name": "Flexy keychain EHS cyclones",
+    "image": "flexy-keychain-ehs-cyclones.png",
     "filament": 0,
     "elec": 0,
     "qty": 10,
@@ -11,8 +11,8 @@
     "mktHigh": 0,
     "stock": 0,
     "category": "keychain",
-    "notes": "Cyclone flexi keychain",
-    "priceOverride": 5
+    "notes": "Cyclone flexi keychain design",
+    "priceOverride": 3
   },
   {
     "name": "Custom hueforge art",
