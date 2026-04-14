@@ -12,7 +12,7 @@
     "stock": 10,
     "category": "",
     "notes": "Cyclone flexi keychain design",
-    "priceOverride": 2
+    "priceOverride": 3
   },
   {
     "name": "Custom hueforge art",
@@ -149,6 +149,7 @@
     "mktHigh": 90,
     "stock": 1,
     "category": "light box",
+    "madeToOrder": true,
     "notes": "A custom illuminated light box that glows beautifully on any wall. Vibrant color detail that really pops when lit — a one-of-a-kind display piece or meaningful gift.",
     "priceOverride": 40
   }
