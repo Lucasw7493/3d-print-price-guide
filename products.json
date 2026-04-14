@@ -1,21 +1,5 @@
 [
   {
-    "name": "Custom Jersey shadow box",
-    "image": "custom-jersey-shadow-box.jpg",
-    "filament": 0,
-    "elec": 0,
-    "qty": 1,
-    "printTime": 0,
-    "mktLow": 0,
-    "mktMid": 0,
-    "mktHigh": 0,
-    "stock": 0,
-    "category": "custom",
-    "madeToOrder": true,
-    "notes": "Get your custom jersey shadow box today!!",
-    "priceOverride": 60
-  },
-  {
     "name": "Flexy keychain EHS cyclones",
     "image": "flexy-keychain-ehs-cyclones.png",
     "filament": 0,
@@ -28,7 +12,7 @@
     "stock": 10,
     "category": "",
     "notes": "Cyclone flexi keychain design",
-    "priceOverride": 3
+    "priceOverride": 2
   },
   {
     "name": "Custom hueforge art",
