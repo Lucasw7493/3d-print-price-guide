@@ -1,5 +1,20 @@
 [
   {
+    "name": "Venom bust",
+    "image": "venom-bust.jpg",
+    "filament": 18,
+    "elec": 5,
+    "qty": 1,
+    "printTime": 0,
+    "mktLow": 0,
+    "mktMid": 0,
+    "mktHigh": 0,
+    "stock": 0,
+    "category": "",
+    "notes": "venom bust",
+    "priceOverride": 50
+  },
+  {
     "name": "Custom Jersey shadow box",
     "image": "custom-jersey-shadow-box.jpg",
     "filament": 0,
